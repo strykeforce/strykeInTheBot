@@ -12,7 +12,7 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.DriveConstants;
 
 public class Modules implements ModulesIO {
-    public Modules() {
+    public Modules(TelemetryService telemetryService) {
         var moduleBuilder = new TalonSwerveModule.Builder()
                 .driveGearRatio(DriveConstants.kDriveGearRatio)
                 .wheelDiameterInches(DriveConstants.kWheelDiameterInches)
@@ -54,6 +54,6 @@ public class Modules implements ModulesIO {
 
     @Override
     public void registerWith(TelemetryService telemetryService) {
-        telemetryService.register();
+        
     }
 }
