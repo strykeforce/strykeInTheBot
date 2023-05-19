@@ -17,7 +17,10 @@ public class DriveConstants {
     public static final double kDriveGearRatio = 0;
     public static final double kWheelDiameterInches = 0;
     public static final double kMaxSpeedMetersPerSecond = 0;
-
+    
+    public static final double kMaxOmega =
+        (kMaxSpeedMetersPerSecond / Math.hypot(kRobotWidth / 2.0, kRobotLength / 2.0))
+            / 2.0; // wheel locations below
 
     public static Translation2d[] getWheelLocationMeters() {
         final double x = kRobotLength / 2.0; // front-back, was ROBOT_LENGTH
@@ -84,5 +87,36 @@ public class DriveConstants {
             driveConfig.voltageMeasurementFilter = 32;
             return driveConfig;
           }
+
+          // Holonomic Controller Constants
+          public static final double kPHolonomic = 0.25; // 6 0.25
+          public static final double kIHolonomic = 0.0000;
+          public static final double kDHolonomic = 0.00; // kPHolonomic/100
+          public static final double kIMin = 0.0;
+          public static final double kIMax = 0.0;
+
+          public static final double kPOmega = 4.5;
+          public static final double kIOmega = 0.0;
+          public static final double kDOmega = 0.0;
+          //    public static final double kMaxVelOmega = kMaxOmega / 2.0;
+          public static final double kMaxAccelOmega = 5.0; // 3.14
+
+          // AUTODRIVE ProfiledPID Constants
+          public static final double kPAutoDrive = 3; // 3
+          public static final double kIAutoDrive = 0.0000;
+          public static final double kDAutoDrive = 0.00; // kPHolonomic/100
+
+          public static final double kAutoDriveMaxVelocity = 2; //
+          public static final double kAutoDriveMaxAccel = 2;
+
+          // Auto PickUp Constants
+          public static final double kPAutoPickup = 3;
+          public static final double kIAutoPickup = 0.0;
+          public static final double kDAutoPickup = 0.0;
+
+          public static final double kAutoPickupDriveMaxVel = 1.5;
+          public static final double kAutoPickupDriveMaxAccel = 2;
+
+          public static final double kAutoPickupCloseEnough = 0.07;
 
 }
