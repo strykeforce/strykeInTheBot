@@ -10,6 +10,9 @@ public class ExtendoConstants {
   public static final double kMaxFwd = 2_000;
   public static final double kMaxRev = -1_000;
   public static final double kZeroTicks = 550;
+  public static final double kZeroSpeed = -1;
+  public static final double kVelocityThreshhold = 0.01;
+  public static final int kZeroCount = 3;
 
   public static final double kHoldPos = 500;
   public static final double kOpenPos = 1_800;
@@ -46,5 +49,9 @@ public class ExtendoConstants {
 
   public static SupplyCurrentLimitConfiguration getExtendoSupplyLimitConfig() {
     return new SupplyCurrentLimitConfiguration(true, 2, 2, 0.3);
+  }
+
+  public static SupplyCurrentLimitConfiguration getExtendoSupplyLimitZeroingConfig() {
+    return new SupplyCurrentLimitConfiguration(true, 0.5, 2, 0.3);
   }
 }
