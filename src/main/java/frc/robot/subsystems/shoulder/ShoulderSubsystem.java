@@ -27,27 +27,21 @@ public class ShoulderSubsystem extends MeasurableSubsystem {
   }
 
   public void zero() {
-    double absolute = inputs.absoluteTicks;
-    double offset = absolute - ShoulderConstants.kZeroTicks;
-    io.setSelectedSensorPos(offset*ShoulderConstants.kShoulderGearRatio);
-    logger.info(
-        "Abs: {}, Zero Pos: {}, Offset: {}", absolute, ShoulderConstants.kZeroTicks, offset);
+
+    if (inputs.isFwdLimitSwitchClosed) {
+      double absolute = inputs.absoluteTicks;
+      double offset = absolute - ShoulderConstants.kZeroTicks;
+      io.setSelectedSensorPos(offset * (1 / ShoulderConstants.kShoulderGearRatio));
+      logger.info(
+          "Abs: {}, Zero Pos: {}, Offset: {}", absolute, ShoulderConstants.kZeroTicks, offset);
+    } else {
+      logger.error("Limit Switch Not Aligned", getName(), advLogger);
+    }
   }
 
-  public void setShoulderPosition(double position)
-  {
+  public void setShoulderPosition(double position) {
     io.setSelectedSensorPos(position);
     setpointTicks = position;
-  }
-
- 
-  public void hold() {
-    logger.info("HOLD: {} -> TRANSITION", currState);
-    desiredState = ShoulderStates.HOLD;
-    currState = ShoulderStates.TRANSITION;
-    io.setPos(ShoulderConstants.kHoldPos);
-    setpointTicks = ShoulderConstants.kHoldPos;
-    
   }
 
   public boolean isFinished() {
@@ -70,16 +64,9 @@ public class ShoulderSubsystem extends MeasurableSubsystem {
 
     switch (currState) {
       case IDLE:
+        break;
 
-        break;
-      case HOLD:
-
-        break;
-      case OPEN:
-    
-        break;
       case TRANSITION:
-
         if (isFinished()) {
           logger.info("{} -> {}", currState, desiredState);
           currState = desiredState;
@@ -90,15 +77,13 @@ public class ShoulderSubsystem extends MeasurableSubsystem {
     }
 
     // Log Outputs
-    advLogger.recordOutput("Example/currState", currState.ordinal());
-    advLogger.recordOutput("Example/setpointTicks", setpointTicks);
+    advLogger.recordOutput("Shoulder/currState", currState.ordinal());
+    advLogger.recordOutput("Shoulder/setpointTicks", setpointTicks);
   }
 
   // States
   public enum ShoulderStates {
     IDLE,
-    HOLD,
-    OPEN,
     TRANSITION
   }
 

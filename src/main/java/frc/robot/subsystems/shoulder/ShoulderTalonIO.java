@@ -1,32 +1,30 @@
 package frc.robot.subsystems.shoulder;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import frc.robot.constants.ShoulderConstants;
 import org.strykeforce.telemetry.TelemetryService;
 
 public class ShoulderTalonIO implements ShoulderIO {
   private TalonSRX shoulderLeft1Main;
   private TalonSRX shoulderLeft2Follow;
- 
-  
 
   public ShoulderTalonIO() {
     shoulderLeft1Main = new TalonSRX(ShoulderConstants.kLeftMainID);
     configTalon(shoulderLeft1Main);
+    shoulderLeft1Main.configForwardLimitSwitchSource(
+        RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen, 43);
     shoulderLeft2Follow = new TalonSRX(ShoulderConstants.kLeftFollowID);
     configTalon(shoulderLeft2Follow);
-    
+
     shoulderLeft2Follow.follow(shoulderLeft1Main);
-    
   }
 
-  private void configTalon(TalonSRX falcon)
-  {
+  private void configTalon(TalonSRX falcon) {
     falcon.configFactoryDefault();
     falcon.configAllSettings(ShoulderConstants.getShoulderTalonConfig());
     falcon.configSupplyCurrentLimit(ShoulderConstants.getShoulderSupplyLimitConfig());
@@ -36,7 +34,6 @@ public class ShoulderTalonIO implements ShoulderIO {
   @Override
   public void setSelectedSensorPos(double positionTicks) {
     shoulderLeft1Main.setSelectedSensorPosition(positionTicks);
-    
   }
 
   @Override
@@ -54,7 +51,6 @@ public class ShoulderTalonIO implements ShoulderIO {
       SupplyCurrentLimitConfiguration supplyCurrentLimitConfiguration) {
     shoulderLeft1Main.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
     shoulderLeft1Main.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
-
   }
 
   @Override
@@ -69,6 +65,5 @@ public class ShoulderTalonIO implements ShoulderIO {
   public void registerWith(TelemetryService telemetryService) {
     telemetryService.register(shoulderLeft1Main);
     telemetryService.register(shoulderLeft2Follow);
-    
   }
 }
