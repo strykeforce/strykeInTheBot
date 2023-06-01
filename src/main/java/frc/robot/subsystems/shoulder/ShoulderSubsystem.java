@@ -60,7 +60,7 @@ public class ShoulderSubsystem extends MeasurableSubsystem {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    advLogger.processInputs("Example", inputs);
+    advLogger.processInputs("Shoulder", inputs);
 
     switch (currState) {
       case IDLE:
