@@ -27,12 +27,13 @@ public class HandConstants {
     return falconConfig;
   }
 
-  public static final double kWaitingSpeed = 0.0; // TODO
-  public static final double kConeSpeed = 0.0; // TODO
-  public static final double kCubeSpeed = 0.0; // TODO
+  public static final double kWaitingSpeed = 0.7; // used comp robot speed
+  public static final double kConeSpeed = 0.2; // used comp robot speed
+  public static final double kCubeSpeed = 0.15; // used comp robot speed
 
   public static final double kConeVelLimit = 50; // used comp robot number
 
   public static final int kHasConeStableCounts = 2; // used comp robot number
   public static final int kHasCubeStableCounts = 2; // used comp robot number
+  public static final int kEjectStableCounts = 5; // FIXME guessed at number
 }

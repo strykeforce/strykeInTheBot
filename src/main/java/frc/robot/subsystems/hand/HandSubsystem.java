@@ -17,6 +17,7 @@ public class HandSubsystem extends MeasurableSubsystem {
       org.littletonrobotics.junction.Logger.getInstance();
   private int hasConeStableCounts;
   private int hasCubeStableCounts;
+  private int ejectStableCounts = 0;
 
   public HandSubsystem(HandIO io) {
     this.io = io;
@@ -29,6 +30,11 @@ public class HandSubsystem extends MeasurableSubsystem {
   public void grabPiece() {
     logger.info("{} -> WAITING", currState);
     currState = HandStates.WAITING;
+  }
+
+  public void ejectPiece() {
+    logger.info("{} -> EJECT", currState);
+    currState = HandStates.EJECT;
   }
 
   public boolean hasCone() {
@@ -72,6 +78,16 @@ public class HandSubsystem extends MeasurableSubsystem {
       case CUBE:
         io.setPct(HandConstants.kCubeSpeed);
         break;
+      case EJECT:
+        if (ejectStableCounts < HandConstants.kEjectStableCounts) {
+          io.setPct(-HandConstants.kWaitingSpeed);
+          ejectStableCounts++;
+        } else {
+          ejectStableCounts = 0;
+          logger.info("EJECT -> IDLE");
+          currState = HandStates.IDLE;
+        }
+        break;
     }
   }
 
@@ -79,7 +95,8 @@ public class HandSubsystem extends MeasurableSubsystem {
     IDLE,
     WAITING,
     CONE,
-    CUBE
+    CUBE,
+    EJECT
   }
 
   public Set<Measure> getMeasures() {
