@@ -188,9 +188,8 @@ public class VisionSubsystem extends MeasurableSubsystem {
   @Override
   public Set<Measure> getMeasures() {
     return Set.of(
-      new Measure("Has Targets", () -> getHasTargets()),
-      new Measure("Camera Offset X", () -> getCameraOffset().getX()),
-      new Measure("Camera Offset Y", () -> getCameraOffset().getY())
-    );
+        new Measure("Has Targets", () -> getHasTargets()),
+        new Measure("Camera Offset X", () -> getCameraOffset().getX()),
+        new Measure("Camera Offset Y", () -> getCameraOffset().getY()));
   }
 }
