@@ -1,5 +1,6 @@
 package frc.robot.subsystems.Extendo;
 
+import frc.robot.constants.ExampleConstants;
 import frc.robot.constants.ExtendoConstants;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -30,6 +31,20 @@ public class ExtendoSubsystem extends MeasurableSubsystem {
 
   public boolean isFinished() {
     return (ExtendoConstants.kCloseEnough <= Math.abs(inputs.positionTicks-SetPoint));
+  }
+
+  public boolean isPastPoint(double pastPointTicks) {
+
+//  Tests if the pos is between the input and the SetPoint.
+//  This is the best way I could find.
+
+    if (SetPoint < inputs.positionTicks) {
+      return (pastPointTicks + ExtendoConstants.kCloseEnough >= inputs.positionTicks);
+    } else if (SetPoint > inputs.positionTicks) {
+      return (pastPointTicks - ExtendoConstants.kCloseEnough <= inputs.positionTicks);
+    } else {
+      return false;
+    }
   }
 
   public void setPos(int positionTicks) {
