@@ -1,11 +1,12 @@
 package frc.robot.constants;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 
 public class ExtendoConstants {
-  public static int kExtendoTalonId = 5;
+  public static int kExtendoTalonMainId = 30;
+  public static int kExtendoTalonFollowId = 31;
 
   public static final double kMaxFwd = 2_000;
   public static final double kMaxRev = -1_000;
@@ -18,8 +19,8 @@ public class ExtendoConstants {
   public static final double kOpenPos = 1_800;
   public static final double kCloseEnough = 100;
 
-  public static TalonSRXConfiguration getExtendoTalonConfig() {
-    TalonSRXConfiguration ExtendoConfig = new TalonSRXConfiguration();
+  public static TalonFXConfiguration getExtendoTalonConfig() {
+    TalonFXConfiguration ExtendoConfig = new TalonFXConfiguration();
 
     // PID Configs
     ExtendoConfig.slot0.kP = 2.0;
