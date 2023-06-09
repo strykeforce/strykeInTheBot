@@ -10,29 +10,37 @@ import org.strykeforce.telemetry.measurable.Measure;
 
 public class WristSubsystem extends MeasurableSubsystem {
   private final WristIO io;
+  private final WristEncoderIO eio;
   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
   private double setpointTicks;
   private Logger logger = LoggerFactory.getLogger(WristSubsystem.class);
-  private org.littletonrobotics.junction.Logger advLogger = org.littletonrobotics.junction.Logger.getInstance();
+  private org.littletonrobotics.junction.Logger advLogger =
+      org.littletonrobotics.junction.Logger.getInstance();
   private ZeroState zeroState = ZeroState.IDLE;
   private int ZeroCounter = 0;
   private double SetPoint = 0;
 
-  public WristSubsystem(WristIO io) {
+  public WristSubsystem(WristIO io, WristEncoderIO eio) {
     this.io = io;
+    this.eio = eio;
   }
 
   public void zero() {
+    // double absfalcon = inputs.absoluteTicks;
+    // double absCANAnd = eio.inputs.absolutePercentage;
+    // double offset = absolute - WristConstants.kZeroTicks;
+    // io.setSelectedSensorPos(offset);
+    // logger.info("Abs: {}, Zero Pos: {}, Offset: {}", absfalcon, WristConstants.kZeroTicks, offset);
   }
 
   public boolean isFinished() {
-    return (WristConstants.kCloseEnough <= Math.abs(inputs.positionTicks-SetPoint));
+    return (WristConstants.kCloseEnough <= Math.abs(inputs.positionTicks - SetPoint));
   }
 
   public boolean isPastPoint(double pastPointTicks) {
 
-//  Tests if the pos is between the input and the SetPoint.
-//  This is the best way I could find.
+    //  Tests if the pos is between the input and the SetPoint.
+    //  This is the best way I could find.
 
     if (SetPoint < inputs.positionTicks) {
       return (pastPointTicks + WristConstants.kCloseEnough >= inputs.positionTicks);
@@ -52,14 +60,15 @@ public class WristSubsystem extends MeasurableSubsystem {
   public void periodic() {
     io.updateInputs(inputs);
 
-    if (zeroState == ZeroState.ZEROING){
+    if (zeroState == ZeroState.ZEROING) {
       if (inputs.velocityTicksPer100ms <= WristConstants.kVelocityThreshhold) {
         ZeroCounter++;
         if (ZeroCounter >= WristConstants.kZeroCount) {
           double absolute = inputs.absoluteTicks;
           double offset = absolute - WristConstants.kZeroTicks;
           io.setSelectedSensorPos(offset);
-          logger.info("Abs: {}, Zero Pos: {}, Offset: {}", absolute, WristConstants.kZeroTicks, offset);
+          logger.info(
+              "Abs: {}, Zero Pos: {}, Offset: {}", absolute, WristConstants.kZeroTicks, offset);
           this.io.setPct(0);
           zeroState = ZeroState.IDLE;
           ZeroCounter = 0;

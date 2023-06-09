@@ -1,22 +1,21 @@
 package frc.robot.subsystems.Wrist;
 
-import org.littletonrobotics.junction.AutoLog;
-import org.strykeforce.telemetry.TelemetryService;
-
 import com.reduxrobotics.sensors.canandcoder.CANandcoder;
-
 import frc.robot.constants.WristConstants;
+import java.util.Set;
+import org.strykeforce.telemetry.Registrable;
+import org.strykeforce.telemetry.TelemetryService;
+import org.strykeforce.telemetry.measurable.Measurable;
+import org.strykeforce.telemetry.measurable.Measure;
 
-public class WristEncoderIOCanandcoder implements WristEncoderIO{
+public class WristEncoderIOCanandcoder implements WristEncoderIO, Measurable, Registrable {
 
   private CANandcoder encoder;
 
-  @AutoLog
-  public static class WristIOEncoderInputs {
-    public double absolutePercentage = 0.0;
+  public WristEncoderIOCanandcoder() {
+    encoder = new CANandcoder(WristConstants.kWristEncoderId);
   }
 
-  @Override
   public void updateInputs(WristEncoderIOInputs inputs) {
     inputs.absolutePercentage = encoder.getAbsPosition();
   }
@@ -24,7 +23,38 @@ public class WristEncoderIOCanandcoder implements WristEncoderIO{
   @Override
   public void setSelectedSensorPos(double absolutePercentage) {}
 
+  // ------------ grapher stuff -------------------
+
   @Override
   public void registerWith(TelemetryService telemetryService) {
-    telemetryService.register(encoder);}
+    telemetryService.register(this);
+  }
+
+  @Override
+  public int getDeviceId() {
+    return WristConstants.kWristEncoderId;
+  }
+
+  @Override
+  public String getDescription() {
+    return "CANAndCoder";
+  }
+
+  @Override
+  public Set<Measure> getMeasures() {
+    return Set.of(
+        new Measure("Absolute percentage", () -> encoder.getAbsPosition()),
+        new Measure("relative percentage", () -> encoder.getPosition()),
+        new Measure("velocity", () -> encoder.getVelocity()));
+  }
+
+  @Override
+  public String getType() {
+    return "CANAndCoder";
+  }
+
+  @Override
+  public int compareTo(Measurable item) {
+    return 0;
+  }
 }

@@ -5,8 +5,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 
 public class WristConstants {
-  public static int kWristTalonMainId = 30;
-  public static int kWristTalonFollowId = 31;
+  public static int kWristTalonId = 40;
+  public static int kWristEncoderId = 41;
 
   public static final double kMaxFwd = 2_000;
   public static final double kMaxRev = -1_000;

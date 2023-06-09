@@ -12,7 +12,7 @@ public class WristIOTalon implements WristIO {
   private TalonFX Talon;
 
   public WristIOTalon() {
-    Talon = new TalonFX(WristConstants.kWristTalonMainId);
+    Talon = new TalonFX(WristConstants.kWristTalonId);
     Talon.configFactoryDefault();
     Talon.configAllSettings(WristConstants.getWristTalonConfig());
     Talon.configSupplyCurrentLimit(WristConstants.getWristSupplyLimitConfig());
