@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
+import frc.robot.subsystems.timestampedpose.TimestampedPose;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,7 @@ import org.strykeforce.telemetry.measurable.Measure;
 
 public class VisionSubsystem extends MeasurableSubsystem {
   private static final Logger logger = LoggerFactory.getLogger(VisionSubsystem.class);
-  private static DriveSubsystem driveSubsystem;
+  private DriveSubsystem driveSubsystem;
   private PhotonCamera camera = new PhotonCamera("idkfixthisprobably");
   private PhotonPoseEstimator photonPoseEstimator;
   private AprilTagFieldLayout aprilTagFieldLayout;
@@ -83,6 +84,23 @@ public class VisionSubsystem extends MeasurableSubsystem {
     return robotPose;
   }
 
+  public TimestampedPose odomNewPoseViaVision() {
+    // List<PhotonTrackedTarget> gyroBuffer;
+    if (buffersFull) {
+      Rotation2d gyroAngle =
+          new Rotation2d(
+              gyroBuffer.get(
+                  VisionConstants.kBufferLookupOffset)); // driveSubsystem.getGyroRotation2d();
+      // List<PhotonTrackedTarget> timestampBuffer;
+      double timestamp = timestampBuffer.get(VisionConstants.kBufferLookupOffset);
+
+      Pose2d odomPose = new Pose2d(robotPose, gyroAngle);
+      return new TimestampedPose((long) timestamp, odomPose);
+    } else {
+      return new TimestampedPose((long) 2767, new Pose2d());
+    }
+  }
+
   public void fillBuffers() {
     gyroBuffer.addFirst(driveSubsystem.getGyroRotation2d().getRadians());
     timestampBuffer.addFirst(RobotController.getFPGATime());
@@ -93,6 +111,14 @@ public class VisionSubsystem extends MeasurableSubsystem {
   public void setOdomAutoBool(boolean autoBool) {
     logger.info("setOdomAutoBool: {}", autoBool);
     hasResetOdomAuto = autoBool;
+  }
+
+  public boolean getOdomAutoBool() {
+    return hasResetOdomAuto;
+  }
+
+  public double getNumTargets() {
+    return targets.size();
   }
 
   public Translation2d getCameraOffset() {
