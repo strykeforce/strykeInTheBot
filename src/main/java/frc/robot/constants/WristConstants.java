@@ -8,12 +8,13 @@ public class WristConstants {
   public static int kWristTalonId = 40;
   public static int kWristEncoderId = 41;
 
-  public static final double kMaxFwd = 2_000;
+  public static final double kMaxFwd = 1_000;
   public static final double kMaxRev = -1_000;
   public static final double kZeroTicks = 550;
   public static final double kZeroSpeed = -1;
   public static final double kVelocityThreshhold = 0.01;
   public static final int kZeroCount = 3;
+  public static final int kTalonTicks = 2048;
 
   public static final double kHoldPos = 500;
   public static final double kOpenPos = 1_800;

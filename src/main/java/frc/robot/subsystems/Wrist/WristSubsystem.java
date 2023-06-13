@@ -10,8 +10,9 @@ import org.strykeforce.telemetry.measurable.Measure;
 
 public class WristSubsystem extends MeasurableSubsystem {
   private final WristIO io;
-  private final WristEncoderIO eio;
+  private final WristEncoderIO Eio;
   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
+  private final WristEncoderIOInputsAutoLogged Einputs = new WristEncoderIOInputsAutoLogged();
   private double setpointTicks;
   private Logger logger = LoggerFactory.getLogger(WristSubsystem.class);
   private org.littletonrobotics.junction.Logger advLogger =
@@ -20,17 +21,22 @@ public class WristSubsystem extends MeasurableSubsystem {
   private int ZeroCounter = 0;
   private double SetPoint = 0;
 
-  public WristSubsystem(WristIO io, WristEncoderIO eio) {
+  public WristSubsystem(WristIO io, WristEncoderIO Eio) {
     this.io = io;
-    this.eio = eio;
+    this.Eio = Eio;
   }
 
   public void zero() {
-    // double absfalcon = inputs.absoluteTicks;
-    // double absCANAnd = eio.inputs.absolutePercentage;
-    // double offset = absolute - WristConstants.kZeroTicks;
-    // io.setSelectedSensorPos(offset);
-    // logger.info("Abs: {}, Zero Pos: {}, Offset: {}", absfalcon, WristConstants.kZeroTicks, offset);
+    double absTalon = inputs.absoluteTicks;
+    double absCANAnd = Einputs.absolutePercentage * WristConstants.kTalonTicks;
+    double offset = absCANAnd - WristConstants.kZeroTicks;
+    io.setSelectedSensorPos(offset);
+    logger.info(
+        "AbsTalon: {}, AbsCANAnd: {}, Zero Pos: {}, Offset: {}",
+        absTalon,
+        absCANAnd,
+        WristConstants.kZeroTicks,
+        offset);
   }
 
   public boolean isFinished() {
