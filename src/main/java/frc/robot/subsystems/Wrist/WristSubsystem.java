@@ -17,8 +17,6 @@ public class WristSubsystem extends MeasurableSubsystem {
   private Logger logger = LoggerFactory.getLogger(WristSubsystem.class);
   private org.littletonrobotics.junction.Logger advLogger =
       org.littletonrobotics.junction.Logger.getInstance();
-  private ZeroState zeroState = ZeroState.IDLE;
-  private int ZeroCounter = 0;
   private double SetPoint = 0;
 
   public WristSubsystem(WristIO io, WristEncoderIO Eio) {
@@ -66,25 +64,6 @@ public class WristSubsystem extends MeasurableSubsystem {
   public void periodic() {
     io.updateInputs(inputs);
 
-    if (zeroState == ZeroState.ZEROING) {
-      if (inputs.velocityTicksPer100ms <= WristConstants.kVelocityThreshhold) {
-        ZeroCounter++;
-        if (ZeroCounter >= WristConstants.kZeroCount) {
-          double absolute = inputs.absoluteTicks;
-          double offset = absolute - WristConstants.kZeroTicks;
-          io.setSelectedSensorPos(offset);
-          logger.info(
-              "Abs: {}, Zero Pos: {}, Offset: {}", absolute, WristConstants.kZeroTicks, offset);
-          this.io.setPct(0);
-          zeroState = ZeroState.IDLE;
-          ZeroCounter = 0;
-          io.setSupplyCurrentLimit(WristConstants.getWristSupplyLimitConfig());
-        }
-      } else {
-        ZeroCounter = 0;
-      }
-    }
-
     advLogger.processInputs("Wrist", inputs);
 
     // Log Outputs
@@ -101,10 +80,5 @@ public class WristSubsystem extends MeasurableSubsystem {
   public void registerWith(TelemetryService telemetryService) {
     super.registerWith(telemetryService);
     io.registerWith(telemetryService);
-  }
-
-  public enum ZeroState {
-    IDLE,
-    ZEROING;
   }
 }
