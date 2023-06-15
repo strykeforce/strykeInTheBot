@@ -6,8 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.example.ExampleIOTalon;
-import frc.robot.subsystems.example.ExampleSubsystem;
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
 
@@ -17,20 +15,17 @@ public class RobotContainer {
   private final TelemetryService telemetryService = new TelemetryService(TelemetryController::new);
 
   // Subsystems
-  private ExampleSubsystem exampleSubsystem;
 
   // OI Objects
 
   public RobotContainer() {
 
-    exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
     configureBindings();
   }
 
   private void configureBindings() {}
 
   private void configTelemetry() {
-    exampleSubsystem.registerWith(telemetryService);
     telemetryService.start();
   }
 

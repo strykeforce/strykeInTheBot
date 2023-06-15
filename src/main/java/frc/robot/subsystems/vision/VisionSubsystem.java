@@ -48,7 +48,6 @@ public class VisionSubsystem extends MeasurableSubsystem {
   private int gyroBufferId = 0;
   private boolean buffersFull = false;
   private boolean canFillBuffers = false;
-  private boolean hasResetOdomAuto = false;
   private EstimatedRobotPose savedOffRobotEstimation;
   private Pose3d cameraPose;
   private Pose3d lastPose;
@@ -108,15 +107,6 @@ public class VisionSubsystem extends MeasurableSubsystem {
     buffersFull = true;
   }
 
-  public void setOdomAutoBool(boolean autoBool) {
-    logger.info("setOdomAutoBool: {}", autoBool);
-    hasResetOdomAuto = autoBool;
-  }
-
-  public boolean getOdomAutoBool() {
-    return hasResetOdomAuto;
-  }
-
   public double getNumTargets() {
     return targets.size();
   }
@@ -146,9 +136,8 @@ public class VisionSubsystem extends MeasurableSubsystem {
     return new Translation2d(2767, 2767);
   }
 
-  public double getHasTargets() {
-    if (result.hasTargets()) return 1.0;
-    return 0.0;
+  public boolean getHasTargets() {
+    return result.hasTargets();
   }
 
   @Override
@@ -175,7 +164,6 @@ public class VisionSubsystem extends MeasurableSubsystem {
               new Pose2d(
                   new Translation2d(x, y).plus(getCameraOffset()),
                   new Rotation2d(gyroBuffer.get(gyroBufferId))));
-          setOdomAutoBool(true);
           // result.setTimestampSeconds(timeStamp);
         }
       } else {
@@ -183,6 +171,7 @@ public class VisionSubsystem extends MeasurableSubsystem {
         visionOff++;
         lastPose = cameraPose;
       }
+      robotPose = new Translation2d(x, y);
     }
   }
 
@@ -214,7 +203,7 @@ public class VisionSubsystem extends MeasurableSubsystem {
   @Override
   public Set<Measure> getMeasures() {
     return Set.of(
-        new Measure("Has Targets", () -> getHasTargets()),
+        new Measure("Has Targets", () -> getHasTargets() ? 1.0 : 0.0),
         new Measure("Camera Offset X", () -> getCameraOffset().getX()),
         new Measure("Camera Offset Y", () -> getCameraOffset().getY()));
   }
