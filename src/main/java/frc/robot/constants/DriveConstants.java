@@ -1,21 +1,19 @@
 package frc.robot.constants;
 
-import java.util.ArrayList;
-
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import java.util.ArrayList;
 
 public class DriveConstants {
-  public static final double kFieldLength = 16.54;
+  public static final double kFieldMaxX = 16.540988; // m
 
   public static final int kTalonConfigTimeout = 10; // ms
 
@@ -127,6 +125,10 @@ public class DriveConstants {
 
   public static final double kAutoPickupCloseEnough = 0.07;
 
+  public static final Pose2d kOdometryZeroPosBlue =
+      new Pose2d(new Translation2d(1.80, 5.097), new Rotation2d());
+  public static final Pose2d kOdometryZeroPosRed =
+      new Pose2d(new Translation2d(kFieldMaxX - 1.80, 0.39), new Rotation2d());
 
   // Default safety path constants
   public static final Pose2d startPose2d = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
@@ -150,7 +152,4 @@ public class DriveConstants {
   public static SupplyCurrentLimitConfiguration getAzimuthSupplyCurrentLimit() {
     return new SupplyCurrentLimitConfiguration(true, 10, 15, 0.04);
   }
-
-
-
 }

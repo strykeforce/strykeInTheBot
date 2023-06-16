@@ -1,6 +1,8 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -9,10 +11,17 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.Trajectory.State;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import java.io.IOException;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.RobotState;
+import frc.robot.Robot;
+import frc.robot.constants.DriveConstants;
+import frc.robot.subsystems.robotstate.RobotStateSubsystem;
+import frc.robot.subsystems.timestampedpose.TimestampedPose;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Set;
@@ -24,11 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.swerve.SwerveDrive;
 import org.strykeforce.swerve.SwerveModule;
+import org.strykeforce.telemetry.TelemetryService;
 import org.strykeforce.telemetry.measurable.MeasurableSubsystem;
 import org.strykeforce.telemetry.measurable.Measure;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.constants.DriveConstants;
 
 public class DriveSubsystem extends MeasurableSubsystem {
   private final SwerveIOInputsAutoLogged inputs = new SwerveIOInputsAutoLogged();
@@ -39,6 +46,16 @@ public class DriveSubsystem extends MeasurableSubsystem {
   private final SwerveDrive swerveDrive;
   private final HolonomicDriveController holonomicController;
   private Alliance allianceColor = DriverStation.getAlliance();
+  private RobotStateSubsystem robotStateSubsystem;
+
+  private final ProfiledPIDController omegaController;
+  private final PIDController xController;
+  private final PIDController yController;
+  private final ProfiledPIDController omegaAutoDriveController;
+  private final ProfiledPIDController xAutoDriveController;
+  private final ProfiledPIDController yAutoDriveController;
+
+  private boolean isOnAllianceSide;
 
   // Grapher stuff
   private ChassisSpeeds holoContOutput = new ChassisSpeeds();
@@ -53,8 +70,56 @@ public class DriveSubsystem extends MeasurableSubsystem {
   public DriveSubsystem(Swerve swerve) {
     this.swerve = swerve;
     this.swerveDrive = swerve.getSwerveDrive();
-    this.holonomicController = swerve.getHolonomicController();
 
+    // Setup Holonomic Controller
+    omegaAutoDriveController =
+        new ProfiledPIDController(
+            DriveConstants.kPOmega,
+            DriveConstants.kIOmega,
+            DriveConstants.kDOmega,
+            new TrapezoidProfile.Constraints(
+                DriveConstants.kMaxOmega, DriveConstants.kMaxAccelOmega));
+    omegaAutoDriveController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
+
+    xAutoDriveController =
+        new ProfiledPIDController(
+            DriveConstants.kPAutoDrive,
+            DriveConstants.kIAutoDrive,
+            DriveConstants.kDAutoDrive,
+            new TrapezoidProfile.Constraints(
+                DriveConstants.kAutoDriveMaxVelocity, DriveConstants.kAutoDriveMaxAccel));
+    // xAutoDriveController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
+
+    yAutoDriveController =
+        new ProfiledPIDController(
+            DriveConstants.kPAutoDrive,
+            DriveConstants.kIAutoDrive,
+            DriveConstants.kDAutoDrive,
+            new TrapezoidProfile.Constraints(
+                DriveConstants.kAutoDriveMaxVelocity, DriveConstants.kAutoDriveMaxAccel));
+    // yAutoDriveController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
+
+    omegaController =
+        new ProfiledPIDController(
+            DriveConstants.kPOmega,
+            DriveConstants.kIOmega,
+            DriveConstants.kDOmega,
+            new TrapezoidProfile.Constraints(
+                DriveConstants.kMaxOmega, DriveConstants.kMaxAccelOmega));
+    omegaController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
+
+    xController =
+        new PIDController(
+            DriveConstants.kPHolonomic, DriveConstants.kIHolonomic, DriveConstants.kDHolonomic);
+    // xController.setIntegratorRange(DriveConstants.kIMin, DriveConstants.kIMax);
+    yController =
+        new PIDController(
+            DriveConstants.kPHolonomic, DriveConstants.kIHolonomic, DriveConstants.kDHolonomic);
+    // yController.setIntegratorRange(DriveConstants.kIMin, DriveConstants.kIMax);
+    holonomicController = new HolonomicDriveController(xController, yController, omegaController);
+    // Disabling the holonomic controller makes the robot directly follow the trajectory output (no
+    // closing the loop on x,y,theta errors)
+    holonomicController.setEnabled(true);
   }
 
   // Open-Loop Swerve Movements
@@ -80,27 +145,56 @@ public class DriveSubsystem extends MeasurableSubsystem {
         false);
   }
 
-  public void resetGyro() {
-    swerveDrive.resetGyro();
+  public void setRobotStateSubsystem(RobotStateSubsystem robotStateSubsystem) {
+    this.robotStateSubsystem = robotStateSubsystem;
   }
 
-  public void setGyroOffset(Rotation2d rotation) {
-    swerveDrive.setGyroOffset(rotation);
-  }
 
   public void resetOdometry(Pose2d pose) {
     swerveDrive.resetOdometry(pose);
     logger.info("reset odometry with: {}", pose);
   }
 
+  public void resetHolonomicController() {
+    xController.reset();
+    yController.reset();
+    omegaController.reset(swerve.getGyroRotation2d().getRadians());
+  }
+
+  public Rotation2d getGyroRotation2d() {
+    return swerve.getGyroRotation2d();
+  }
+
+  public void teleResetGyro() {
+    logger.info("Driver Joystick: Reset Gyro");
+    double gyroResetDegs = robotStateSubsystem.getAllianceColor() == Alliance.Blue ? 0.0 : 180.0;
+    swerveDrive.setGyroOffset(Rotation2d.fromDegrees(gyroResetDegs));
+    swerveDrive.resetGyro();
+    swerveDrive.resetOdometry(
+        new Pose2d(
+            swerveDrive.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(gyroResetDegs)));
+  }
+
+
+  // Make whether a trajectory is currently active obvious on grapher
+  public void grapherTrajectoryActive(Boolean active) {
+    if (active) trajectoryActive = 1.0;
+    else trajectoryActive = 0.0;
+  }
+
+  public void setEnableHolo(boolean enabled) {
+    holonomicController.setEnabled(enabled);
+    logger.info("Holonomic Controller Enabled: {}", enabled);
+  }
+
   private boolean shouldFlip() {
     return allianceColor == Alliance.Red;
   }
 
+  // Field flipping stuff
   public Translation2d apply(Translation2d translation) {
     if (shouldFlip()) {
-      return new Translation2d(
-          DriveConstants.kFieldLength - translation.getX(), translation.getY());
+      return new Translation2d(DriveConstants.kFieldMaxX - translation.getX(), translation.getY());
     } else {
       return translation;
     }
@@ -109,7 +203,7 @@ public class DriveSubsystem extends MeasurableSubsystem {
   public Pose2d apply(Pose2d pose) {
     if (shouldFlip()) {
       return new Pose2d(
-          DriveConstants.kFieldLength - pose.getX(),
+          DriveConstants.kFieldMaxX - pose.getX(),
           pose.getY(),
           new Rotation2d(-pose.getRotation().getCos(), pose.getRotation().getSin()));
     } else {
@@ -125,9 +219,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
     } else return rotation;
   }
 
-
   public ChassisSpeeds getFieldRelSpeed() {
-    SwerveDriveKinematics kinematics = swerveDrive.getKinematics();
+    SwerveDriveKinematics kinematics = swerve.getKinematics();
     SwerveModule[] swerveModules = swerveDrive.getSwerveModules();
     SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
     for (int i = 0; i < 4; ++i) {
@@ -142,8 +235,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
         roboRelSpeed.omegaRadiansPerSecond);
   }
 
-// Trajectory TOML Parsing
-public PathData generateTrajectory(String trajectoryName) {
+  // Trajectory TOML Parsing
+  public PathData generateTrajectory(String trajectoryName) {
     try {
       if (shouldFlip()) {
         logger.info("Flipping path");
@@ -169,7 +262,6 @@ public PathData generateTrajectory(String trajectoryName) {
       }
 
       // Trajectory Config parsed from toml - any additional constraints would be added here
-
       TrajectoryConfig trajectoryConfig =
           new TrajectoryConfig(
               parseResult.getDouble("max_velocity"), parseResult.getDouble("max_acceleration"));
@@ -209,23 +301,22 @@ public PathData generateTrajectory(String trajectoryName) {
     }
   }
 
-
   private Pose2d parsePose2d(TomlParseResult parseResult, String pose) {
     return new Pose2d(
         parseResult.getTable(pose).getDouble("x"),
         parseResult.getTable(pose).getDouble("y"),
         Rotation2d.fromDegrees(parseResult.getTable(pose).getDouble("angle")));
   }
-  
+
   public void lockZero() {
-    SwerveModule[] swerveModules = swerveDrive.getSwerveModules();
+    SwerveModule[] swerveModules = swerve.getSwerveModules();
     for (int i = 0; i < 4; i++) {
       swerveModules[i].setAzimuthRotation2d(Rotation2d.fromDegrees(0.0));
     }
   }
 
   public void xLock() {
-    SwerveModule[] swerveModules = swerveDrive.getSwerveModules();
+    SwerveModule[] swerveModules = swerve.getSwerveModules();
     for (int i = 0; i < 4; i++) {
       if (i == 0 || i == 3) {
         swerveModules[i].setAzimuthRotation2d(Rotation2d.fromDegrees(45.0));
@@ -237,7 +328,17 @@ public PathData generateTrajectory(String trajectoryName) {
     }
   }
 
+  @Override
+  public void periodic() {
+    // Update swerve module states every robot loop
+    swerveDrive.periodic();
+  }
 
+  @Override
+  public void registerWith(TelemetryService telemetryService) {
+    // TODO Auto-generated method stub
+    super.registerWith(telemetryService);
+  }
 
   @Override
   public Set<Measure> getMeasures() {
@@ -272,7 +373,6 @@ public PathData generateTrajectory(String trajectoryName) {
         new Measure("Wheel 3 Speed", () -> swerve.getSwerveModuleStates()[3].speedMetersPerSecond),
         new Measure("FWD Vel", () -> lastVelocity[0]),
         new Measure("STR Vel", () -> lastVelocity[1]),
-        new Measure("YAW Vel", () -> lastVelocity[2])
-        );
+        new Measure("YAW Vel", () -> lastVelocity[2]));
   }
 }

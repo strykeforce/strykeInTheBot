@@ -5,15 +5,12 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.navx.frc.AHRS.SerialDataType;
-import edu.wpi.first.math.controller.HolonomicDriveController;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.SerialPort;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DriveConstants;
@@ -27,13 +24,11 @@ import org.strykeforce.telemetry.TelemetryService;
 public class Swerve implements SwerveIO {
 
   private final SwerveDrive swerveDrive;
-  private final HolonomicDriveController holonomicController;
-  private final ProfiledPIDController omegaController;
-  private final PIDController xController;
-  private final PIDController yController;
-  private final ProfiledPIDController omegaAutoDriveController;
-  private final ProfiledPIDController xAutoDriveController;
-  private final ProfiledPIDController yAutoDriveController;
+
+  private TalonFX followerZero = new TalonFX(14);
+  private TalonFX followerOne = new TalonFX(15);
+  private TalonFX followerTwo = new TalonFX(16);
+  private TalonFX followerThree = new TalonFX(17);
 
   // Grapher stuff
   private PoseEstimatorOdometryStrategy odometryStrategy;
@@ -79,7 +74,6 @@ public class Swerve implements SwerveIO {
           DriveConstants.getDriveTalonConfig(), Constants.kTalonConfigTimeout);
       driveTalonFollower.enableVoltageCompensation(true);
       driveTalonFollower.setNeutralMode(NeutralMode.Brake);
-      telemetryService.register(driveTalonFollower);
       driveTalonFollower.follow(driveTalon);
 
       swerveModules[i] =
@@ -88,8 +82,12 @@ public class Swerve implements SwerveIO {
               .driveTalon(driveTalon)
               .wheelLocationMeters(wheelLocations[i])
               .build();
-
       swerveModules[i].loadAndSetAzimuthZeroReference();
+
+      if (i == 0) followerZero = driveTalon;
+      else if (i == 1) followerOne = driveTalon;
+      else if (i == 2) followerTwo = driveTalon;
+      else if (i == 3) followerThree = driveTalon;
     }
 
     ahrs = new AHRS(SerialPort.Port.kUSB, SerialDataType.kProcessedData, (byte) 200);
@@ -97,55 +95,6 @@ public class Swerve implements SwerveIO {
     swerveDrive.resetGyro();
     swerveDrive.setGyroOffset(Rotation2d.fromDegrees(0));
 
-    // Setup Holonomic Controller
-    omegaAutoDriveController =
-        new ProfiledPIDController(
-            DriveConstants.kPOmega,
-            DriveConstants.kIOmega,
-            DriveConstants.kDOmega,
-            new TrapezoidProfile.Constraints(
-                DriveConstants.kMaxOmega, DriveConstants.kMaxAccelOmega));
-    omegaAutoDriveController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
-
-    xAutoDriveController =
-        new ProfiledPIDController(
-            DriveConstants.kPAutoDrive,
-            DriveConstants.kIAutoDrive,
-            DriveConstants.kDAutoDrive,
-            new TrapezoidProfile.Constraints(
-                DriveConstants.kAutoDriveMaxVelocity, DriveConstants.kAutoDriveMaxAccel));
-    // xAutoDriveController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
-
-    yAutoDriveController =
-        new ProfiledPIDController(
-            DriveConstants.kPAutoDrive,
-            DriveConstants.kIAutoDrive,
-            DriveConstants.kDAutoDrive,
-            new TrapezoidProfile.Constraints(
-                DriveConstants.kAutoDriveMaxVelocity, DriveConstants.kAutoDriveMaxAccel));
-    // yAutoDriveController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
-
-    omegaController =
-        new ProfiledPIDController(
-            DriveConstants.kPOmega,
-            DriveConstants.kIOmega,
-            DriveConstants.kDOmega,
-            new TrapezoidProfile.Constraints(
-                DriveConstants.kMaxOmega, DriveConstants.kMaxAccelOmega));
-    omegaController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
-
-    xController =
-        new PIDController(
-            DriveConstants.kPHolonomic, DriveConstants.kIHolonomic, DriveConstants.kDHolonomic);
-    // xController.setIntegratorRange(DriveConstants.kIMin, DriveConstants.kIMax);
-    yController =
-        new PIDController(
-            DriveConstants.kPHolonomic, DriveConstants.kIHolonomic, DriveConstants.kDHolonomic);
-    // yController.setIntegratorRange(DriveConstants.kIMin, DriveConstants.kIMax);
-    holonomicController = new HolonomicDriveController(xController, yController, omegaController);
-    // Disabling the holonomic controller makes the robot directly follow the trajectory output (no
-    // closing the loop on x,y,theta errors)
-    holonomicController.setEnabled(true);
     odometryStrategy =
         new PoseEstimatorOdometryStrategy(
             swerveDrive.getHeading(),
@@ -155,6 +104,7 @@ public class Swerve implements SwerveIO {
             VisionConstants.kLocalMeasurementStdDevs,
             VisionConstants.kVisionMeasurementStdDevs,
             getSwerveModulePositions());
+
     swerveDrive.setOdometry(odometryStrategy);
   }
 
@@ -184,26 +134,35 @@ public class Swerve implements SwerveIO {
     return swerveModuleStates;
   }
 
-  public HolonomicDriveController getHolonomicController() {
-    return holonomicController;
-  }
-
-  public void resetHolonomicController() {
-    xController.reset();
-    yController.reset();
-    omegaController.reset(getGyroRotation2d().getRadians());
-  }
-
   public Rotation2d getGyroRotation2d() {
     return swerveDrive.getHeading();
   }
 
-  @Override
-  public void updateInputs(SwerveIOInputs inputs) {
-    // TODO Auto-generated method stub
-    SwerveIO.super.updateInputs(inputs);
+  public void resetGyro() {
+    swerveDrive.resetGyro();
+  }
+
+  public SwerveDriveKinematics getKinematics() {
+    return swerveDrive.getKinematics();
+  }
+
+  public void setGyroOffset(Rotation2d rotation) {
+    swerveDrive.setGyroOffset(rotation);
   }
 
   @Override
-  public void registerWith(TelemetryService telemetryService) {}
+  public void updateInputs(SwerveIOInputs inputs) {
+    inputs.odometry = swerveDrive.getPoseMeters();
+    inputs.gyroRotation = getGyroRotation2d().getDegrees();
+    inputs.odometryRotation2D = swerveDrive.getPoseMeters().getRotation().getDegrees();
+  }
+
+  @Override
+  public void registerWith(TelemetryService telemetryService) {
+    swerveDrive.registerWith(telemetryService);
+    telemetryService.register(followerZero);
+    telemetryService.register(followerOne);
+    telemetryService.register(followerTwo);
+    telemetryService.register(followerThree);
+  }
 }
