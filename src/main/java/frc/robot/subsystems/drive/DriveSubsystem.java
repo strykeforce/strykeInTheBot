@@ -7,8 +7,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -17,8 +15,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.RobotState;
-import frc.robot.Robot;
 import frc.robot.constants.DriveConstants;
 import frc.robot.subsystems.robotstate.RobotStateSubsystem;
 import frc.robot.subsystems.timestampedpose.TimestampedPose;
@@ -136,7 +132,7 @@ public class DriveSubsystem extends MeasurableSubsystem {
     holoContInput = desiredState;
     holoContAngle = desiredAngle;
     holoContOutput =
-        holonomicController.calculate(swerveDrive.getPoseMeters(), desiredState, desiredAngle);
+        holonomicController.calculate(swerve.getPoseMeters(), desiredState, desiredAngle);
     // logger.info("input: {}, output: {}, angle: {}", holoContInput, holoContOutput, desiredAngle);
     swerveDrive.move(
         holoContOutput.vxMetersPerSecond,
@@ -149,9 +145,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
     this.robotStateSubsystem = robotStateSubsystem;
   }
 
-
   public void resetOdometry(Pose2d pose) {
-    swerveDrive.resetOdometry(pose);
+    swerve.resetOdometry(pose);
     logger.info("reset odometry with: {}", pose);
   }
 
@@ -168,13 +163,11 @@ public class DriveSubsystem extends MeasurableSubsystem {
   public void teleResetGyro() {
     logger.info("Driver Joystick: Reset Gyro");
     double gyroResetDegs = robotStateSubsystem.getAllianceColor() == Alliance.Blue ? 0.0 : 180.0;
-    swerveDrive.setGyroOffset(Rotation2d.fromDegrees(gyroResetDegs));
-    swerveDrive.resetGyro();
-    swerveDrive.resetOdometry(
-        new Pose2d(
-            swerveDrive.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(gyroResetDegs)));
+    swerve.setGyroOffset(Rotation2d.fromDegrees(gyroResetDegs));
+    swerve.resetGyro();
+    swerve.resetOdometry(
+        new Pose2d(swerve.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(gyroResetDegs)));
   }
-
 
   // Make whether a trajectory is currently active obvious on grapher
   public void grapherTrajectoryActive(Boolean active) {
@@ -220,19 +213,7 @@ public class DriveSubsystem extends MeasurableSubsystem {
   }
 
   public ChassisSpeeds getFieldRelSpeed() {
-    SwerveDriveKinematics kinematics = swerve.getKinematics();
-    SwerveModule[] swerveModules = swerveDrive.getSwerveModules();
-    SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
-    for (int i = 0; i < 4; ++i) {
-      swerveModuleStates[i] = swerveModules[i].getState();
-    }
-    ChassisSpeeds roboRelSpeed = kinematics.toChassisSpeeds(swerveModuleStates);
-    return new ChassisSpeeds(
-        roboRelSpeed.vxMetersPerSecond * swerveDrive.getHeading().unaryMinus().getCos()
-            + roboRelSpeed.vyMetersPerSecond * swerveDrive.getHeading().unaryMinus().getSin(),
-        -roboRelSpeed.vxMetersPerSecond * swerveDrive.getHeading().unaryMinus().getSin()
-            + roboRelSpeed.vyMetersPerSecond * swerveDrive.getHeading().unaryMinus().getCos(),
-        roboRelSpeed.omegaRadiansPerSecond);
+    return swerve.getFieldRelSpeed();
   }
 
   // Trajectory TOML Parsing
@@ -330,25 +311,33 @@ public class DriveSubsystem extends MeasurableSubsystem {
 
   @Override
   public void periodic() {
+    swerve.updateInputs(inputs);
+    advLogger.processInputs("Swerve", inputs);
     // Update swerve module states every robot loop
-    swerveDrive.periodic();
+    swerve.periodic();
+
+    // Log Outputs FIXME
+    advLogger.recordOutput(
+        "Swerve/OdometryRotation2d", swerve.getPoseMeters().getRotation().getDegrees());
+
+    
   }
 
   @Override
   public void registerWith(TelemetryService telemetryService) {
     // TODO Auto-generated method stub
     super.registerWith(telemetryService);
+    swerve.registerWith(telemetryService);
   }
 
   @Override
   public Set<Measure> getMeasures() {
     return Set.of(
-        new Measure("Gyro Rotation2D(deg)", () -> swerveDrive.getHeading().getDegrees()),
-        new Measure("Odometry X", () -> swerveDrive.getPoseMeters().getX()),
-        new Measure("Odometry Y", () -> swerveDrive.getPoseMeters().getY()),
+        new Measure("Gyro Rotation2D(deg)", () -> swerve.getGyroRotation2d().getDegrees()),
+        new Measure("Odometry X", () -> swerve.getPoseMeters().getX()),
+        new Measure("Odometry Y", () -> swerve.getPoseMeters().getY()),
         new Measure(
-            "Odometry Rotation2D(deg)",
-            () -> swerveDrive.getPoseMeters().getRotation().getDegrees()),
+            "Odometry Rotation2D(deg)", () -> swerve.getPoseMeters().getRotation().getDegrees()),
         new Measure("Trajectory Vel", () -> holoContInput.velocityMetersPerSecond),
         new Measure("Trajectory Accel", () -> holoContInput.accelerationMetersPerSecondSq),
         new Measure("Trajectory X", () -> holoContInput.poseMeters.getX()),

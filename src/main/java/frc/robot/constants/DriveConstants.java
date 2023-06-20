@@ -125,6 +125,11 @@ public class DriveConstants {
 
   public static final double kAutoPickupCloseEnough = 0.07;
 
+  public static final double kDeadbandAllStick = 0.075;
+  public static final double kExpoScaleYawFactor = 0.75;
+  public static final double kRateLimitFwdStr = 3.5; // 2
+  public static final double kRateLimitYaw = 3;
+
   public static final Pose2d kOdometryZeroPosBlue =
       new Pose2d(new Translation2d(1.80, 5.097), new Rotation2d());
   public static final Pose2d kOdometryZeroPosRed =

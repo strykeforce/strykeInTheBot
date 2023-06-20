@@ -8,6 +8,7 @@ import com.kauailabs.navx.frc.AHRS.SerialDataType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -142,12 +143,40 @@ public class Swerve implements SwerveIO {
     swerveDrive.resetGyro();
   }
 
+  public void periodic() {
+    swerveDrive.periodic();
+  }
+
+  public ChassisSpeeds getFieldRelSpeed() {
+    SwerveDriveKinematics kinematics = swerveDrive.getKinematics();
+    SwerveModule[] swerveModules = swerveDrive.getSwerveModules();
+    SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
+    for (int i = 0; i < 4; ++i) {
+      swerveModuleStates[i] = swerveModules[i].getState();
+    }
+    ChassisSpeeds roboRelSpeed = kinematics.toChassisSpeeds(swerveModuleStates);
+    return new ChassisSpeeds(
+        roboRelSpeed.vxMetersPerSecond * swerveDrive.getHeading().unaryMinus().getCos()
+            + roboRelSpeed.vyMetersPerSecond * swerveDrive.getHeading().unaryMinus().getSin(),
+        -roboRelSpeed.vxMetersPerSecond * swerveDrive.getHeading().unaryMinus().getSin()
+            + roboRelSpeed.vyMetersPerSecond * swerveDrive.getHeading().unaryMinus().getCos(),
+        roboRelSpeed.omegaRadiansPerSecond);
+  }
+
   public SwerveDriveKinematics getKinematics() {
     return swerveDrive.getKinematics();
   }
 
   public void setGyroOffset(Rotation2d rotation) {
     swerveDrive.setGyroOffset(rotation);
+  }
+
+  public void resetOdometry(Pose2d pose) {
+    swerveDrive.resetOdometry(pose);
+  }
+
+  public Pose2d getPoseMeters() {
+    return swerveDrive.getPoseMeters();
   }
 
   @Override
