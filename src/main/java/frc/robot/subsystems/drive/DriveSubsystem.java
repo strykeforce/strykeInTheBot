@@ -24,7 +24,7 @@ public class DriveSubsystem {
     return 0; // placeholder
   }
 
-  public void updateOdometryWithVision(Pose2d pose, long timestamp) {}
+  public void updateOdometryWithVision(Pose2d pose, long timestamp) {} // refactor this to whatever will be used to update the odemetry from vision
 
   public void resetOdometryNoLog(Pose2d pose) {}
 }

@@ -100,6 +100,11 @@ public class VisionSubsystem extends MeasurableSubsystem {
     }
   }
 
+  public void setFillBuffers(boolean set) {
+    logger.info("Set Fill Buffers: {}", set);
+    canFillBuffers = set;
+  }
+
   public void fillBuffers() {
     gyroBuffer.addFirst(driveSubsystem.getGyroRotation2d().getRadians());
     timestampBuffer.addFirst(RobotController.getFPGATime());
@@ -159,13 +164,12 @@ public class VisionSubsystem extends MeasurableSubsystem {
                 new Rotation2d(gyroBuffer.get(gyroBufferId))),
             (long) timeStamp);
 
-        if (driveSubsystem.canGetVisionUpdates() && driveSubsystem.isAutoDriving()) {
-          driveSubsystem.resetOdometryNoLog( // FIXME
-              new Pose2d(
-                  new Translation2d(x, y).plus(getCameraOffset()),
-                  new Rotation2d(gyroBuffer.get(gyroBufferId))));
-          // result.setTimestampSeconds(timeStamp);
-        }
+        // if (driveSubsystem.canGetVisionUpdates() && driveSubsystem.isAutoDriving()) {
+        //   driveSubsystem.resetOdometryNoLog(
+        //       new Pose2d(
+        //           new Translation2d(x, y).plus(getCameraOffset()),
+        //           new Rotation2d(gyroBuffer.get(gyroBufferId))));
+        // }
       } else {
         logger.info("bad reading");
         visionOff++;
@@ -188,8 +192,7 @@ public class VisionSubsystem extends MeasurableSubsystem {
       timeStamp = result.getTimestampSeconds();
       gyroBufferId = (int) FastMath.floor(result.getLatencyMillis() / 20);
 
-      if (result.hasTargets()
-          && (result.getBestTarget().getPoseAmbiguity() <= 0.15 || result.targets.size() > 1)) {
+      if (result.getBestTarget().getPoseAmbiguity() <= 0.15 || result.targets.size() > 1) {
         try {
           savedOffRobotEstimation = photonPoseEstimator.update().get();
           cameraPose = savedOffRobotEstimation.estimatedPose;
