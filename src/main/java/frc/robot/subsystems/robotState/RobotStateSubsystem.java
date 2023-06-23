@@ -12,7 +12,6 @@ public class RobotStateSubsystem extends SubsystemBase {
     FLOOR,
     AUTO_SHELF,
     MANUAL_SHELF,
-    AUTO_SCORE,
     MANUAL_SCORE,
     AUTOBALANCE,
   }
