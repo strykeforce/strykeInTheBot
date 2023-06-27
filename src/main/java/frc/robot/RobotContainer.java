@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
+import frc.robot.subsystems.robotState.RobotStateSubsystem;
+
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
 
@@ -18,12 +20,14 @@ public class RobotContainer {
 
   // Subsystems
   private ExampleSubsystem exampleSubsystem;
+  private RobotStateSubsystem robotStateSubsystem;
 
-  // OI Objects
+  // IO Objects
 
   public RobotContainer() {
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
+    robotStateSubsystem = new RobotStateSubsystem(); // TODO: add inputs for other subsystems
     configureBindings();
   }
 
