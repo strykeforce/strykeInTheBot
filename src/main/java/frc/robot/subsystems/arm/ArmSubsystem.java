@@ -6,6 +6,8 @@ import org.strykeforce.telemetry.measurable.MeasurableSubsystem;
 import org.strykeforce.telemetry.measurable.Measure;
 
 public class ArmSubsystem extends MeasurableSubsystem {
+    private ArmStates armState = ArmStates.STOW;
+
     public ArmSubsystem() {}
 
     @Override
