@@ -12,12 +12,11 @@ public class WristSubsystem extends MeasurableSubsystem {
   private final WristIO io;
   private final WristEncoderIO Eio;
   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
-  private final WristEncoderIOInputsAutoLogged Einputs = new WristEncoderIOInputsAutoLogged();
-  private double setpointTicks;
+  private final WristEncoderIOInputsAutoLogged encInputs = new WristEncoderIOInputsAutoLogged();
   private Logger logger = LoggerFactory.getLogger(WristSubsystem.class);
   private org.littletonrobotics.junction.Logger advLogger =
       org.littletonrobotics.junction.Logger.getInstance();
-  private double SetPoint = 0;
+  private double setPointTicks = 0;
 
   public WristSubsystem(WristIO io, WristEncoderIO Eio) {
     this.io = io;
@@ -26,7 +25,7 @@ public class WristSubsystem extends MeasurableSubsystem {
 
   public void zero() {
     double absTalon = inputs.absoluteTicks;
-    double absCANAnd = Einputs.absolutePercentage * WristConstants.kTalonTicks;
+    double absCANAnd = encInputs.absolutePercentage * WristConstants.kTalonTotalTicks;
     double offset = absCANAnd - WristConstants.kZeroTicks;
     io.setSelectedSensorPos(offset);
     logger.info(
@@ -38,7 +37,7 @@ public class WristSubsystem extends MeasurableSubsystem {
   }
 
   public boolean isFinished() {
-    return (WristConstants.kCloseEnough <= Math.abs(inputs.positionTicks - SetPoint));
+    return (WristConstants.kCloseEnough >= Math.abs(inputs.positionTicks - setPointTicks));
   }
 
   public boolean isPastPoint(double pastPointTicks) {
@@ -46,18 +45,18 @@ public class WristSubsystem extends MeasurableSubsystem {
     //  Tests if the pos is between the input and the SetPoint.
     //  This is the best way I could find.
 
-    if (SetPoint < inputs.positionTicks) {
+    if (setPointTicks < inputs.positionTicks) {
       return (pastPointTicks + WristConstants.kCloseEnough >= inputs.positionTicks);
-    } else if (SetPoint > inputs.positionTicks) {
+    } else if (setPointTicks > inputs.positionTicks) {
       return (pastPointTicks - WristConstants.kCloseEnough <= inputs.positionTicks);
     } else {
-      return false;
+      return true;
     }
   }
 
   public void setPos(int positionTicks) {
     this.io.setPos(positionTicks);
-    SetPoint = positionTicks;
+    setPointTicks = positionTicks;
   }
 
   @Override
@@ -67,7 +66,7 @@ public class WristSubsystem extends MeasurableSubsystem {
     advLogger.processInputs("Wrist", inputs);
 
     // Log Outputs
-    advLogger.recordOutput("Wrist/setpointTicks", setpointTicks);
+    advLogger.recordOutput("Wrist/setpointTicks", setPointTicks);
   }
 
   // Grapher Stuff

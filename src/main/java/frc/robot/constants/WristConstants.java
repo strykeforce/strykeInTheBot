@@ -13,7 +13,7 @@ public class WristConstants {
   public static final double kZeroTicks = 550;
   public static final double kZeroSpeed = -1;
   public static final double kVelocityThreshhold = 0.01;
-  public static final int kTalonTicks = 2048;
+  public static final int kTalonTotalTicks = 2048;
 
   public static final double kHoldPos = 500;
   public static final double kOpenPos = 1_800;

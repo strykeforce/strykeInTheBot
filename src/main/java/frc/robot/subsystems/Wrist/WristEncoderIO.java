@@ -12,7 +12,5 @@ public interface WristEncoderIO {
 
   public default void updateInputs(WristEncoderIOInputs inputs) {}
 
-  public default void setSelectedSensorPos(double absolutePercentage) {}
-
   public default void registerWith(TelemetryService telemetryService) {}
 }

@@ -20,9 +20,6 @@ public class WristEncoderIOCanandcoder implements WristEncoderIO, Measurable, Re
     inputs.absolutePercentage = encoder.getAbsPosition();
   }
 
-  @Override
-  public void setSelectedSensorPos(double absolutePercentage) {}
-
   // ------------ grapher stuff -------------------
 
   @Override
