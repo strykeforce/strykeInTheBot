@@ -22,8 +22,8 @@ Clone of 2910 2023 Robot
 | Shoudler   | FX       | shoulderLeft2Follow   | 21 |          |  falcon       |         |
 | Shoulder   | FX       | shoulderRight1Follow  | 22 |          |  falcon       |         |
 | Shoulder   | FX       | shoulderRight2Follow  | 23 |          |  falcon       |         |
-| TBD        | FX       | tbdMain               | 30 |          |  falcon       |         |
-| TBD        | FX       | tbdFollow             | 31 |          |  falcon       |         |
+| Extendo    | FX       | extendoMain           | 30 |          |  falcon       |         |
+| Extendo    | FX       | extendoFollow         | 31 |          |  falcon       |         |
 | Wrist      | FX       | wrist                 | 40 |          |  falcon       |         |
 | Wrist      | Encoder  | wristEncoder          | 41 |          |  CANAndCoder  |         |
 | Hand       | FX       | hand                  | 50 |          |  falcon       |         |
