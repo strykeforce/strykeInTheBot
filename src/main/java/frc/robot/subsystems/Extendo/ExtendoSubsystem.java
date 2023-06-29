@@ -12,12 +12,11 @@ import org.strykeforce.telemetry.measurable.Measure;
 public class ExtendoSubsystem extends MeasurableSubsystem {
   private final ExtendoIO io;
   private final ExtendoIOInputsAutoLogged inputs = new ExtendoIOInputsAutoLogged();
-  private double setpointTicks;
+  private double setpointTicks = 0;
   private Logger logger = LoggerFactory.getLogger(ExtendoSubsystem.class);
   private org.littletonrobotics.junction.Logger advLogger = org.littletonrobotics.junction.Logger.getInstance();
   private ZeroState zeroState = ZeroState.IDLE;
   private int ZeroCounter = 0;
-  private double SetPoint = 0;
 
   public ExtendoSubsystem(ExtendoIO io) {
     this.io = io;
@@ -30,7 +29,7 @@ public class ExtendoSubsystem extends MeasurableSubsystem {
   }
 
   public boolean isFinished() {
-    return (ExtendoConstants.kCloseEnough <= Math.abs(inputs.positionTicks-SetPoint));
+    return (ExtendoConstants.kCloseEnough >= Math.abs(inputs.positionTicks-setpointTicks));
   }
 
   public boolean isPastPoint(double pastPointTicks) {
@@ -38,18 +37,18 @@ public class ExtendoSubsystem extends MeasurableSubsystem {
 //  Tests if the pos is between the input and the SetPoint.
 //  This is the best way I could find.
 
-    if (SetPoint < inputs.positionTicks) {
+    if (setpointTicks < inputs.positionTicks) {
       return (pastPointTicks + ExtendoConstants.kCloseEnough >= inputs.positionTicks);
-    } else if (SetPoint > inputs.positionTicks) {
+    } else if (setpointTicks > inputs.positionTicks) {
       return (pastPointTicks - ExtendoConstants.kCloseEnough <= inputs.positionTicks);
     } else {
-      return false;
+      return true;
     }
   }
 
   public void setPos(int positionTicks) {
     this.io.setPos(positionTicks);
-    SetPoint = positionTicks;
+    setpointTicks = positionTicks;
   }
 
   @Override
