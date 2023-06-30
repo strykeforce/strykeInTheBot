@@ -26,4 +26,6 @@ public interface ShoulderIO {
   public default void setPos(double positionTicks) {}
 
   public default void setPct(double percentOutput) {}
+
+  public default void disableOutput() {}
 }

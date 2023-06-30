@@ -36,6 +36,7 @@ public class ShoulderSubsystem extends MeasurableSubsystem {
           "Abs: {}, Zero Pos: {}, Offset: {}", absolute, ShoulderConstants.kZeroTicks, offset);
     } else {
       logger.error("Limit Switch Not Aligned", getName(), advLogger);
+      io.disableOutput();
     }
   }
 
