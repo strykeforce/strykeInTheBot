@@ -1,6 +1,5 @@
 package frc.robot.subsystems.Extendo;
 
-import frc.robot.constants.ExampleConstants;
 import frc.robot.constants.ExtendoConstants;
 import java.util.Set;
 import org.slf4j.Logger;
