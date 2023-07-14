@@ -16,7 +16,8 @@ public class ShoulderTalonIO implements ShoulderIO {
   public ShoulderTalonIO() {
     shoulderLeftMain = new TalonSRX(ShoulderConstants.kLeftMainID);
     configTalon(shoulderLeftMain);
-    shoulderLeftMain.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled, 20);
+    shoulderLeftMain.configForwardLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled, 20);
     shoulderRightFollow = new TalonSRX(ShoulderConstants.kLeftFollowID);
     configTalon(shoulderRightFollow);
 
@@ -54,10 +55,10 @@ public class ShoulderTalonIO implements ShoulderIO {
 
   @Override
   public void disableOutput() {
-      shoulderLeftMain.configPeakOutputForward(0);
-      shoulderLeftMain.configPeakOutputReverse(0);
-      shoulderRightFollow.configPeakOutputForward(0);
-      shoulderRightFollow.configPeakOutputReverse(0);
+    shoulderLeftMain.configPeakOutputForward(0);
+    shoulderLeftMain.configPeakOutputReverse(0);
+    shoulderRightFollow.configPeakOutputForward(0);
+    shoulderRightFollow.configPeakOutputReverse(0);
   }
 
   @Override

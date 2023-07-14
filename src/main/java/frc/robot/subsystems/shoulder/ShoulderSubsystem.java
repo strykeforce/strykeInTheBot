@@ -40,7 +40,7 @@ public class ShoulderSubsystem extends MeasurableSubsystem {
     }
   }
 
-  public void setShoulderPosition(double position) {
+  public void setPos(double position) {
     io.setSelectedSensorPos(position);
     setpointTicks = position;
   }

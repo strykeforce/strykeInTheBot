@@ -13,7 +13,8 @@ public class ExtendoSubsystem extends MeasurableSubsystem {
   private final ExtendoIOInputsAutoLogged inputs = new ExtendoIOInputsAutoLogged();
   private double setpointTicks = 0;
   private Logger logger = LoggerFactory.getLogger(ExtendoSubsystem.class);
-  private org.littletonrobotics.junction.Logger advLogger = org.littletonrobotics.junction.Logger.getInstance();
+  private org.littletonrobotics.junction.Logger advLogger =
+      org.littletonrobotics.junction.Logger.getInstance();
   private ZeroState zeroState = ZeroState.IDLE;
   private int ZeroCounter = 0;
 
@@ -28,13 +29,13 @@ public class ExtendoSubsystem extends MeasurableSubsystem {
   }
 
   public boolean isFinished() {
-    return (ExtendoConstants.kCloseEnough >= Math.abs(inputs.positionTicks-setpointTicks));
+    return (ExtendoConstants.kCloseEnough >= Math.abs(inputs.positionTicks - setpointTicks));
   }
 
   public boolean isPastPoint(double pastPointTicks) {
 
-//  Tests if the pos is between the input and the SetPoint.
-//  This is the best way I could find.
+    //  Tests if the pos is between the input and the SetPoint.
+    //  This is the best way I could find.
 
     if (setpointTicks < inputs.positionTicks) {
       return (pastPointTicks + ExtendoConstants.kCloseEnough >= inputs.positionTicks);
@@ -45,7 +46,7 @@ public class ExtendoSubsystem extends MeasurableSubsystem {
     }
   }
 
-  public void setPos(int positionTicks) {
+  public void setPos(double positionTicks) {
     this.io.setPos(positionTicks);
     setpointTicks = positionTicks;
   }
@@ -54,14 +55,15 @@ public class ExtendoSubsystem extends MeasurableSubsystem {
   public void periodic() {
     io.updateInputs(inputs);
 
-    if (zeroState == ZeroState.ZEROING){
+    if (zeroState == ZeroState.ZEROING) {
       if (inputs.velocityTicksPer100ms <= ExtendoConstants.kVelocityThreshhold) {
         ZeroCounter++;
         if (ZeroCounter >= ExtendoConstants.kZeroCount) {
           double absolute = inputs.absoluteTicks;
           double offset = absolute - ExtendoConstants.kZeroTicks;
           io.setSelectedSensorPos(offset);
-          logger.info("Abs: {}, Zero Pos: {}, Offset: {}", absolute, ExtendoConstants.kZeroTicks, offset);
+          logger.info(
+              "Abs: {}, Zero Pos: {}, Offset: {}", absolute, ExtendoConstants.kZeroTicks, offset);
           this.io.setPct(0);
           zeroState = ZeroState.IDLE;
           ZeroCounter = 0;
