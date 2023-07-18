@@ -53,6 +53,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
 
   private boolean isOnAllianceSide;
 
+  public DriveStates currDriveState = DriveStates.IDLE;
+
   // Grapher stuff
   private ChassisSpeeds holoContOutput = new ChassisSpeeds();
   private State holoContInput = new State();
@@ -309,6 +311,11 @@ public class DriveSubsystem extends MeasurableSubsystem {
     }
   }
 
+  public void setDriveState(DriveStates driveStates) {
+    logger.info("{} -> {}", currDriveState, driveStates);
+    currDriveState = driveStates;
+  }
+
   @Override
   public void periodic() {
     swerve.updateInputs(inputs);
@@ -317,10 +324,25 @@ public class DriveSubsystem extends MeasurableSubsystem {
     swerve.periodic();
 
     // Log Outputs FIXME
-    advLogger.recordOutput(
-        "Swerve/OdometryRotation2d", swerve.getPoseMeters().getRotation().getDegrees());
-
+    advLogger.recordOutput("Swerve/OdometryRotation2d(deg)", swerve.getPoseMeters().getRotation().getDegrees());
+    advLogger.recordOutput("Swerve/OdometryX", swerve.getPoseMeters().getX());
+    advLogger.recordOutput("Swerve/OdometryY", swerve.getPoseMeters().getY());
+    advLogger.recordOutput("Swerve/Odometry", swerve.getPoseMeters());
+    advLogger.recordOutput("Swerve/GyroRotation2d(deg)", swerve.getGyroRotation2d().getDegrees());
     
+  }
+  
+  public enum DriveStates {
+    IDLE,
+    AUTO_BALANCE_EDGE,
+    AUTO_BALANCE_DRIVE,
+    AUTO_BALANCE_AVERAGE,
+    AUTO_BALANCE,
+    AUTO_BALANCE_RECOVERY,
+    AUTO_BALANCE_FINISHED,
+    AUTO_BALANCE_PULSE,
+    AUTO_BALANCE_CHECK,
+    AUTO_BALANCE_XLOCK;
   }
 
   @Override

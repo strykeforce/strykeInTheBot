@@ -11,6 +11,8 @@ public interface SwerveIO {
     public Pose2d odometry = new Pose2d();
     public double gyroRotation = 0.0;
     public double odometryRotation2D = 0.0;
+
+    
   }
 
   public default void updateInputs(SwerveIOInputs inputs) {}
