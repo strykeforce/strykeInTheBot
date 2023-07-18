@@ -15,9 +15,9 @@ import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.Swerve;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
+import frc.robot.subsystems.robotstate.RobotStateSubsystem;
 import frc.robot.subsystems.shoulder.ShoulderSubsystem;
 import frc.robot.subsystems.shoulder.ShoulderTalonIO;
-import frc.robot.subsystems.robotstate.RobotStateSubsystem;
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
 
@@ -58,8 +58,6 @@ public class RobotContainer {
     new JoystickButton(driveJoystick, InterlinkButton.X.id)
         .onTrue(new XLockCommand(driveSubsystem));
   }
-
-
 
   private void configTelemetry() {
     exampleSubsystem.registerWith(telemetryService);

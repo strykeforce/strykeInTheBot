@@ -324,14 +324,14 @@ public class DriveSubsystem extends MeasurableSubsystem {
     swerve.periodic();
 
     // Log Outputs FIXME
-    advLogger.recordOutput("Swerve/OdometryRotation2d(deg)", swerve.getPoseMeters().getRotation().getDegrees());
+    advLogger.recordOutput(
+        "Swerve/OdometryRotation2d(deg)", swerve.getPoseMeters().getRotation().getDegrees());
     advLogger.recordOutput("Swerve/OdometryX", swerve.getPoseMeters().getX());
     advLogger.recordOutput("Swerve/OdometryY", swerve.getPoseMeters().getY());
     advLogger.recordOutput("Swerve/Odometry", swerve.getPoseMeters());
     advLogger.recordOutput("Swerve/GyroRotation2d(deg)", swerve.getGyroRotation2d().getDegrees());
-    
   }
-  
+
   public enum DriveStates {
     IDLE,
     AUTO_BALANCE_EDGE,

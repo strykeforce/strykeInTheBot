@@ -181,7 +181,8 @@ public class Swerve implements SwerveIO {
 
   @Override
   public void updateInputs(SwerveIOInputs inputs) {
-    inputs.odometry = swerveDrive.getPoseMeters();
+    inputs.odometryX = swerveDrive.getPoseMeters().getX();
+    inputs.odometryY = swerveDrive.getPoseMeters().getY();
     inputs.gyroRotation = getGyroRotation2d().getDegrees();
     inputs.odometryRotation2D = swerveDrive.getPoseMeters().getRotation().getDegrees();
   }
