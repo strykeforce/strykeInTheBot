@@ -15,6 +15,8 @@ import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.Swerve;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
+import frc.robot.subsystems.shoulder.ShoulderSubsystem;
+import frc.robot.subsystems.shoulder.ShoulderTalonIO;
 import frc.robot.subsystems.robotstate.RobotStateSubsystem;
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
@@ -26,6 +28,7 @@ public class RobotContainer {
 
   // Subsystems
   private ExampleSubsystem exampleSubsystem;
+  private ShoulderSubsystem shoulder;
   private DriveSubsystem driveSubsystem;
   private RobotStateSubsystem robotStateSubsystem;
 
@@ -35,9 +38,13 @@ public class RobotContainer {
   public RobotContainer() {
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
+    shoulder = new ShoulderSubsystem(new ShoulderTalonIO());
     driveSubsystem = new DriveSubsystem(new Swerve(telemetryService));
     configureDriverButtonBindings();
+    configureBindings();
   }
+
+  private void configureBindings() {}
 
   private void configureDriverButtonBindings() {
     driveSubsystem.setDefaultCommand(
@@ -52,10 +59,17 @@ public class RobotContainer {
         .onTrue(new XLockCommand(driveSubsystem));
   }
 
+
+
   private void configTelemetry() {
     exampleSubsystem.registerWith(telemetryService);
+    shoulder.registerWith(telemetryService);
     driveSubsystem.registerWith(telemetryService);
     telemetryService.start();
+  }
+
+  public void zeroShoulder() {
+    shoulder.zero();
   }
 
   public Command getAutonomousCommand() {
