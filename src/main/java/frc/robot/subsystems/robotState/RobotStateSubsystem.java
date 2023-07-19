@@ -16,6 +16,8 @@ public class RobotStateSubsystem extends SubsystemBase {
   private RobotState nextState = RobotState.STOW;
   private GamePiece currentPiece = GamePiece.NONE;
   private GamePiece targetPiece = GamePiece.NONE;
+  private TargetLevel targetLevel = TargetLevel.NONE;
+  private TargetCol targetCol = TargetCol.NONE;
   private boolean isConePickupUpright = true;
 
   public RobotStateSubsystem(DriveSubsystem driveSubsystem) {
@@ -53,6 +55,12 @@ public class RobotStateSubsystem extends SubsystemBase {
       robotState = RobotState.TO_AUTO_SHELF;
     } else {
       robotState = RobotState.TO_MANUAL_SHELF;
+    }
+    if (driveSubsystem.getGyroAngle().getRadians()
+        > 0) { // FIXME: change calulation and also use alliance color
+      targetPiece = GamePiece.CONE;
+    } else {
+      targetPiece = GamePiece.CUBE;
     }
   }
 
@@ -104,6 +112,7 @@ public class RobotStateSubsystem extends SubsystemBase {
       case TO_MANUAL_SHELF:
         break;
       case TO_SCORE:
+        //
         break;
       case TO_AUTOBALANCE:
         break;
@@ -132,5 +141,19 @@ public class RobotStateSubsystem extends SubsystemBase {
     CONE,
     CUBE,
     NONE
+  }
+
+  public enum TargetLevel {
+    NONE,
+    LOW,
+    MID,
+    HIGH
+  }
+
+  public enum TargetCol {
+    NONE,
+    LEFT,
+    MID,
+    RIGHT
   }
 }
