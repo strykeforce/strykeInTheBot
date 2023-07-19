@@ -1,12 +1,11 @@
 package frc.robot.subsystems.robotState;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.DriveSubsystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RobotStateSubsystem extends SubsystemBase {
   private DriveSubsystem driveSubsystem;
@@ -92,9 +91,7 @@ public class RobotStateSubsystem extends SubsystemBase {
         break;
       case TO_FLOOR_PICKUP:
         if (targetPiece == GamePiece.CONE) {
-          if (isConePickupUpright) {
-            
-          }
+          if (isConePickupUpright) {}
         } else if (targetPiece == GamePiece.CUBE) {
           // arm to cube
         }

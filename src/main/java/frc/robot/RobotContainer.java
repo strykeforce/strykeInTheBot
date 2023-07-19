@@ -10,7 +10,6 @@ import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
 import frc.robot.subsystems.robotState.RobotStateSubsystem;
-
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
 
@@ -30,7 +29,8 @@ public class RobotContainer {
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
     driveSubsystem = new DriveSubsystem();
-    robotStateSubsystem = new RobotStateSubsystem(driveSubsystem); // TODO: add inputs for other subsystems
+    robotStateSubsystem =
+        new RobotStateSubsystem(driveSubsystem); // TODO: add inputs for other subsystems
     configureBindings();
   }
 
