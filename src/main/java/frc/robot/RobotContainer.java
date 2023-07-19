@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
 import frc.robot.subsystems.robotState.RobotStateSubsystem;
@@ -20,6 +21,7 @@ public class RobotContainer {
 
   // Subsystems
   private ExampleSubsystem exampleSubsystem;
+  private DriveSubsystem driveSubsystem;
   private RobotStateSubsystem robotStateSubsystem;
 
   // IO Objects
@@ -27,7 +29,8 @@ public class RobotContainer {
   public RobotContainer() {
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
-    robotStateSubsystem = new RobotStateSubsystem(); // TODO: add inputs for other subsystems
+    driveSubsystem = new DriveSubsystem();
+    robotStateSubsystem = new RobotStateSubsystem(driveSubsystem); // TODO: add inputs for other subsystems
     configureBindings();
   }
 
