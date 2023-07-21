@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
+import frc.robot.subsystems.shoulder.ShoulderSubsystem;
+import frc.robot.subsystems.shoulder.ShoulderTalonIO;
 import frc.robot.subsystems.robotState.RobotStateSubsystem;
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
@@ -20,6 +22,7 @@ public class RobotContainer {
 
   // Subsystems
   private ExampleSubsystem exampleSubsystem;
+  private ShoulderSubsystem shoulder;
   private DriveSubsystem driveSubsystem;
   private RobotStateSubsystem robotStateSubsystem;
 
@@ -28,6 +31,7 @@ public class RobotContainer {
   public RobotContainer() {
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
+    shoulder = new ShoulderSubsystem(new ShoulderTalonIO());
     driveSubsystem = new DriveSubsystem();
     robotStateSubsystem =
         new RobotStateSubsystem(driveSubsystem); // TODO: add inputs for other subsystems
@@ -38,7 +42,12 @@ public class RobotContainer {
 
   private void configTelemetry() {
     exampleSubsystem.registerWith(telemetryService);
+    shoulder.registerWith(telemetryService);
     telemetryService.start();
+  }
+
+  public void zeroShoulder() {
+    shoulder.zero();
   }
 
   public Command getAutonomousCommand() {
