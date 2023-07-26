@@ -1,8 +1,10 @@
 package frc.robot.subsystems.robotState;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.ArmConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ public class RobotStateSubsystem extends SubsystemBase {
   private GamePiece targetPiece = GamePiece.NONE;
   private TargetLevel targetLevel = TargetLevel.NONE;
   private TargetCol targetCol = TargetCol.NONE;
+  private double currShelfPoseX;
   private boolean isConePickupUpright = true;
 
   public RobotStateSubsystem(DriveSubsystem driveSubsystem) {
@@ -79,9 +82,17 @@ public class RobotStateSubsystem extends SubsystemBase {
   public boolean isShelfPieceCube() {
     // FIXME needs correct calculation to get whether the robot should goto the shelf cube or cone
     // position based on gyro rotation
-    return ((driveSubsystem.getGyroAngle().getRadians() > 0)
-            && (driveSubsystem.getGyroAngle().getRadians() < Math.PI))
-        == (allianceColor == Alliance.Blue);
+    if (isBlueAlliance()) {
+      return ((driveSubsystem.getGyroAngle().getRadians() > 0)
+          && (driveSubsystem.getGyroAngle().getRadians() < Math.PI));
+    } else {
+      return ((driveSubsystem.getGyroAngle().getRadians() > Math.PI)
+          && (driveSubsystem.getGyroAngle().getRadians() < Math.PI * 2));
+    }
+  }
+
+  public boolean isBlueAlliance() {
+    return allianceColor == Alliance.Blue;
   }
 
   public void toStow(RobotState nextState) {
@@ -129,6 +140,8 @@ public class RobotStateSubsystem extends SubsystemBase {
   }
 
   public void toAutoShelf() {
+    logger.info("starting auto shelf");
+
     if (isStowed()) {
       if (isShelfPieceCube()) {
         // arm to shelf cube
@@ -144,6 +157,8 @@ public class RobotStateSubsystem extends SubsystemBase {
   }
 
   public void toManualShelf() {
+    logger.info("starting manual shelf");
+
     if (isStowed()) {
       if (isShelfPieceCube()) {
         // arm to shelf cube
@@ -159,14 +174,20 @@ public class RobotStateSubsystem extends SubsystemBase {
   }
 
   public void toAutoScore() {
+    logger.info("starting auto score");
+
     toStow(RobotState.TO_AUTO_SCORE);
   }
 
   public void toManualScore() {
+    logger.info("starting manual score");
+
     toStow(RobotState.TO_MANUAL_SCORE);
   }
 
   public void toAutobalance() {
+    logger.info("starting autobalance");
+
     setRobotStateLogged(RobotState.TO_AUTOBALANCE);
   }
 
@@ -194,11 +215,30 @@ public class RobotStateSubsystem extends SubsystemBase {
         toStow();
         break;
       case AUTO_SHELF:
+        // wait to drive to correct spot
+        currentPiece = targetPiece;
+        currShelfPoseX = driveSubsystem.getPoseMeters().getX();
         break;
       case MANUAL_SHELF:
         // wait for beam break
+        // hand to holding speed
         currentPiece = targetPiece;
-        toStow();
+        currShelfPoseX = driveSubsystem.getPoseMeters().getX();
+        setRobotStateLogged(RobotState.SHELF_WAIT);
+        break;
+      case SHELF_WAIT:
+        double desiredPoseX;
+        if (isBlueAlliance()) {
+          desiredPoseX = currShelfPoseX - ArmConstants.kShelfMove;
+          if (driveSubsystem.getPoseMeters().getX() <= desiredPoseX) {
+            toStow();
+          }
+        } else {
+          desiredPoseX = currShelfPoseX + ArmConstants.kShelfMove;
+          if (driveSubsystem.getPoseMeters().getX() >= desiredPoseX) {
+            toStow();
+          }
+        }
         break;
       case AUTO_SCORE:
         break;
@@ -217,6 +257,8 @@ public class RobotStateSubsystem extends SubsystemBase {
         break;
       case TO_AUTO_SHELF:
         // wait for arm to finish
+        // driveSubsystem.driveToPose();
+        setRobotStateLogged(RobotState.AUTO_SHELF);
         break;
       case TO_MANUAL_SHELF:
         // wait for arm to finish
@@ -264,6 +306,7 @@ public class RobotStateSubsystem extends SubsystemBase {
     FLOOR_PICKUP,
     AUTO_SHELF,
     MANUAL_SHELF,
+    SHELF_WAIT,
     AUTO_SCORE,
     MANUAL_SCORE,
     AUTOBALANCE,

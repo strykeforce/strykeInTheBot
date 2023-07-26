@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.robot.constants.ShoulderConstants;
@@ -17,7 +16,8 @@ public class ShoulderTalonIO implements ShoulderIO {
   public ShoulderTalonIO() {
     shoulderLeftMain = new TalonSRX(ShoulderConstants.kLeftMainID);
     configTalon(shoulderLeftMain);
-    shoulderLeftMain.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled, 20);
+    shoulderLeftMain.configForwardLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled, 20);
     shoulderRightFollow = new TalonSRX(ShoulderConstants.kLeftFollowID);
     configTalon(shoulderRightFollow);
 
@@ -55,10 +55,10 @@ public class ShoulderTalonIO implements ShoulderIO {
 
   @Override
   public void disableOutput() {
-      shoulderLeftMain.configPeakOutputForward(0);
-      shoulderLeftMain.configPeakOutputReverse(0);
-      shoulderRightFollow.configPeakOutputForward(0);
-      shoulderRightFollow.configPeakOutputReverse(0);
+    shoulderLeftMain.configPeakOutputForward(0);
+    shoulderLeftMain.configPeakOutputReverse(0);
+    shoulderRightFollow.configPeakOutputForward(0);
+    shoulderRightFollow.configPeakOutputReverse(0);
   }
 
   @Override
