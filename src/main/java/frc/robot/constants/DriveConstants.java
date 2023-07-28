@@ -125,6 +125,31 @@ public class DriveConstants {
 
   public static final double kAutoPickupCloseEnough = 0.07;
 
+  // AutoBalance Constants
+
+  public static final double kAutoBalanceCloseEnoughDeg = 1.5; // 2
+  public static final double kAutoBalanceStableCount = 10;
+  public static final double kAutoBalanceStartTimerThresholdDeg = 5;
+  public static final double kAutoBalanceEnableGyroThresholdDegrees = 8;
+
+  public static final double kAutoBalanceSlowDriveVel = 0.35; // 0.6
+  public static final double kAutoBalanceRecoveryDriveVel = 0.25;
+  public static final double kAutoBalanceFinalDriveVel = 1.0; // 0.5 0.75
+  public static final double kAutoBalanceSlowdownTimeSec = 1.0; // 1.3-> 1.15
+  public static final double kAutoBalanceStopThresholdDegrees = 1.5; // 1 0.6 1.5
+  public static final double kAutoBalanceEdgeTriggerThreshold = 3; // 5
+  public static final double kAutoBalanceAvgRollCount = 7; // 5 10 7
+  public static final double kAutoBalanceLoopFixTimer = 0.140;
+
+  public static final double kPulseAutoBalanceTime = 0.2;
+  public static final double kPauseAutoBalanceTime = 1.0;
+  public static final double kPulseSpeed = 0.5;
+  public static final double kHoldSpeed = 0.1;
+  public static final double kSettleTime = 1.0;
+
+  public static final double kAutonBumpHighCubeYawOffsetDeg = -5.0;
+  public static final double kAutonSmoothHighCubeYawOffsetDeg = 5.0;
+
   public static final double kDeadbandAllStick = 0.075;
   public static final double kExpoScaleYawFactor = 0.75;
   public static final double kRateLimitFwdStr = 3.5; // 2

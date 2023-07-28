@@ -139,8 +139,16 @@ public class Swerve implements SwerveIO {
     return swerveDrive.getHeading();
   }
 
+  public double getGyroPitch() {
+    return ahrs.getPitch();
+  }
+
   public void resetGyro() {
     swerveDrive.resetGyro();
+  }
+
+  public double getGyroRoll() {
+    return ahrs.getRoll();
   }
 
   public void periodic() {
