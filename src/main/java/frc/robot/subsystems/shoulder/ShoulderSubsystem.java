@@ -13,7 +13,7 @@ public class ShoulderSubsystem extends MeasurableSubsystem {
   private final ShoulderIOInputsAutoLogged inputs = new ShoulderIOInputsAutoLogged();
   private ShoulderStates currState = ShoulderStates.IDLE;
   private ShoulderStates desiredState = ShoulderStates.IDLE;
-  private double setpointTicks = inputs.positionTicks;
+  private double setPointTicks = inputs.positionTicks;
   private Logger logger = LoggerFactory.getLogger(ShoulderSubsystem.class);
   private org.littletonrobotics.junction.Logger advLogger =
       org.littletonrobotics.junction.Logger.getInstance();
@@ -42,7 +42,7 @@ public class ShoulderSubsystem extends MeasurableSubsystem {
 
   public void setPos(double position) {
     io.setSelectedSensorPos(position);
-    setpointTicks = position;
+    setPointTicks = position;
   }
 
   public boolean isFinished() {
@@ -51,8 +51,22 @@ public class ShoulderSubsystem extends MeasurableSubsystem {
         case IDLE:
           return true;
         default:
-          return Math.abs(setpointTicks - inputs.positionTicks) <= ShoulderConstants.kCloseEnough;
+          return Math.abs(setPointTicks - inputs.positionTicks) <= ShoulderConstants.kCloseEnough;
       }
+    } else {
+      return true;
+    }
+  }
+
+  public boolean isPastPoint(double pastPointTicks) {
+
+    //  Tests if the pos is between the input and the SetPoint.
+    //  This is the best way I could find.
+
+    if (setPointTicks < inputs.positionTicks) {
+      return (pastPointTicks + ShoulderConstants.kCloseEnough >= inputs.positionTicks);
+    } else if (setPointTicks > inputs.positionTicks) {
+      return (pastPointTicks - ShoulderConstants.kCloseEnough <= inputs.positionTicks);
     } else {
       return true;
     }
@@ -79,7 +93,7 @@ public class ShoulderSubsystem extends MeasurableSubsystem {
 
     // Log Outputs
     advLogger.recordOutput("Shoulder/currState", currState.ordinal());
-    advLogger.recordOutput("Shoulder/setpointTicks", setpointTicks);
+    advLogger.recordOutput("Shoulder/setpointTicks", setPointTicks);
   }
 
   // States
