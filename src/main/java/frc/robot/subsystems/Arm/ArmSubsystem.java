@@ -39,16 +39,19 @@ public class ArmSubsystem extends MeasurableSubsystem {
   }
 
   public void stow() {
-    shoulderSubsystem.setPos(ArmConstants.kStowShoulderPos);
-    extendoSubsystem.setPos(ArmConstants.kStowExtendoPos);
-    wristSubsystem.setPos(ArmConstants.kStowWristPos);
-    currState = ArmState.PARALLEL_TRANS;
-    desiredState = ArmState.STOW;
+    if (currState != ArmState.STOW) {
+      shoulderSubsystem.setPos(ArmConstants.kStowShoulderPos);
+      extendoSubsystem.setPos(ArmConstants.kStowExtendoPos);
+      wristSubsystem.setPos(ArmConstants.kStowWristPos);
+      currState = ArmState.PARALLEL_TRANS;
+      desiredState = ArmState.STOW;
+    }
   }
 
   public void high(gamePiece piece) {
     if (currState == ArmState.STOW) {
       shoulderSubsystem.setPos(ArmConstants.kPlaceShoulderPos);
+      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
       currState = ArmState.STOW_TO_HIGH;
       if (piece == gamePiece.CUBE) {
         desiredState = ArmState.HIGH_CUBE;
@@ -57,10 +60,31 @@ public class ArmSubsystem extends MeasurableSubsystem {
         desiredState = ArmState.HIGH_CONE;
         wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
       }
+    } else if(currState == ArmState.MID_CUBE) {
+      currState = ArmState.PARALLEL_TRANS;
+      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
+      if (piece == gamePiece.CONE) {
+        desiredState = ArmState.HIGH_CONE;
+        wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+      } else {
+        desiredState = ArmState.HIGH_CUBE;
+      }
+    } else if(currState == ArmState.MID_CONE) {
+      currState = ArmState.PARALLEL_TRANS;
+      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
+      if (piece == gamePiece.CUBE) {
+        desiredState = ArmState.HIGH_CUBE;
+        wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+      } else {
+        desiredState = ArmState.HIGH_CONE;
+      }
     } else {
       this.stow();
-      desiredState = ArmState.STOW;
-      finalState = ArmState.HIGH_CUBE;
+      if (piece == gamePiece.CUBE) {
+        finalState = ArmState.HIGH_CUBE;
+      } else {
+        finalState = ArmState.HIGH_CONE;
+      }
       useFinal = true;
     }
   }
@@ -77,6 +101,32 @@ public class ArmSubsystem extends MeasurableSubsystem {
         desiredState = ArmState.LOW_CONE;
         wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
       }
+    } else if(currState == ArmState.HIGH_CUBE) {
+      currState = ArmState.PARALLEL_TRANS;
+      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
+      if (piece == gamePiece.CUBE) {
+        desiredState = ArmState.MID_CONE;
+        wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+      } else {
+        desiredState = ArmState.MID_CUBE;
+      }
+    } else if(currState == ArmState.HIGH_CONE) {
+      currState = ArmState.PARALLEL_TRANS;
+      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
+      if (piece == gamePiece.CUBE) {
+        desiredState = ArmState.MID_CUBE;
+        wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+      } else {
+        desiredState = ArmState.MID_CONE;
+      }
+    } else {
+      this.stow();
+      if (piece == gamePiece.CUBE) {
+        finalState = ArmState.MID_CUBE;
+      } else {
+        finalState = ArmState.MID_CONE;
+      }
+      useFinal = true;
     }
   }
 
@@ -92,6 +142,14 @@ public class ArmSubsystem extends MeasurableSubsystem {
         desiredState = ArmState.LOW_CONE;
         wristSubsystem.setPos(ArmConstants.kConeLowPlaceWristPos);
       }
+    } else {
+      this.stow();
+      if (piece == gamePiece.CUBE) {
+        finalState = ArmState.LOW_CUBE;
+      } else {
+        finalState = ArmState.LOW_CONE;
+      }
+      useFinal = true;
     }
   }
 
@@ -109,6 +167,14 @@ public class ArmSubsystem extends MeasurableSubsystem {
         extendoSubsystem.setPos(ArmConstants.kConeShelfExtendoPos);
         wristSubsystem.setPos(ArmConstants.kConeShelfWristPos);
       }
+    } else {
+      this.stow();
+      if (piece == gamePiece.CUBE) {
+        finalState = ArmState.SHELF_CUBE;
+      } else {
+        finalState = ArmState.SHELF_CONE;
+      }
+      useFinal = true;
     }
   }
 
@@ -133,6 +199,39 @@ public class ArmSubsystem extends MeasurableSubsystem {
           wristSubsystem.setPos(ArmConstants.kConeFloorWristPos);
         }
       }
+    } else {
+      this.stow();
+      if (piece == gamePiece.CUBE) {
+        finalState = ArmState.FLOOR_CUBE;
+      } else {
+        if (isUpright) {
+          finalState = ArmState.FLOOR_CONE_UPRIGHT;
+        } else {
+          finalState = ArmState.FLOOR_CONE;
+        }
+      }
+      useFinal = true;
+    }
+  }
+
+  public void yoshi() {
+    if (currState == ArmState.FLOOR_CUBE) {
+      currState = ArmState.PARALLEL_TRANS;
+      desiredState = ArmState.YOSHIED;
+      extendoSubsystem.setPos(ArmConstants.kYoshiPos);
+      finalState = ArmState.FLOOR_CUBE;
+    }
+    if (currState == ArmState.FLOOR_CONE) {
+      currState = ArmState.PARALLEL_TRANS;
+      desiredState = ArmState.YOSHIED;
+      extendoSubsystem.setPos(ArmConstants.kYoshiPos);
+      finalState = ArmState.FLOOR_CONE;
+    }
+    if (currState == ArmState.FLOOR_CONE_UPRIGHT) {
+      currState = ArmState.PARALLEL_TRANS;
+      desiredState = ArmState.YOSHIED;
+      extendoSubsystem.setPos(ArmConstants.kYoshiPos);
+      finalState = ArmState.FLOOR_CONE_UPRIGHT;
     }
   }
 
@@ -152,7 +251,60 @@ public class ArmSubsystem extends MeasurableSubsystem {
       if (useFinal) {
         switch (finalState) {
           case HIGH_CUBE:
-            
+            useFinal = false;
+            high(gamePiece.CUBE);
+            break;
+          case HIGH_CONE:
+            useFinal = false;
+            high(gamePiece.CONE);
+            break;
+          case MID_CUBE:
+            useFinal = false;
+            mid(gamePiece.CUBE);
+            break;
+          case MID_CONE:
+            useFinal = false;
+            mid(gamePiece.CONE);
+            break;
+          case LOW_CUBE:
+            useFinal = false;
+            low(gamePiece.CUBE);
+            break;
+          case LOW_CONE:
+            useFinal = false;
+            low(gamePiece.CONE);
+            break;
+          case SHELF_CUBE:
+            useFinal = false;
+            shelf(gamePiece.CUBE);
+            break;
+          case SHELF_CONE:
+            useFinal = false;
+            shelf(gamePiece.CONE);
+            break;
+          case FLOOR_CUBE:
+            useFinal = false;
+            floor(gamePiece.CUBE, true);
+            break;
+          case FLOOR_CONE:
+            useFinal = false;
+            floor(gamePiece.CONE, false);
+            break;
+          case FLOOR_CONE_UPRIGHT:
+            useFinal = false;
+            floor(gamePiece.CONE, true);
+            break;
+          case YOSHIED:
+            //fall through
+          case PARALLEL_TRANS:
+            //fall through
+          case STOW_TO_HIGH:
+            //fall through
+          case STOW:
+            //fall through
+          default:
+            useFinal = false;
+            break;
         }
       }
     }
@@ -170,11 +322,12 @@ public class ArmSubsystem extends MeasurableSubsystem {
     MID_CONE,
     LOW_CUBE,
     LOW_CONE,
-    SHELF_CONE,
     SHELF_CUBE,
+    SHELF_CONE,
+    FLOOR_CUBE,
     FLOOR_CONE,
     FLOOR_CONE_UPRIGHT,
-    FLOOR_CUBE,
+    YOSHIED,
     PARALLEL_TRANS,
     STOW_TO_HIGH
   }
