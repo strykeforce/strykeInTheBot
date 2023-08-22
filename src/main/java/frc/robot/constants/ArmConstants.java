@@ -23,7 +23,7 @@ public class ArmConstants {
   public static final double kConeShelfWristPos = 0;
   public static final double kConeShelfShoulderPos = 0;
   public static final double kConeShelfExtendoPos = 0;
-  
+
   public static final double kCubeFloorShoulderPos = 0;
   public static final double kCubeFloorExtendoPos = 0;
   public static final double kCubeFloorWristPos = 0;
@@ -33,6 +33,6 @@ public class ArmConstants {
   public static final double kConeFloorShoulderPos = 0;
   public static final double kConeFloorExtendoPos = 0;
   public static final double kConeFloorWristPos = 0;
-  
+
   public static final double kYoshiPos = 0;
 }

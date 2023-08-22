@@ -60,7 +60,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
         desiredState = ArmState.HIGH_CONE;
         wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
       }
-    } else if(currState == ArmState.MID_CUBE) {
+    } else if (currState == ArmState.MID_CUBE) {
       currState = ArmState.PARALLEL_TRANS;
       extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
       if (piece == gamePiece.CONE) {
@@ -69,7 +69,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
       } else {
         desiredState = ArmState.HIGH_CUBE;
       }
-    } else if(currState == ArmState.MID_CONE) {
+    } else if (currState == ArmState.MID_CONE) {
       currState = ArmState.PARALLEL_TRANS;
       extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
       if (piece == gamePiece.CUBE) {
@@ -101,7 +101,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
         desiredState = ArmState.LOW_CONE;
         wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
       }
-    } else if(currState == ArmState.HIGH_CUBE) {
+    } else if (currState == ArmState.HIGH_CUBE) {
       currState = ArmState.PARALLEL_TRANS;
       extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
       if (piece == gamePiece.CUBE) {
@@ -110,7 +110,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
       } else {
         desiredState = ArmState.MID_CUBE;
       }
-    } else if(currState == ArmState.HIGH_CONE) {
+    } else if (currState == ArmState.HIGH_CONE) {
       currState = ArmState.PARALLEL_TRANS;
       extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
       if (piece == gamePiece.CUBE) {
@@ -295,13 +295,13 @@ public class ArmSubsystem extends MeasurableSubsystem {
             floor(gamePiece.CONE, true);
             break;
           case YOSHIED:
-            //fall through
+            // fall through
           case PARALLEL_TRANS:
-            //fall through
+            // fall through
           case STOW_TO_HIGH:
-            //fall through
+            // fall through
           case STOW:
-            //fall through
+            // fall through
           default:
             useFinal = false;
             break;
@@ -309,7 +309,8 @@ public class ArmSubsystem extends MeasurableSubsystem {
       }
     }
 
-    if (currState == ArmState.STOW_TO_HIGH && shoulderSubsystem.isPastPoint(ArmConstants.highShoulderpastPointTicks)) {
+    if (currState == ArmState.STOW_TO_HIGH
+        && shoulderSubsystem.isPastPoint(ArmConstants.highShoulderpastPointTicks)) {
       extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
     }
   }
