@@ -2,18 +2,24 @@ package frc.robot.subsystems.Arm;
 
 import frc.robot.constants.ArmConstants;
 import frc.robot.subsystems.Extendo.ExtendoSubsystem;
+import frc.robot.subsystems.RobotState.RobotStateSubsystem;
 import frc.robot.subsystems.RobotState.RobotStateSubsystem.gamePiece;
 import frc.robot.subsystems.Wrist.WristSubsystem;
 import frc.robot.subsystems.shoulder.ShoulderSubsystem;
 import java.util.Set;
+
 import org.strykeforce.telemetry.measurable.MeasurableSubsystem;
 import org.strykeforce.telemetry.measurable.Measure;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ArmSubsystem extends MeasurableSubsystem {
 
   private final ShoulderSubsystem shoulderSubsystem;
   private final ExtendoSubsystem extendoSubsystem;
   private final WristSubsystem wristSubsystem;
+  private org.slf4j.Logger logger = LoggerFactory.getLogger(ArmSubsystem.class);
   private ArmState currState;
   private ArmState desiredState;
   private ArmState finalState;
@@ -49,169 +55,179 @@ public class ArmSubsystem extends MeasurableSubsystem {
   }
 
   public void high(gamePiece piece) {
-    if (currState == ArmState.STOW) {
-      shoulderSubsystem.setPos(ArmConstants.kPlaceShoulderPos);
-      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
-      currState = ArmState.STOW_TO_HIGH;
-      if (piece == gamePiece.CUBE) {
-        desiredState = ArmState.HIGH_CUBE;
-        wristSubsystem.setPos(ArmConstants.kCubePlaceWristPos);
+    if (piece != gamePiece.NONE) {
+      if (currState == ArmState.STOW) {
+        shoulderSubsystem.setPos(ArmConstants.kPlaceShoulderPos);
+        extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
+        currState = ArmState.STOW_TO_HIGH;
+        if (piece == gamePiece.CUBE) {
+          desiredState = ArmState.HIGH_CUBE;
+          wristSubsystem.setPos(ArmConstants.kCubePlaceWristPos);
+        } else {
+          desiredState = ArmState.HIGH_CONE;
+          wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+        }
+      } else if (currState == ArmState.MID_CUBE) {
+        currState = ArmState.PARALLEL_TRANS;
+        extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
+        if (piece == gamePiece.CONE) {
+          desiredState = ArmState.HIGH_CONE;
+          wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+        } else {
+          desiredState = ArmState.HIGH_CUBE;
+        }
+      } else if (currState == ArmState.MID_CONE) {
+        currState = ArmState.PARALLEL_TRANS;
+        extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
+        if (piece == gamePiece.CUBE) {
+          desiredState = ArmState.HIGH_CUBE;
+          wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+        } else {
+          desiredState = ArmState.HIGH_CONE;
+        }
       } else {
-        desiredState = ArmState.HIGH_CONE;
-        wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+        this.stow();
+        if (piece == gamePiece.CUBE) {
+          finalState = ArmState.HIGH_CUBE;
+        } else {
+          finalState = ArmState.HIGH_CONE;
+        }
+        useFinal = true;
       }
-    } else if (currState == ArmState.MID_CUBE) {
-      currState = ArmState.PARALLEL_TRANS;
-      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
-      if (piece == gamePiece.CONE) {
-        desiredState = ArmState.HIGH_CONE;
-        wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
-      } else {
-        desiredState = ArmState.HIGH_CUBE;
-      }
-    } else if (currState == ArmState.MID_CONE) {
-      currState = ArmState.PARALLEL_TRANS;
-      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
-      if (piece == gamePiece.CUBE) {
-        desiredState = ArmState.HIGH_CUBE;
-        wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
-      } else {
-        desiredState = ArmState.HIGH_CONE;
-      }
-    } else {
-      this.stow();
-      if (piece == gamePiece.CUBE) {
-        finalState = ArmState.HIGH_CUBE;
-      } else {
-        finalState = ArmState.HIGH_CONE;
-      }
-      useFinal = true;
-    }
+    } else {logger.info("cannot place nonexistent game piece");}
   }
 
   public void mid(gamePiece piece) {
-    if (currState == ArmState.STOW) {
-      shoulderSubsystem.setPos(ArmConstants.kPlaceShoulderPos);
-      extendoSubsystem.setPos(ArmConstants.kMidExtendoPos);
-      currState = ArmState.PARALLEL_TRANS;
-      if (piece == gamePiece.CUBE) {
-        desiredState = ArmState.MID_CUBE;
-        wristSubsystem.setPos(ArmConstants.kCubePlaceWristPos);
+    if (piece != gamePiece.NONE) {
+      if (currState == ArmState.STOW) {
+        shoulderSubsystem.setPos(ArmConstants.kPlaceShoulderPos);
+        extendoSubsystem.setPos(ArmConstants.kMidExtendoPos);
+        currState = ArmState.PARALLEL_TRANS;
+        if (piece == gamePiece.CUBE) {
+          desiredState = ArmState.MID_CUBE;
+          wristSubsystem.setPos(ArmConstants.kCubePlaceWristPos);
+        } else {
+          desiredState = ArmState.LOW_CONE;
+          wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+        }
+      } else if (currState == ArmState.HIGH_CUBE) {
+        currState = ArmState.PARALLEL_TRANS;
+        extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
+        if (piece == gamePiece.CUBE) {
+          desiredState = ArmState.MID_CONE;
+          wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+        } else {
+          desiredState = ArmState.MID_CUBE;
+        }
+      } else if (currState == ArmState.HIGH_CONE) {
+        currState = ArmState.PARALLEL_TRANS;
+        extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
+        if (piece == gamePiece.CUBE) {
+          desiredState = ArmState.MID_CUBE;
+          wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+        } else {
+          desiredState = ArmState.MID_CONE;
+        }
       } else {
-        desiredState = ArmState.LOW_CONE;
-        wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
+        this.stow();
+        if (piece == gamePiece.CUBE) {
+          finalState = ArmState.MID_CUBE;
+        } else {
+          finalState = ArmState.MID_CONE;
+        }
+        useFinal = true;
       }
-    } else if (currState == ArmState.HIGH_CUBE) {
-      currState = ArmState.PARALLEL_TRANS;
-      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
-      if (piece == gamePiece.CUBE) {
-        desiredState = ArmState.MID_CONE;
-        wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
-      } else {
-        desiredState = ArmState.MID_CUBE;
-      }
-    } else if (currState == ArmState.HIGH_CONE) {
-      currState = ArmState.PARALLEL_TRANS;
-      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
-      if (piece == gamePiece.CUBE) {
-        desiredState = ArmState.MID_CUBE;
-        wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
-      } else {
-        desiredState = ArmState.MID_CONE;
-      }
-    } else {
-      this.stow();
-      if (piece == gamePiece.CUBE) {
-        finalState = ArmState.MID_CUBE;
-      } else {
-        finalState = ArmState.MID_CONE;
-      }
-      useFinal = true;
-    }
+    } else {logger.info("cannot place nonexistent game piece");}
   }
 
   public void low(gamePiece piece) {
-    if (currState == ArmState.STOW) {
-      shoulderSubsystem.setPos(ArmConstants.kLowPlaceShoulderPos);
-      extendoSubsystem.setPos(ArmConstants.kMidExtendoPos);
-      currState = ArmState.PARALLEL_TRANS;
-      if (piece == gamePiece.CUBE) {
-        desiredState = ArmState.LOW_CUBE;
-        wristSubsystem.setPos(ArmConstants.kCubeLowPlaceWristPos);
+    if (piece != gamePiece.NONE) {
+      if (currState == ArmState.STOW) {
+        shoulderSubsystem.setPos(ArmConstants.kLowPlaceShoulderPos);
+        extendoSubsystem.setPos(ArmConstants.kMidExtendoPos);
+        currState = ArmState.PARALLEL_TRANS;
+        if (piece == gamePiece.CUBE) {
+          desiredState = ArmState.LOW_CUBE;
+          wristSubsystem.setPos(ArmConstants.kCubeLowPlaceWristPos);
+        } else {
+          desiredState = ArmState.LOW_CONE;
+          wristSubsystem.setPos(ArmConstants.kConeLowPlaceWristPos);
+        }
       } else {
-        desiredState = ArmState.LOW_CONE;
-        wristSubsystem.setPos(ArmConstants.kConeLowPlaceWristPos);
+        this.stow();
+        if (piece == gamePiece.CUBE) {
+          finalState = ArmState.LOW_CUBE;
+        } else {
+          finalState = ArmState.LOW_CONE;
+        }
+        useFinal = true;
       }
-    } else {
-      this.stow();
-      if (piece == gamePiece.CUBE) {
-        finalState = ArmState.LOW_CUBE;
-      } else {
-        finalState = ArmState.LOW_CONE;
-      }
-      useFinal = true;
-    }
+    } else {logger.info("cannot place nonexistent game piece");}
   }
 
   public void shelf(gamePiece piece) {
-    if (currState == ArmState.STOW) {
-      currState = ArmState.PARALLEL_TRANS;
-      if (piece == gamePiece.CUBE) {
-        desiredState = ArmState.SHELF_CUBE;
-        shoulderSubsystem.setPos(ArmConstants.kCubeShelfShoulderPos);
-        extendoSubsystem.setPos(ArmConstants.kCubeShelfExtendoPos);
-        wristSubsystem.setPos(ArmConstants.kCubeShelfWristPos);
+    if (piece != gamePiece.NONE) {
+      if (currState == ArmState.STOW) {
+        currState = ArmState.PARALLEL_TRANS;
+        if (piece == gamePiece.CUBE) {
+          desiredState = ArmState.SHELF_CUBE;
+          shoulderSubsystem.setPos(ArmConstants.kCubeShelfShoulderPos);
+          extendoSubsystem.setPos(ArmConstants.kCubeShelfExtendoPos);
+          wristSubsystem.setPos(ArmConstants.kCubeShelfWristPos);
+        } else {
+          desiredState = ArmState.SHELF_CONE;
+          shoulderSubsystem.setPos(ArmConstants.kConeShelfShoulderPos);
+          extendoSubsystem.setPos(ArmConstants.kConeShelfExtendoPos);
+          wristSubsystem.setPos(ArmConstants.kConeShelfWristPos);
+        }
       } else {
-        desiredState = ArmState.SHELF_CONE;
-        shoulderSubsystem.setPos(ArmConstants.kConeShelfShoulderPos);
-        extendoSubsystem.setPos(ArmConstants.kConeShelfExtendoPos);
-        wristSubsystem.setPos(ArmConstants.kConeShelfWristPos);
+        this.stow();
+        if (piece == gamePiece.CUBE) {
+          finalState = ArmState.SHELF_CUBE;
+        } else {
+          finalState = ArmState.SHELF_CONE;
+        }
+        useFinal = true;
       }
-    } else {
-      this.stow();
-      if (piece == gamePiece.CUBE) {
-        finalState = ArmState.SHELF_CUBE;
-      } else {
-        finalState = ArmState.SHELF_CONE;
-      }
-      useFinal = true;
-    }
+    } else {logger.info("cannot pickup nonexistent game piece");}
   }
 
   public void floor(gamePiece piece, boolean isUpright) {
     // if it's a cube, set isUpright to whatever! freedom!!!
-    if (currState == ArmState.STOW) {
-      currState = ArmState.PARALLEL_TRANS;
-      if (piece == gamePiece.CUBE) {
-        desiredState = ArmState.FLOOR_CUBE;
-        shoulderSubsystem.setPos(ArmConstants.kCubeFloorShoulderPos);
-        extendoSubsystem.setPos(ArmConstants.kCubeFloorExtendoPos);
-        wristSubsystem.setPos(ArmConstants.kCubeFloorWristPos);
-      } else {
-        desiredState = ArmState.FLOOR_CONE;
-        if (isUpright) {
-          shoulderSubsystem.setPos(ArmConstants.kConeFloorUprightShoulderPos);
-          extendoSubsystem.setPos(ArmConstants.kConeFloorUprightExtendoPos);
-          wristSubsystem.setPos(ArmConstants.kConeFloorUprightWristPos);
+    if (piece != gamePiece.NONE) {
+      if (currState == ArmState.STOW) {
+        currState = ArmState.PARALLEL_TRANS;
+        if (piece == gamePiece.CUBE) {
+          desiredState = ArmState.FLOOR_CUBE;
+          shoulderSubsystem.setPos(ArmConstants.kCubeFloorShoulderPos);
+          extendoSubsystem.setPos(ArmConstants.kCubeFloorExtendoPos);
+          wristSubsystem.setPos(ArmConstants.kCubeFloorWristPos);
         } else {
-          shoulderSubsystem.setPos(ArmConstants.kConeFloorShoulderPos);
-          extendoSubsystem.setPos(ArmConstants.kConeFloorExtendoPos);
-          wristSubsystem.setPos(ArmConstants.kConeFloorWristPos);
+          desiredState = ArmState.FLOOR_CONE;
+          if (isUpright) {
+            shoulderSubsystem.setPos(ArmConstants.kConeFloorUprightShoulderPos);
+            extendoSubsystem.setPos(ArmConstants.kConeFloorUprightExtendoPos);
+            wristSubsystem.setPos(ArmConstants.kConeFloorUprightWristPos);
+          } else {
+            shoulderSubsystem.setPos(ArmConstants.kConeFloorShoulderPos);
+            extendoSubsystem.setPos(ArmConstants.kConeFloorExtendoPos);
+            wristSubsystem.setPos(ArmConstants.kConeFloorWristPos);
+          }
         }
-      }
-    } else {
-      this.stow();
-      if (piece == gamePiece.CUBE) {
-        finalState = ArmState.FLOOR_CUBE;
       } else {
-        if (isUpright) {
-          finalState = ArmState.FLOOR_CONE_UPRIGHT;
+        this.stow();
+        if (piece == gamePiece.CUBE) {
+          finalState = ArmState.FLOOR_CUBE;
         } else {
-          finalState = ArmState.FLOOR_CONE;
+          if (isUpright) {
+            finalState = ArmState.FLOOR_CONE_UPRIGHT;
+          } else {
+            finalState = ArmState.FLOOR_CONE;
+          }
         }
+        useFinal = true;
       }
-      useFinal = true;
-    }
+    } else {logger.info("cannot pickup nonexistent game piece");}
   }
 
   public void yoshi() {
