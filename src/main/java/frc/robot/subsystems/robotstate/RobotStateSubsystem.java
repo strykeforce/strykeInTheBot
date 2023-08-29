@@ -31,7 +31,6 @@ public class RobotStateSubsystem extends MeasurableSubsystem {
     driveSubsystem.autoBalance(isOnAllianceSide);
   }
 
-
   public void toPulseAutoBalance(boolean isOnAllianceSide) {
     // driveSubsystem.pulseAutoBalance(isOnAllianceSide);
     // logger.info("{} -> AUTO_BALANCE", currRobotState);

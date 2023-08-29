@@ -183,6 +183,10 @@ public class Swerve implements SwerveIO {
     swerveDrive.resetOdometry(pose);
   }
 
+  public void setOdometry(Rotation2d Odom) {
+    swerveDrive.setOdometry(null);
+  }
+
   public Pose2d getPoseMeters() {
     return swerveDrive.getPoseMeters();
   }

@@ -393,7 +393,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
       case IDLE:
         break;
       case AUTO_BALANCE_EDGE:
-        // if the gyro measures past the edge threshold, go to auto balance drive state and start a timer and keep driving
+        // if the gyro measures past the edge threshold, go to auto balance drive state and start a
+        // timer and keep driving
         if (Math.abs(swerve.getGyroPitch()) - Math.abs(tempRoll)
             >= DriveConstants.kAutoBalanceEdgeTriggerThreshold) {
           autoBalanceTimer.reset();
@@ -403,8 +404,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
         }
         break;
       case AUTO_BALANCE_DRIVE:
-        // keep driving and once the timer reaches a certain point, switch to the averaging state and restart the
-        // timer and make a variable for the gyro direction
+        // keep driving and once the timer reaches a certain point, switch to the averaging state
+        // and restart the timer and make a variable for the gyro direction
         if (autoBalanceTimer.hasElapsed(DriveConstants.kAutoBalanceSlowdownTimeSec)) {
           logger.info("{} -> AUTO_BALANCE_AVERAGE", currDriveState);
           currDriveState = DriveStates.AUTO_BALANCE_AVERAGE;
