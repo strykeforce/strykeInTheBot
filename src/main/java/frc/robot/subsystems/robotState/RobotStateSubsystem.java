@@ -128,9 +128,9 @@ public class RobotStateSubsystem extends SubsystemBase {
           break;
       }
       setRobotStateLogged(RobotState.TO_FLOOR_PICKUP);
-    } else {
-      toStow(RobotState.FLOOR_PICKUP);
-    }
+    }// else {
+    //   toStow(RobotState.FLOOR_PICKUP);
+    // }
   }
 
   public void toFloorPickup() {
@@ -149,9 +149,9 @@ public class RobotStateSubsystem extends SubsystemBase {
         // hand cone speed
       }
       setRobotStateLogged(RobotState.TO_AUTO_SHELF);
-    } else {
-      toStow(RobotState.AUTO_SHELF);
-    }
+    }// else {
+    //   toStow(RobotState.AUTO_SHELF);
+    // }
   }
 
   public void toManualShelf() {
@@ -166,9 +166,9 @@ public class RobotStateSubsystem extends SubsystemBase {
         // hand cone speed
       }
       setRobotStateLogged(RobotState.TO_MANUAL_SHELF);
-    } else {
-      toStow(RobotState.MANUAL_SHELF);
-    }
+    }// else {
+    //   toStow(RobotState.MANUAL_SHELF);
+    // }
   }
 
   public void toAutoScore() {
@@ -189,9 +189,9 @@ public class RobotStateSubsystem extends SubsystemBase {
           break;
       }
       setRobotStateLogged(RobotState.TO_AUTO_SCORE);
-    } else {
-      toStow(RobotState.AUTO_SCORE);
-    }
+    }// else {
+    //   toStow(RobotState.AUTO_SCORE);
+    // }
   }
 
   public void toManualScore() {
