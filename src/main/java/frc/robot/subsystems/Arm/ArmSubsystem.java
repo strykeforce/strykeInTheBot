@@ -58,7 +58,6 @@ public class ArmSubsystem extends MeasurableSubsystem {
     if (piece != gamePiece.NONE) {
       if (currState == ArmState.STOW) {
         shoulderSubsystem.setPos(ArmConstants.kPlaceShoulderPos);
-        extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
         currState = ArmState.STOW_TO_HIGH;
         if (piece == gamePiece.CUBE) {
           desiredState = ArmState.HIGH_CUBE;
@@ -67,7 +66,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
           desiredState = ArmState.HIGH_CONE;
           wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
         }
-      } else if (currState == ArmState.MID_CUBE) {
+      } else if (currState == (ArmState.MID_CUBE || ArmState.MID_CONE)) {
         currState = ArmState.PARALLEL_TRANS;
         extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
         if (piece == gamePiece.CONE) {
@@ -75,15 +74,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
           wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
         } else {
           desiredState = ArmState.HIGH_CUBE;
-        }
-      } else if (currState == ArmState.MID_CONE) {
-        currState = ArmState.PARALLEL_TRANS;
-        extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
-        if (piece == gamePiece.CUBE) {
-          desiredState = ArmState.HIGH_CUBE;
-          wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
-        } else {
-          desiredState = ArmState.HIGH_CONE;
+          wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);          
         }
       } else {
         this.stow();
@@ -118,15 +109,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
           wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
         } else {
           desiredState = ArmState.MID_CUBE;
-        }
-      } else if (currState == ArmState.HIGH_CONE) {
-        currState = ArmState.PARALLEL_TRANS;
-        extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
-        if (piece == gamePiece.CUBE) {
-          desiredState = ArmState.MID_CUBE;
-          wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
-        } else {
-          desiredState = ArmState.MID_CONE;
+          wristSubsystem.setPos(ArmConstants.kCubePlaceWristPos);
         }
       } else {
         this.stow();
@@ -230,8 +213,8 @@ public class ArmSubsystem extends MeasurableSubsystem {
     } else {logger.info("cannot pickup nonexistent game piece");}
   }
 
-  public void yoshi() {
-    if (currState == ArmState.FLOOR_CUBE) {
+  public void yoshi(gamePiece gamePiece) {
+    if (gamePiece == ) {
       currState = ArmState.PARALLEL_TRANS;
       desiredState = ArmState.YOSHIED;
       extendoSubsystem.setPos(ArmConstants.kYoshiPos);
