@@ -2,17 +2,13 @@ package frc.robot.subsystems.Arm;
 
 import frc.robot.constants.ArmConstants;
 import frc.robot.subsystems.Extendo.ExtendoSubsystem;
-import frc.robot.subsystems.RobotState.RobotStateSubsystem;
 import frc.robot.subsystems.RobotState.RobotStateSubsystem.gamePiece;
 import frc.robot.subsystems.Wrist.WristSubsystem;
 import frc.robot.subsystems.shoulder.ShoulderSubsystem;
 import java.util.Set;
-
+import org.slf4j.LoggerFactory;
 import org.strykeforce.telemetry.measurable.MeasurableSubsystem;
 import org.strykeforce.telemetry.measurable.Measure;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ArmSubsystem extends MeasurableSubsystem {
 
@@ -38,6 +34,18 @@ public class ArmSubsystem extends MeasurableSubsystem {
     useFinal = false;
   }
 
+  public ArmState getcurrState() {
+    return currState;
+  }
+
+  public ArmState getdesiredState() {
+    return desiredState;
+  }
+
+  public ArmState getfinalState() {
+    return finalState;
+  }
+
   public void zero() {
     shoulderSubsystem.zero();
     extendoSubsystem.zero();
@@ -45,6 +53,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
   }
 
   public void stow() {
+    useFinal = false;
     if (currState != ArmState.STOW) {
       shoulderSubsystem.setPos(ArmConstants.kStowShoulderPos);
       extendoSubsystem.setPos(ArmConstants.kStowExtendoPos);
@@ -55,6 +64,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
   }
 
   public void high(gamePiece piece) {
+    useFinal = false;
     if (piece != gamePiece.NONE) {
       if (currState == ArmState.STOW) {
         shoulderSubsystem.setPos(ArmConstants.kPlaceShoulderPos);
@@ -66,7 +76,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
           desiredState = ArmState.HIGH_CONE;
           wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
         }
-      } else if (currState == (ArmState.MID_CUBE || ArmState.MID_CONE)) {
+      } else if (currState == ArmState.MID_CUBE || currState == ArmState.MID_CONE) {
         currState = ArmState.PARALLEL_TRANS;
         extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
         if (piece == gamePiece.CONE) {
@@ -74,7 +84,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
           wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
         } else {
           desiredState = ArmState.HIGH_CUBE;
-          wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);          
+          wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
         }
       } else {
         this.stow();
@@ -85,15 +95,17 @@ public class ArmSubsystem extends MeasurableSubsystem {
         }
         useFinal = true;
       }
-    } else {logger.info("cannot place nonexistent game piece");}
+    } else {
+      logger.info("cannot place nonexistent game piece");
+    }
   }
 
   public void mid(gamePiece piece) {
+    useFinal = false;
     if (piece != gamePiece.NONE) {
       if (currState == ArmState.STOW) {
         shoulderSubsystem.setPos(ArmConstants.kPlaceShoulderPos);
-        extendoSubsystem.setPos(ArmConstants.kMidExtendoPos);
-        currState = ArmState.PARALLEL_TRANS;
+        currState = ArmState.STOW_TO_MID;
         if (piece == gamePiece.CUBE) {
           desiredState = ArmState.MID_CUBE;
           wristSubsystem.setPos(ArmConstants.kCubePlaceWristPos);
@@ -101,10 +113,10 @@ public class ArmSubsystem extends MeasurableSubsystem {
           desiredState = ArmState.LOW_CONE;
           wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
         }
-      } else if (currState == ArmState.HIGH_CUBE) {
+      } else if (currState == ArmState.HIGH_CUBE || currState == ArmState.HIGH_CONE) {
         currState = ArmState.PARALLEL_TRANS;
         extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
-        if (piece == gamePiece.CUBE) {
+        if (piece == gamePiece.CONE) {
           desiredState = ArmState.MID_CONE;
           wristSubsystem.setPos(ArmConstants.kConePlaceWristPos);
         } else {
@@ -120,14 +132,17 @@ public class ArmSubsystem extends MeasurableSubsystem {
         }
         useFinal = true;
       }
-    } else {logger.info("cannot place nonexistent game piece");}
+    } else {
+      logger.info("cannot place nonexistent game piece");
+    }
   }
 
   public void low(gamePiece piece) {
+    useFinal = false;
     if (piece != gamePiece.NONE) {
       if (currState == ArmState.STOW) {
         shoulderSubsystem.setPos(ArmConstants.kLowPlaceShoulderPos);
-        extendoSubsystem.setPos(ArmConstants.kMidExtendoPos);
+        extendoSubsystem.setPos(ArmConstants.kLowExtendoPos);
         currState = ArmState.PARALLEL_TRANS;
         if (piece == gamePiece.CUBE) {
           desiredState = ArmState.LOW_CUBE;
@@ -145,10 +160,13 @@ public class ArmSubsystem extends MeasurableSubsystem {
         }
         useFinal = true;
       }
-    } else {logger.info("cannot place nonexistent game piece");}
+    } else {
+      logger.info("cannot place nonexistent game piece");
+    }
   }
 
   public void shelf(gamePiece piece) {
+    useFinal = false;
     if (piece != gamePiece.NONE) {
       if (currState == ArmState.STOW) {
         currState = ArmState.PARALLEL_TRANS;
@@ -172,10 +190,13 @@ public class ArmSubsystem extends MeasurableSubsystem {
         }
         useFinal = true;
       }
-    } else {logger.info("cannot pickup nonexistent game piece");}
+    } else {
+      logger.info("cannot pickup nonexistent game piece");
+    }
   }
 
   public void floor(gamePiece piece, boolean isUpright) {
+    useFinal = false;
     // if it's a cube, set isUpright to whatever! freedom!!!
     if (piece != gamePiece.NONE) {
       if (currState == ArmState.STOW) {
@@ -186,12 +207,13 @@ public class ArmSubsystem extends MeasurableSubsystem {
           extendoSubsystem.setPos(ArmConstants.kCubeFloorExtendoPos);
           wristSubsystem.setPos(ArmConstants.kCubeFloorWristPos);
         } else {
-          desiredState = ArmState.FLOOR_CONE;
           if (isUpright) {
+            desiredState = ArmState.FLOOR_CONE_UPRIGHT;
             shoulderSubsystem.setPos(ArmConstants.kConeFloorUprightShoulderPos);
             extendoSubsystem.setPos(ArmConstants.kConeFloorUprightExtendoPos);
             wristSubsystem.setPos(ArmConstants.kConeFloorUprightWristPos);
           } else {
+            desiredState = ArmState.FLOOR_CONE;
             shoulderSubsystem.setPos(ArmConstants.kConeFloorShoulderPos);
             extendoSubsystem.setPos(ArmConstants.kConeFloorExtendoPos);
             wristSubsystem.setPos(ArmConstants.kConeFloorWristPos);
@@ -210,31 +232,44 @@ public class ArmSubsystem extends MeasurableSubsystem {
         }
         useFinal = true;
       }
-    } else {logger.info("cannot pickup nonexistent game piece");}
-  }
-
-  public void yoshi(gamePiece gamePiece) {
-    if (gamePiece == ) {
-      currState = ArmState.PARALLEL_TRANS;
-      desiredState = ArmState.YOSHIED;
-      extendoSubsystem.setPos(ArmConstants.kYoshiPos);
-      finalState = ArmState.FLOOR_CUBE;
-    }
-    if (currState == ArmState.FLOOR_CONE) {
-      currState = ArmState.PARALLEL_TRANS;
-      desiredState = ArmState.YOSHIED;
-      extendoSubsystem.setPos(ArmConstants.kYoshiPos);
-      finalState = ArmState.FLOOR_CONE;
-    }
-    if (currState == ArmState.FLOOR_CONE_UPRIGHT) {
-      currState = ArmState.PARALLEL_TRANS;
-      desiredState = ArmState.YOSHIED;
-      extendoSubsystem.setPos(ArmConstants.kYoshiPos);
-      finalState = ArmState.FLOOR_CONE_UPRIGHT;
+    } else {
+      logger.info("cannot pickup nonexistent game piece");
     }
   }
 
-  public boolean isFinished() {
+  public void yoshi(gamePiece piece, boolean isUpright) {
+    useFinal = false;
+    // if it's a cube, set isUpright to whatever! freedom!!!
+    if (piece != gamePiece.NONE) {
+      if (currState == ArmState.FLOOR_CUBE
+          || currState == ArmState.FLOOR_CONE
+          || currState == ArmState.FLOOR_CONE_UPRIGHT) {
+        currState = ArmState.PARALLEL_TRANS;
+        if (piece == gamePiece.CUBE) {
+          desiredState = ArmState.YOSHIED;
+          shoulderSubsystem.setPos(ArmConstants.kCubeFloorShoulderPos);
+          extendoSubsystem.setPos(ArmConstants.kYoshiPos);
+          wristSubsystem.setPos(ArmConstants.kCubeFloorWristPos);
+        } else {
+          if (isUpright) {
+            desiredState = ArmState.YOSHIED;
+            shoulderSubsystem.setPos(ArmConstants.kConeFloorUprightShoulderPos);
+            extendoSubsystem.setPos(ArmConstants.kYoshiPos);
+            wristSubsystem.setPos(ArmConstants.kConeFloorUprightWristPos);
+          } else {
+            desiredState = ArmState.YOSHIED;
+            shoulderSubsystem.setPos(ArmConstants.kConeFloorShoulderPos);
+            extendoSubsystem.setPos(ArmConstants.kYoshiPos);
+            wristSubsystem.setPos(ArmConstants.kConeFloorWristPos);
+          }
+        }
+      }
+    } else {
+      logger.info("cannot pickup nonexistent game piece");
+    }
+  }
+
+  private boolean isFinishedP() {
     if (shoulderSubsystem.isFinished()
         && extendoSubsystem.isFinished()
         && wristSubsystem.isFinished()) {
@@ -243,11 +278,25 @@ public class ArmSubsystem extends MeasurableSubsystem {
     return false;
   }
 
+  public boolean isFinished() {
+    return currState == desiredState && !useFinal;
+  }
+
   @Override
   public void periodic() {
-    if (this.isFinished()) {
+    if (currState == ArmState.STOW_TO_HIGH
+        && shoulderSubsystem.isPastPoint(ArmConstants.highShoulderpastPointTicks)) {
+      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
+    }
+
+    if (currState == ArmState.STOW_TO_MID
+        && shoulderSubsystem.isPastPoint(ArmConstants.midShoulderpastPointTicks)) {
+      extendoSubsystem.setPos(ArmConstants.kMidExtendoPos);
+    }
+
+    if (this.isFinishedP()) {
       currState = desiredState;
-      if (useFinal) {
+      if (useFinal && currState == ArmState.STOW) {
         switch (finalState) {
           case HIGH_CUBE:
             useFinal = false;
@@ -307,11 +356,6 @@ public class ArmSubsystem extends MeasurableSubsystem {
         }
       }
     }
-
-    if (currState == ArmState.STOW_TO_HIGH
-        && shoulderSubsystem.isPastPoint(ArmConstants.highShoulderpastPointTicks)) {
-      extendoSubsystem.setPos(ArmConstants.kHighExtendoPos);
-    }
   }
 
   public enum ArmState {
@@ -329,12 +373,16 @@ public class ArmSubsystem extends MeasurableSubsystem {
     FLOOR_CONE_UPRIGHT,
     YOSHIED,
     PARALLEL_TRANS,
-    STOW_TO_HIGH
+    STOW_TO_HIGH,
+    STOW_TO_MID
   }
 
   @Override
   public Set<Measure> getMeasures() {
-    // TODO Fill in measures for grapher
-    return null;
+    return Set.of(
+        new Measure("currState", () -> currState.ordinal()),
+        new Measure("desiredState", () -> desiredState.ordinal()),
+        new Measure("finalState", () -> finalState.ordinal()),
+        new Measure("State", () -> useFinal ? 1 : 0));
   }
 }

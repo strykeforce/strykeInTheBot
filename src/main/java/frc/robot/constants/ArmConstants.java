@@ -35,4 +35,5 @@ public class ArmConstants {
   public static final double kConeFloorWristPos = 0;
 
   public static final double kYoshiPos = 0;
+  public static final double midShoulderpastPointTicks = 0;
 }
