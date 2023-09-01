@@ -54,7 +54,7 @@ public class WristSubsystem extends MeasurableSubsystem {
     }
   }
 
-  public void setPos(int positionTicks) {
+  public void setPos(double positionTicks) {
     this.io.setPos(positionTicks);
     setPointTicks = positionTicks;
   }
