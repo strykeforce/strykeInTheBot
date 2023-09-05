@@ -37,6 +37,13 @@ public class HandSubsystem extends MeasurableSubsystem {
     currState = HandStates.EJECT;
   }
 
+  public void idle() {
+    if (currState == HandStates.WAITING) {
+      logger.info("WAITING -> IDLE");
+      currState = HandStates.IDLE;
+    } else logger.info("failed to IDLE: hand has a piece");
+  }
+
   public boolean hasCone() {
     if (inputs.isFwdLimitSwitchClosed
         && Math.abs(inputs.velocityTicksPer100ms) <= HandConstants.kConeVelLimit) {
