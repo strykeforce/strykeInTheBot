@@ -46,7 +46,7 @@ public class ExtendoSubsystem extends MeasurableSubsystem {
     }
   }
 
-  public void setPos(int positionTicks) {
+  public void setPos(double positionTicks) {
     this.io.setPos(positionTicks);
     setpointTicks = positionTicks;
   }
