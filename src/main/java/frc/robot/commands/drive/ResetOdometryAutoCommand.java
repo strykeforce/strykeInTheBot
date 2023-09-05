@@ -3,7 +3,7 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.robotstate.RobotStateSubsystem;
+import frc.robot.subsystems.RobotState.RobotStateSubsystem;
 
 public class ResetOdometryAutoCommand extends InstantCommand {
   DriveSubsystem driveSubsystem;
