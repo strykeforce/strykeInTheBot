@@ -26,10 +26,10 @@ public class Swerve implements SwerveIO {
 
   private final SwerveDrive swerveDrive;
 
-  private TalonFX followerZero = new TalonFX(14);
-  private TalonFX followerOne = new TalonFX(15);
-  private TalonFX followerTwo = new TalonFX(16);
-  private TalonFX followerThree = new TalonFX(17);
+  // private TalonFX followerZero = new TalonFX(14);
+  // private TalonFX followerOne = new TalonFX(15);
+  // private TalonFX followerTwo = new TalonFX(16);
+  // private TalonFX followerThree = new TalonFX(17);
 
   // Grapher stuff
   private PoseEstimatorOdometryStrategy odometryStrategy;
@@ -69,13 +69,13 @@ public class Swerve implements SwerveIO {
           moduleBuilder.driveTalon(driveTalon).wheelLocationMeters(wheelLocations[i]).build();
       telemetryService.register(driveTalon);
 
-      var driveTalonFollower = new TalonFX(i + 14);
-      driveTalonFollower.configFactoryDefault(Constants.kTalonConfigTimeout);
-      driveTalonFollower.configAllSettings(
-          DriveConstants.getDriveTalonConfig(), Constants.kTalonConfigTimeout);
-      driveTalonFollower.enableVoltageCompensation(true);
-      driveTalonFollower.setNeutralMode(NeutralMode.Brake);
-      driveTalonFollower.follow(driveTalon);
+      // var driveTalonFollower = new TalonFX(i + 14);
+      // driveTalonFollower.configFactoryDefault(Constants.kTalonConfigTimeout);
+      // driveTalonFollower.configAllSettings(
+      //     DriveConstants.getDriveTalonConfig(), Constants.kTalonConfigTimeout);
+      // driveTalonFollower.enableVoltageCompensation(true);
+      // driveTalonFollower.setNeutralMode(NeutralMode.Brake);
+      // driveTalonFollower.follow(driveTalon);
 
       swerveModules[i] =
           moduleBuilder
@@ -85,10 +85,10 @@ public class Swerve implements SwerveIO {
               .build();
       swerveModules[i].loadAndSetAzimuthZeroReference();
 
-      if (i == 0) followerZero = driveTalon;
-      else if (i == 1) followerOne = driveTalon;
-      else if (i == 2) followerTwo = driveTalon;
-      else if (i == 3) followerThree = driveTalon;
+      // if (i == 0) followerZero = driveTalon;
+      // else if (i == 1) followerOne = driveTalon;
+      // else if (i == 2) followerTwo = driveTalon;
+      // else if (i == 3) followerThree = driveTalon;
     }
 
     ahrs = new AHRS(SerialPort.Port.kUSB, SerialDataType.kProcessedData, (byte) 200);
@@ -202,9 +202,9 @@ public class Swerve implements SwerveIO {
   @Override
   public void registerWith(TelemetryService telemetryService) {
     swerveDrive.registerWith(telemetryService);
-    telemetryService.register(followerZero);
-    telemetryService.register(followerOne);
-    telemetryService.register(followerTwo);
-    telemetryService.register(followerThree);
+    // telemetryService.register(followerZero);
+    // telemetryService.register(followerOne);
+    // telemetryService.register(followerTwo);
+    // telemetryService.register(followerThree);
   }
 }

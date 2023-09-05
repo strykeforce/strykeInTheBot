@@ -1,13 +1,11 @@
 package frc.robot.subsystems.RobotState;
 
-import java.util.Set;
-
-import org.strykeforce.telemetry.measurable.MeasurableSubsystem;
-import org.strykeforce.telemetry.measurable.Measure;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.subsystems.drive.DriveSubsystem;
+import java.util.Set;
+import org.strykeforce.telemetry.measurable.MeasurableSubsystem;
+import org.strykeforce.telemetry.measurable.Measure;
 
 public class RobotStateSubsystem extends MeasurableSubsystem {
 
@@ -42,8 +40,8 @@ public class RobotStateSubsystem extends MeasurableSubsystem {
 
   @Override
   public Set<Measure> getMeasures() {
-      // TODO Auto-generated method stub
-      return null;
+    // TODO Auto-generated method stub
+    return null;
   }
 
   public enum gamePiece {

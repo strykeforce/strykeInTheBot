@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -11,13 +12,16 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.drive.DriveTeleopCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
+import frc.robot.controllers.FlyskyJoystick;
+import frc.robot.controllers.FlyskyJoystick.Button;
+import frc.robot.subsystems.RobotState.RobotStateSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.Swerve;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
-import frc.robot.subsystems.RobotState.RobotStateSubsystem;
 import frc.robot.subsystems.shoulder.ShoulderSubsystem;
 import frc.robot.subsystems.shoulder.ShoulderTalonIO;
+import org.slf4j.Logger;
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
 
@@ -35,6 +39,8 @@ public class RobotContainer {
   // OI Objects
   private final Joystick driveJoystick = new Joystick(0);
 
+  private Logger logger;
+
   public RobotContainer() {
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
@@ -46,16 +52,47 @@ public class RobotContainer {
 
   private void configureBindings() {}
 
-  private void configureDriverButtonBindings() {
+  public boolean configureDriverButtonBindings() {
+    String joystick = DriverStation.getJoystickName(0);
+    boolean success = false;
+    switch (joystick) {
+      case "InterLink-X":
+        logger.info("Configuring Interlink Joystick");
+        configureInterlinkDriverButtonBindings();
+        success = true;
+        break;
+      case "FlySky NV14 Joystick":
+        logger.info("Configuring Flysky Joystick");
+        configureFlyskyDriverButtonBindings();
+        success = true;
+        break;
+      default:
+        logger.info("No joystick type {} defined", joystick);
+        break;
+    }
+    return success;
+  }
+
+  private void configureInterlinkDriverButtonBindings() {}
+
+  private void configureFlyskyDriverButtonBindings() {
+
+    FlyskyJoystick flysky = new FlyskyJoystick(driveJoystick);
     driveSubsystem.setDefaultCommand(
 
         // DRIVE
-        new DriveTeleopCommand(driveJoystick, driveSubsystem, robotStateSubsystem));
+        new DriveTeleopCommand(
+            () -> flysky.getFwd(),
+            () -> flysky.getStr(),
+            () -> flysky.getYaw(),
+            driveJoystick,
+            driveSubsystem,
+            robotStateSubsystem));
 
-    new JoystickButton(driveJoystick, InterlinkButton.RESET.id)
+    new JoystickButton(driveJoystick, Button.M_LTRIM_UP.id)
         .onTrue(new ZeroGyroCommand(driveSubsystem));
 
-    new JoystickButton(driveJoystick, InterlinkButton.X.id)
+    new JoystickButton(driveJoystick, Button.M_RTRIM_UP.id)
         .onTrue(new XLockCommand(driveSubsystem));
   }
 

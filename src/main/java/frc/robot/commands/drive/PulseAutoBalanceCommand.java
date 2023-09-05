@@ -1,9 +1,9 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.RobotState.RobotStateSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem.DriveStates;
-import frc.robot.subsystems.RobotState.RobotStateSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -7,11 +7,15 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.constants.DriveConstants;
-import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.RobotState.RobotStateSubsystem;
+import frc.robot.subsystems.drive.DriveSubsystem;
+import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.util.ExpoScale;
 
 public class DriveTeleopCommand extends CommandBase {
+  private DoubleSupplier fwdStick;
+  private DoubleSupplier strStick;
+  private DoubleSupplier yawStick;
   private final Joystick joystick;
   private final DriveSubsystem driveSubsystem;
   private final RobotStateSubsystem robotStateSubsystem;
@@ -31,18 +35,26 @@ public class DriveTeleopCommand extends CommandBase {
   private final SlewRateLimiter yawLimiter = new SlewRateLimiter(DriveConstants.kRateLimitYaw);
 
   public DriveTeleopCommand(
-      Joystick driver, DriveSubsystem driveSubsystem, RobotStateSubsystem robotStateSubsystem) {
+      DoubleSupplier fwdStick,
+      DoubleSupplier strStick,
+      DoubleSupplier yawStick,
+      Joystick driver,
+      DriveSubsystem driveSubsystem,
+      RobotStateSubsystem robotStateSubsystem) {
     addRequirements(driveSubsystem);
     joystick = driver;
+    this.fwdStick = fwdStick;
+    this.strStick = strStick;
+    this.yawStick = yawStick;
     this.driveSubsystem = driveSubsystem;
     this.robotStateSubsystem = robotStateSubsystem;
   }
 
   @Override
   public void execute() {
-    rawValues[0] = joystick.getRawAxis(RobotContainer.Axis.LEFT_X.id);
-    rawValues[1] = joystick.getRawAxis(RobotContainer.Axis.LEFT_Y.id);
-    rawValues[2] = joystick.getRawAxis(RobotContainer.Axis.RIGHT_Y.id);
+    rawValues[0] = fwdStick.getAsDouble();
+    rawValues[1] = strStick.getAsDouble();
+    rawValues[2] = yawStick.getAsDouble();
     double yawPercent = 1.0, movePercent = 1.0;
 
     // adjustedValues =
