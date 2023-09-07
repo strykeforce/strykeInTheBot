@@ -2,10 +2,11 @@ package frc.robot.subsystems.Arm;
 
 import frc.robot.constants.ArmConstants;
 import frc.robot.subsystems.Extendo.ExtendoSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem.GamePiece;
 import frc.robot.subsystems.Wrist.WristSubsystem;
+import frc.robot.subsystems.robotState.RobotStateSubsystem.GamePiece;
 import frc.robot.subsystems.shoulder.ShoulderSubsystem;
 import java.util.Set;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.telemetry.measurable.MeasurableSubsystem;
 import org.strykeforce.telemetry.measurable.Measure;
@@ -15,7 +16,7 @@ public class ArmSubsystem extends MeasurableSubsystem {
   private final ShoulderSubsystem shoulderSubsystem;
   private final ExtendoSubsystem extendoSubsystem;
   private final WristSubsystem wristSubsystem;
-  private org.slf4j.Logger logger = LoggerFactory.getLogger(ArmSubsystem.class);
+  private Logger logger = LoggerFactory.getLogger(ArmSubsystem.class);
   private ArmState currState;
   private ArmState desiredState;
   private ArmState finalState;

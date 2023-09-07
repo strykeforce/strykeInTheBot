@@ -8,7 +8,6 @@ import frc.robot.subsystems.Arm.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem.HandStates;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +26,9 @@ public class RobotStateSubsystem extends SubsystemBase {
   private double currShelfPoseX;
   private boolean isConePickupUpright = true;
 
-  public RobotStateSubsystem(DriveSubsystem driveSubsystem) {
+  public RobotStateSubsystem(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem) {
     this.driveSubsystem = driveSubsystem;
+    this.armSubsystem = armSubsystem;
   }
 
   public Alliance getAllianceColor() {
@@ -133,9 +133,9 @@ public class RobotStateSubsystem extends SubsystemBase {
           break;
       }
       setRobotStateLogged(RobotState.TO_FLOOR_PICKUP);
-    }// else {
-    //   toStow(RobotState.FLOOR_PICKUP);
-    // }
+    } else {
+      toStow(RobotState.FLOOR_PICKUP);
+    }
   }
 
   public void toFloorPickup() {
@@ -148,15 +148,13 @@ public class RobotStateSubsystem extends SubsystemBase {
     if (isStowed()) {
       if (isShelfPieceCube()) {
         armSubsystem.shelf(GamePiece.CUBE);
-        handSubsystem.grabPiece();
       } else {
         armSubsystem.shelf(GamePiece.CONE);
-        handSubsystem.grabPiece();
       }
       setRobotStateLogged(RobotState.TO_AUTO_SHELF);
-    }// else {
-    //   toStow(RobotState.AUTO_SHELF);
-    // }
+    } else {
+      toStow(RobotState.AUTO_SHELF);
+    }
   }
 
   public void toManualShelf() {
@@ -165,59 +163,38 @@ public class RobotStateSubsystem extends SubsystemBase {
     if (isStowed()) {
       if (isShelfPieceCube()) {
         armSubsystem.shelf(GamePiece.CUBE);
-        handSubsystem.grabPiece();
       } else {
         armSubsystem.shelf(GamePiece.CONE);
-        handSubsystem.grabPiece();
       }
       setRobotStateLogged(RobotState.TO_MANUAL_SHELF);
-    }// else {
-    //   toStow(RobotState.MANUAL_SHELF);
-    // }
+    } else {
+      toStow(RobotState.MANUAL_SHELF);
+    }
   }
 
   public void toAutoScore() {
     logger.info("starting auto score");
 
     if (isStowed()) {
-      switch (currentPiece) {
-        case CUBE:
-          switch (targetLevel) {
-            case LOW:
-              armSubsystem.low(GamePiece.CUBE);
-              break;
-            case MID:
-              armSubsystem.mid(GamePiece.CUBE);
-              break;
-            case HIGH:
-              armSubsystem.high(GamePiece.CUBE);
-              break;
-            default:
-              break;
-          }
-          break;
-        case CONE: 
-          switch (targetLevel) {
-            case LOW:
-              armSubsystem.low(GamePiece.CONE);
-              break;
-            case MID:
-              armSubsystem.mid(GamePiece.CONE);
-              break;
-            case HIGH:
-              armSubsystem.high(GamePiece.CONE);
-              break;
-            default:
-              break;
-          }
-          break;
-        case NONE:
-          break;
+      if (currentPiece != GamePiece.NONE) {
+        switch (targetLevel) {
+          case LOW:
+            armSubsystem.low(currentPiece);
+            break;
+          case MID:
+            armSubsystem.mid(currentPiece);
+            break;
+          case HIGH:
+            armSubsystem.high(currentPiece);
+            break;
+          default:
+            break;
+        }
       }
       setRobotStateLogged(RobotState.TO_AUTO_SCORE);
-    }// else {
-    //   toStow(RobotState.AUTO_SCORE);
-    // }
+    } else {
+      toStow(RobotState.AUTO_SCORE);
+    }
   }
 
   public void toManualScore() {
@@ -240,6 +217,7 @@ public class RobotStateSubsystem extends SubsystemBase {
     logger.info("starting autobalance");
 
     if (isStowed()) {
+      // TODO: add autobalance functionality
       setRobotStateLogged(RobotState.TO_AUTOBALANCE);
     } else {
       toStow(RobotState.AUTOBALANCE);
@@ -274,24 +252,21 @@ public class RobotStateSubsystem extends SubsystemBase {
         }
         break;
       case FLOOR_PICKUP:
-        // wait for beam break
+        if (!handSubsystem.hasGamePiece()) break;
         currentPiece = targetPiece;
         toStow();
         break;
       case AUTO_SHELF:
         // wait to drive to correct spot
-        // hand to holding speed
+        if (!handSubsystem.hasGamePiece()) break;
         currentPiece = targetPiece;
         currShelfPoseX = driveSubsystem.getPoseMeters().getX();
-        // arm to shelf wait pos?
         setRobotStateLogged(RobotState.SHELF_WAIT);
         break;
       case MANUAL_SHELF:
-        // wait for beam break
-        // hand to holding speed
+        if (!handSubsystem.hasGamePiece()) break;
         currentPiece = targetPiece;
         currShelfPoseX = driveSubsystem.getPoseMeters().getX();
-        // arm to shelf wait pos?
         setRobotStateLogged(RobotState.SHELF_WAIT);
         break;
       case SHELF_WAIT:
@@ -319,41 +294,39 @@ public class RobotStateSubsystem extends SubsystemBase {
         } else handSubsystem.ejectPiece();
         break;
       case AUTOBALANCE:
+        // TODO: add autobalance functionality
         break;
       case TO_STOW:
-        if (armSubsystem.isFinished()){
-          setRobotStateLogged(RobotState.STOW);
-        }
+        if (!armSubsystem.isFinished()) break;
+        setRobotStateLogged(RobotState.STOW);
         break;
       case TO_FLOOR_PICKUP:
-        if (armSubsystem.isFinished()){
-          handSubsystem.grabPiece();
-          setRobotStateLogged(RobotState.FLOOR_PICKUP);
-        }
+        if (!armSubsystem.isFinished()) break;
+        handSubsystem.grabPiece();
+        setRobotStateLogged(RobotState.FLOOR_PICKUP);
         break;
       case TO_AUTO_SHELF:
-        if (armSubsystem.isFinished()){
-          // driveSubsystem.driveToPose();
-          setRobotStateLogged(RobotState.AUTO_SHELF);
-        }
+        if (!armSubsystem.isFinished()) break;
+        handSubsystem.grabPiece();
+        // driveSubsystem.driveToPose();
+        setRobotStateLogged(RobotState.AUTO_SHELF);
         break;
       case TO_MANUAL_SHELF:
-        if (armSubsystem.isFinished()){
-          setRobotStateLogged(RobotState.MANUAL_SHELF);
-        }
+        if (!armSubsystem.isFinished()) break;
+        handSubsystem.grabPiece();
+        setRobotStateLogged(RobotState.MANUAL_SHELF);
         break;
       case TO_AUTO_SCORE:
-        if (armSubsystem.isFinished()){
-          // drive to pos
-          setRobotStateLogged(RobotState.AUTO_SCORE);
-        }
+        if (!armSubsystem.isFinished()) break;
+        // drive to pos
+        setRobotStateLogged(RobotState.AUTO_SCORE);
         break;
       case TO_MANUAL_SCORE:
-        if (armSubsystem.isFinished()){
-          setRobotStateLogged(RobotState.MANUAL_SCORE);
-        }
+        if (!armSubsystem.isFinished()) break;
+        setRobotStateLogged(RobotState.MANUAL_SCORE);
         break;
       case TO_AUTOBALANCE:
+        // TODO: add autobalance functionality
         break;
       default:
         logger.warn("{} is an invalid robot state!", currRobotState);

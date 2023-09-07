@@ -36,6 +36,6 @@ public class ArmConstants {
 
   public static final double kYoshiPos = 0;
   public static final double midShoulderpastPointTicks = 0;
-  
+
   public static final double kShelfMove = 0.5; // meters
 }

@@ -59,6 +59,10 @@ public class HandSubsystem extends MeasurableSubsystem {
     return hasCubeStableCounts > HandConstants.kHasCubeStableCounts;
   }
 
+  public boolean hasGamePiece() {
+    return hasCone() || hasCube();
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
