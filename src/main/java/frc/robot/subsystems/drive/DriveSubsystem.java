@@ -7,7 +7,7 @@ import org.strykeforce.telemetry.measurable.MeasurableSubsystem;
 import org.strykeforce.telemetry.measurable.Measure;
 
 public class DriveSubsystem extends MeasurableSubsystem {
-  public Rotation2d getGyroAngle() {
+  public Rotation2d getGyroRotation2d() {
     return new Rotation2d();
   }
 

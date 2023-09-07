@@ -84,14 +84,12 @@ public class RobotStateSubsystem extends SubsystemBase {
   }
 
   public boolean isShelfPieceCube() {
-    // FIXME needs correct calculation to get whether the robot should goto the shelf cube or cone
-    // position based on gyro rotation
+    // FIXME maybe flip isBlueAlliance boolean
+    double angle = driveSubsystem.getGyroRotation2d().getRadians();
     if (isBlueAlliance()) {
-      return ((driveSubsystem.getGyroAngle().getRadians() > 0)
-          && (driveSubsystem.getGyroAngle().getRadians() < Math.PI));
+      return (angle > Math.PI * -0.5) && (angle < Math.PI * 0.5);
     } else {
-      return ((driveSubsystem.getGyroAngle().getRadians() > Math.PI)
-          && (driveSubsystem.getGyroAngle().getRadians() < Math.PI * 2));
+      return (angle < Math.PI * -0.5) || (angle > Math.PI * 0.5);
     }
   }
 
