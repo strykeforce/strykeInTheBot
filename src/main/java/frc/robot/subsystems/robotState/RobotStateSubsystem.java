@@ -211,15 +211,19 @@ public class RobotStateSubsystem extends SubsystemBase {
     setRobotStateLogged(RobotState.RELEASE_GAMEPIECE);
   }
 
-  public void toAutobalance() {
+  public void toAutobalance(boolean isOnAllianceSide) {
     logger.info("starting autobalance");
-
+    // FIXME: HANDLE ON ALLIANCE SIDE
     if (isStowed()) {
       // TODO: add autobalance functionality
       setRobotStateLogged(RobotState.TO_AUTOBALANCE);
     } else {
       toStow(RobotState.AUTOBALANCE);
     }
+  }
+
+  public void toPulseAutoBalance(boolean isOnAllianceSide) {
+    // FIXME: IMPLEMENT THIS METHOD
   }
 
   @Override
@@ -243,7 +247,8 @@ public class RobotStateSubsystem extends SubsystemBase {
             toManualScore();
             break;
           case AUTOBALANCE:
-            toAutobalance();
+            // FIXME: logic is broken...
+            toAutobalance(false);
             break;
           default:
             break;
