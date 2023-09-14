@@ -14,11 +14,18 @@ import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
 import frc.robot.controllers.FlyskyJoystick;
 import frc.robot.controllers.FlyskyJoystick.Button;
+import frc.robot.subsystems.Arm.ArmSubsystem;
+import frc.robot.subsystems.Extendo.ExtendoIOTalon;
+import frc.robot.subsystems.Extendo.ExtendoSubsystem;
 import frc.robot.subsystems.RobotState.RobotStateSubsystem;
+import frc.robot.subsystems.Wrist.WristEncoderIOCanandcoder;
+import frc.robot.subsystems.Wrist.WristIOTalon;
+import frc.robot.subsystems.Wrist.WristSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.Swerve;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
+import frc.robot.subsystems.robotState.RobotStateSubsystem;
 import frc.robot.subsystems.shoulder.ShoulderSubsystem;
 import frc.robot.subsystems.shoulder.ShoulderTalonIO;
 import org.slf4j.Logger;
@@ -32,11 +39,16 @@ public class RobotContainer {
 
   // Subsystems
   private ExampleSubsystem exampleSubsystem;
+  private DriveSubsystem driveSubsystem;
   private ShoulderSubsystem shoulder;
+  private ExtendoSubsystem extendoSubsystem;
+  private WristSubsystem wristSubsystem;
+  private ArmSubsystem armSubsystem;
+  private RobotStateSubsystem robotStateSubsystem;
   private DriveSubsystem driveSubsystem;
   private RobotStateSubsystem robotStateSubsystem;
 
-  // OI Objects
+  // IO Objects
   private final Joystick driveJoystick = new Joystick(0);
 
   private Logger logger;
@@ -44,9 +56,14 @@ public class RobotContainer {
   public RobotContainer() {
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
+    driveSubsystem = new DriveSubsystem();
     shoulder = new ShoulderSubsystem(new ShoulderTalonIO());
     driveSubsystem = new DriveSubsystem(new Swerve(telemetryService));
     configureDriverButtonBindings();
+    extendoSubsystem = new ExtendoSubsystem(new ExtendoIOTalon());
+    wristSubsystem = new WristSubsystem(new WristIOTalon(), new WristEncoderIOCanandcoder());
+    armSubsystem = new ArmSubsystem(shoulder, extendoSubsystem, wristSubsystem);
+    robotStateSubsystem = new RobotStateSubsystem(driveSubsystem, armSubsystem);
     configureBindings();
   }
 
