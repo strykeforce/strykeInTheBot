@@ -17,7 +17,6 @@ import frc.robot.controllers.FlyskyJoystick.Button;
 import frc.robot.subsystems.Arm.ArmSubsystem;
 import frc.robot.subsystems.Extendo.ExtendoIOTalon;
 import frc.robot.subsystems.Extendo.ExtendoSubsystem;
-import frc.robot.subsystems.RobotState.RobotStateSubsystem;
 import frc.robot.subsystems.Wrist.WristEncoderIOCanandcoder;
 import frc.robot.subsystems.Wrist.WristIOTalon;
 import frc.robot.subsystems.Wrist.WristSubsystem;
@@ -45,8 +44,6 @@ public class RobotContainer {
   private WristSubsystem wristSubsystem;
   private ArmSubsystem armSubsystem;
   private RobotStateSubsystem robotStateSubsystem;
-  private DriveSubsystem driveSubsystem;
-  private RobotStateSubsystem robotStateSubsystem;
 
   // IO Objects
   private final Joystick driveJoystick = new Joystick(0);
@@ -56,7 +53,6 @@ public class RobotContainer {
   public RobotContainer() {
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
-    driveSubsystem = new DriveSubsystem();
     shoulder = new ShoulderSubsystem(new ShoulderTalonIO());
     driveSubsystem = new DriveSubsystem(new Swerve(telemetryService));
     configureDriverButtonBindings();

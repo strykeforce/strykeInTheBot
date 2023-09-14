@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants.DriveConstants;
-import frc.robot.subsystems.RobotState.RobotStateSubsystem;
+import frc.robot.subsystems.robotState.RobotStateSubsystem;
 import frc.robot.subsystems.timestampedpose.TimestampedPose;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -81,6 +81,7 @@ public class DriveSubsystem extends MeasurableSubsystem {
   private TimestampedPose timestampedPose =
       new TimestampedPose(RobotController.getFPGATime(), new Pose2d());
 
+  // FIXME: DRIVE SUBSYSTEM MAKES SWERVE DOESN'T TAKE IN AS IMPORT
   public DriveSubsystem(Swerve swerve) {
     this.swerve = swerve;
     this.swerveDrive = swerve.getSwerveDrive();
@@ -166,6 +167,10 @@ public class DriveSubsystem extends MeasurableSubsystem {
   public void resetOdometry(Pose2d pose) {
     swerve.resetOdometry(pose);
     logger.info("reset odometry with: {}", pose);
+  }
+
+  public Pose2d getPoseMeters() {
+    return swerve.getPoseMeters();
   }
 
   public void resetHolonomicController() {
