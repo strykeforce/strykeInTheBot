@@ -1,22 +1,29 @@
-package frc.robot.subsystems.Wrist;
+package frc.robot.subsystems.extendo;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import frc.robot.constants.WristConstants;
+import frc.robot.constants.ExtendoConstants;
 import org.strykeforce.telemetry.TelemetryService;
 
-public class WristIOTalon implements WristIO {
+public class ExtendoIOTalon implements ExtendoIO {
 
   private TalonFX Talon;
+  private TalonFX Talon2;
 
-  public WristIOTalon() {
-    Talon = new TalonFX(WristConstants.kWristTalonId);
+  public ExtendoIOTalon() {
+    Talon = new TalonFX(ExtendoConstants.kExtendoTalonMainId);
+    Talon2 = new TalonFX(ExtendoConstants.kExtendoTalonFollowId);
     Talon.configFactoryDefault();
-    Talon.configAllSettings(WristConstants.getWristTalonConfig());
-    Talon.configSupplyCurrentLimit(WristConstants.getWristSupplyLimitConfig());
+    Talon.configAllSettings(ExtendoConstants.getExtendoTalonConfig());
+    Talon.configSupplyCurrentLimit(ExtendoConstants.getExtendoSupplyLimitConfig());
     Talon.setNeutralMode(NeutralMode.Brake);
+    Talon2.configFactoryDefault();
+    Talon2.configAllSettings(ExtendoConstants.getExtendoTalonConfig());
+    Talon2.configSupplyCurrentLimit(ExtendoConstants.getExtendoSupplyLimitConfig());
+    Talon2.setNeutralMode(NeutralMode.Brake);
+    Talon2.follow(Talon);
   }
 
   @Override
@@ -41,7 +48,7 @@ public class WristIOTalon implements WristIO {
   }
 
   @Override
-  public void updateInputs(WristIOInputs inputs) {
+  public void updateInputs(ExtendoIOInputs inputs) {
     inputs.positionTicks = Talon.getSelectedSensorPosition();
     inputs.absoluteTicks = Talon.getSensorCollection().getIntegratedSensorAbsolutePosition();
     inputs.velocityTicksPer100ms = Talon.getSelectedSensorVelocity();

@@ -1,6 +1,9 @@
-package frc.robot.subsystems.Wrist;
+package frc.robot.subsystems.wrist;
 
 import frc.robot.constants.WristConstants;
+import frc.robot.subsystems.wrist.WristEncoderIOInputsAutoLogged;
+import frc.robot.subsystems.wrist.WristIOInputsAutoLogged;
+
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

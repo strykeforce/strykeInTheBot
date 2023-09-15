@@ -1,8 +1,8 @@
-package frc.robot.subsystems.Arm;
+package frc.robot.subsystems.arm;
 
 import frc.robot.constants.ArmConstants;
-import frc.robot.subsystems.Extendo.ExtendoSubsystem;
-import frc.robot.subsystems.Wrist.WristSubsystem;
+import frc.robot.subsystems.extendo.ExtendoSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.robotState.RobotStateSubsystem.GamePiece;
 import frc.robot.subsystems.shoulder.ShoulderSubsystem;
 import java.util.Set;

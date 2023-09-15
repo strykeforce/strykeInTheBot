@@ -63,6 +63,10 @@ public class HandSubsystem extends MeasurableSubsystem {
     return hasCone() || hasCube();
   }
 
+  public boolean isFinished() {
+    return currState == HandStates.IDLE;
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
