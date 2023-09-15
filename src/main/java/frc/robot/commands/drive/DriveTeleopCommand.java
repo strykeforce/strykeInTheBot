@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.constants.DriveConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.util.ExpoScale;
 
@@ -18,7 +18,7 @@ public class DriveTeleopCommand extends CommandBase {
   private DoubleSupplier yawStick;
   private final Joystick joystick;
   private final DriveSubsystem driveSubsystem;
-  private final RobotStateSubsystem robotStateSubsystem;
+  private final MinimalRobotStateSubsystem robotStateSubsystem;
   private double[] rawValues = new double[3];
   private final ExpoScale expoScaleYaw =
       new ExpoScale(DriveConstants.kDeadbandAllStick, DriveConstants.kExpoScaleYawFactor);
@@ -40,7 +40,7 @@ public class DriveTeleopCommand extends CommandBase {
       DoubleSupplier yawStick,
       Joystick driver,
       DriveSubsystem driveSubsystem,
-      RobotStateSubsystem robotStateSubsystem) {
+      MinimalRobotStateSubsystem robotStateSubsystem) {
     addRequirements(driveSubsystem);
     joystick = driver;
     this.fwdStick = fwdStick;

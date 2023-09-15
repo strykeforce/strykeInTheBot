@@ -12,19 +12,15 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.drive.DriveTeleopCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
+import frc.robot.commands.robotState.FloorPickupCommand;
 import frc.robot.controllers.FlyskyJoystick;
 import frc.robot.controllers.FlyskyJoystick.Button;
-import frc.robot.subsystems.Arm.ArmSubsystem;
-import frc.robot.subsystems.Extendo.ExtendoIOTalon;
-import frc.robot.subsystems.Extendo.ExtendoSubsystem;
-import frc.robot.subsystems.Wrist.WristEncoderIOCanandcoder;
-import frc.robot.subsystems.Wrist.WristIOTalon;
-import frc.robot.subsystems.Wrist.WristSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.Swerve;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.GamePiece;
 import frc.robot.subsystems.shoulder.MinimalShoulderFalconIO;
 import frc.robot.subsystems.shoulder.MinimalShoulderSubsystem;
 import org.slf4j.Logger;
@@ -52,8 +48,8 @@ public class RobotContainer {
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
     shoulder = new MinimalShoulderSubsystem(new MinimalShoulderFalconIO());
     driveSubsystem = new DriveSubsystem(new Swerve(telemetryService));
-    configureDriverButtonBindings();
     robotStateSubsystem = new MinimalRobotStateSubsystem(driveSubsystem, shoulder);
+    configureDriverButtonBindings();
     configureBindings();
   }
 
@@ -101,6 +97,8 @@ public class RobotContainer {
 
     new JoystickButton(driveJoystick, Button.M_RTRIM_UP.id)
         .onTrue(new XLockCommand(driveSubsystem));
+
+    new JoystickButton(driveJoystick, Button.SWA.id).onTrue(new FloorPickupCommand(robotStateSubsystem, GamePiece.CUBE));
   }
 
   private void configTelemetry() {

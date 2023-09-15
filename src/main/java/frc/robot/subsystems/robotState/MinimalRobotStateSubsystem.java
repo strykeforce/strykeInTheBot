@@ -23,7 +23,6 @@ public class MinimalRobotStateSubsystem extends SubsystemBase {
   private TargetLevel targetLevel = TargetLevel.NONE;
   private TargetCol targetCol = TargetCol.NONE;
   private double currShelfPoseX;
-  private boolean isConePickupUpright = true;
 
   public MinimalRobotStateSubsystem(
       DriveSubsystem driveSubsystem, MinimalShoulderSubsystem shoulderSubsystem) {
@@ -49,6 +48,10 @@ public class MinimalRobotStateSubsystem extends SubsystemBase {
       logger.info("{} -> {}", this.currRobotState, robotState);
       this.currRobotState = robotState;
     }
+  }
+
+  public RobotState getRobotState() {
+    return currRobotState;
   }
 
   public GamePiece getCurrentPiece() {
@@ -189,8 +192,6 @@ public class MinimalRobotStateSubsystem extends SubsystemBase {
         break;
       case TO_MANUAL_SCORE:
         if (!shoulderSubsystem.isFinished()) break;
-        handSubsystem.ejectPiece(currentPiece, targetLevel);
-        if (!handSubsystem.isFinished()) break;
         setRobotStateLogged(RobotState.MANUAL_SCORE);
         break;
       case MANUAL_SUBSTATION:
