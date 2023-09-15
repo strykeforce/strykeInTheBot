@@ -81,9 +81,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
   private TimestampedPose timestampedPose =
       new TimestampedPose(RobotController.getFPGATime(), new Pose2d());
 
-  // FIXME: DRIVE SUBSYSTEM MAKES SWERVE DOESN'T TAKE IN AS IMPORT
-  public DriveSubsystem(Swerve swerve) {
-    this.swerve = swerve;
+  public DriveSubsystem() {
+    this.swerve = new Swerve();
     this.swerveDrive = swerve.getSwerveDrive();
 
     // Setup Holonomic Controller

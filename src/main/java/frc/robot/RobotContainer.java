@@ -21,7 +21,6 @@ import frc.robot.subsystems.Wrist.WristEncoderIOCanandcoder;
 import frc.robot.subsystems.Wrist.WristIOTalon;
 import frc.robot.subsystems.Wrist.WristSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.drive.Swerve;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
 import frc.robot.subsystems.robotState.RobotStateSubsystem;
@@ -54,7 +53,7 @@ public class RobotContainer {
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
     shoulder = new ShoulderSubsystem(new ShoulderTalonIO());
-    driveSubsystem = new DriveSubsystem(new Swerve(telemetryService));
+    driveSubsystem = new DriveSubsystem();
     configureDriverButtonBindings();
     extendoSubsystem = new ExtendoSubsystem(new ExtendoIOTalon());
     wristSubsystem = new WristSubsystem(new WristIOTalon(), new WristEncoderIOCanandcoder());
@@ -113,6 +112,7 @@ public class RobotContainer {
     exampleSubsystem.registerWith(telemetryService);
     shoulder.registerWith(telemetryService);
     driveSubsystem.registerWith(telemetryService);
+
     telemetryService.start();
   }
 

@@ -36,7 +36,7 @@ public class Swerve implements SwerveIO {
 
   private AHRS ahrs;
 
-  public Swerve(TelemetryService telemetryService) {
+  public Swerve() {
     var moduleBuilder =
         new TalonSwerveModule.Builder()
             .driveGearRatio(DriveConstants.kDriveGearRatio)
@@ -57,7 +57,7 @@ public class Swerve implements SwerveIO {
       swerveModules[i] =
           moduleBuilder.azimuthTalon(azimuthTalon).wheelLocationMeters(wheelLocations[i]).build();
 
-      telemetryService.register(azimuthTalon);
+      // telemetryService.register(azimuthTalon);
 
       var driveTalon = new TalonFX(i + 10);
       driveTalon.configFactoryDefault(Constants.kTalonConfigTimeout);
@@ -67,7 +67,8 @@ public class Swerve implements SwerveIO {
       driveTalon.setNeutralMode(NeutralMode.Brake);
       swerveModules[i] =
           moduleBuilder.driveTalon(driveTalon).wheelLocationMeters(wheelLocations[i]).build();
-      telemetryService.register(driveTalon);
+
+      // telemetryService.register(driveTalon);
 
       // var driveTalonFollower = new TalonFX(i + 14);
       // driveTalonFollower.configFactoryDefault(Constants.kTalonConfigTimeout);
