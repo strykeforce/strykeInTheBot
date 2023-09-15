@@ -199,6 +199,7 @@ public class RobotStateSubsystem extends SubsystemBase {
     logger.info("starting manual score");
 
     if (isStowed()) {
+
       setRobotStateLogged(RobotState.TO_MANUAL_SCORE);
     } else {
       toStow(RobotState.MANUAL_SCORE);
@@ -289,7 +290,7 @@ public class RobotStateSubsystem extends SubsystemBase {
         if (handSubsystem.getState() == HandStates.IDLE) {
           currentPiece = GamePiece.NONE;
           toStow();
-        } else handSubsystem.ejectPiece();
+        } else handSubsystem.ejectPiece(currentPiece, targetLevel);
         break;
       case AUTOBALANCE:
         // TODO: add autobalance functionality

@@ -8,7 +8,7 @@ import org.strykeforce.telemetry.TelemetryService;
 public interface MinimalShoulderIO {
 
   @AutoLog
-  public static class ShoulderIOInputs {
+  public static class MinimalShoulderIOInputs {
     public double positionTicks = 0.0;
     public double absoluteTicks = 0.0;
     public double velocityTicksPer100ms = 0.0;
@@ -20,7 +20,7 @@ public interface MinimalShoulderIO {
 
   public default void registerWith(TelemetryService telemetryService) {}
 
-  public default void updateInputs(ShoulderIOInputs inputs) {}
+  public default void updateInputs(MinimalShoulderIOInputs inputs) {}
 
   public default void setSelectedSensorPos(double positionTicks) {}
 
@@ -30,12 +30,13 @@ public interface MinimalShoulderIO {
 
   public default void disableOutput() {}
 
-public void configSoftLimitEnable(boolean b);
+  public void configSoftLimitEnable(boolean b);
 
-public void configStatorCurrentLimit(StatorCurrentLimitConfiguration elevStatorCurrentLimitConfiguration);
+  public void configStatorCurrentLimit(
+      StatorCurrentLimitConfiguration elevStatorCurrentLimitConfiguration);
 
-public double getSelectedSensorPosition();
+  public double getSelectedSensorPosition();
 
-public void configSupplyCurrentLimit(SupplyCurrentLimitConfiguration shoulderSupplyLimitConfig,
-        int ktalonconfigtimeout);
+  public void configSupplyCurrentLimit(
+      SupplyCurrentLimitConfiguration shoulderSupplyLimitConfig, int ktalonconfigtimeout);
 }

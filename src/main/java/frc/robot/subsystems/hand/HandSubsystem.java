@@ -1,6 +1,9 @@
 package frc.robot.subsystems.hand;
 
 import frc.robot.constants.HandConstants;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.GamePiece;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.TargetLevel;
+import frc.robot.subsystems.robotState.RobotStateSubsystem;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +21,8 @@ public class HandSubsystem extends MeasurableSubsystem {
   private int hasConeStableCounts;
   private int hasCubeStableCounts;
   private int ejectStableCounts = 0;
+  private double ejectSpeed;
+  private int ejectCountsNeeded;
 
   public HandSubsystem(HandIO io) {
     this.io = io;
@@ -32,7 +37,90 @@ public class HandSubsystem extends MeasurableSubsystem {
     currState = HandStates.WAITING;
   }
 
-  public void ejectPiece() {
+  public void ejectPiece(GamePiece gamePiece, TargetLevel targetLevel) {
+
+    if (gamePiece == GamePiece.CUBE) {
+      switch (targetLevel) {
+        case LOW:
+          ejectSpeed = HandConstants.kHandEjectCubeSpeedL1;
+          ejectCountsNeeded = HandConstants.kHandEjectCubeCountsL1;
+          break;
+        case MID:
+          ejectSpeed = HandConstants.kHandEjectCubeSpeedL2;
+          ejectCountsNeeded = HandConstants.kHandEjectCubeCountsL2;
+          break;
+        case HIGH:
+          ejectSpeed = HandConstants.kHandEjectCubeSpeedL3;
+          ejectCountsNeeded = HandConstants.kHandEjectCubeCountsL3;
+          break;
+        case NONE:
+          logger.info("Target Level is NONE");
+          break;
+      }
+    } else if (gamePiece == GamePiece.CONE) {
+      switch (targetLevel) {
+        case LOW:
+          ejectSpeed = HandConstants.kHandEjectConeSpeedL1;
+          ejectCountsNeeded = HandConstants.kHandEjectConeCountsL1;
+          break;
+        case MID:
+          ejectSpeed = HandConstants.kHandEjectConeSpeedL2;
+          ejectCountsNeeded = HandConstants.kHandEjectConeCountsL2;
+          break;
+        case HIGH:
+          // ejectSpeed = HandConstants.kHandEjectConeSpeedL3;
+          // ejectLoopCounts = HandConstants.kHandEjectConeCountsL3;
+          break;
+        case NONE:
+          logger.info("Target Level is NONE");
+          break;
+      }
+    }
+    logger.info("{} -> EJECT", currState);
+    currState = HandStates.EJECT;
+  }
+
+  // For compatability with the original RobotStateSubsystem
+  public void ejectPiece(
+      RobotStateSubsystem.GamePiece gamePiece, RobotStateSubsystem.TargetLevel targetLevel) {
+
+    if (gamePiece == RobotStateSubsystem.GamePiece.CUBE) {
+      switch (targetLevel) {
+        case LOW:
+          ejectSpeed = HandConstants.kHandEjectCubeSpeedL1;
+          ejectCountsNeeded = HandConstants.kHandEjectCubeCountsL1;
+          break;
+        case MID:
+          ejectSpeed = HandConstants.kHandEjectCubeSpeedL2;
+          ejectCountsNeeded = HandConstants.kHandEjectCubeCountsL2;
+          break;
+        case HIGH:
+          ejectSpeed = HandConstants.kHandEjectCubeSpeedL3;
+          ejectCountsNeeded = HandConstants.kHandEjectCubeCountsL3;
+          break;
+        case NONE:
+          logger.info("Target Level is NONE");
+          break;
+      }
+    } else if (gamePiece == RobotStateSubsystem.GamePiece.CONE) {
+      switch (targetLevel) {
+        case LOW:
+          ejectSpeed = HandConstants.kHandEjectConeSpeedL1;
+          ejectCountsNeeded = HandConstants.kHandEjectConeCountsL1;
+          break;
+        case MID:
+          ejectSpeed = HandConstants.kHandEjectConeSpeedL2;
+          ejectCountsNeeded = HandConstants.kHandEjectConeCountsL2;
+          break;
+        case HIGH:
+          // ejectSpeed = HandConstants.kHandEjectConeSpeedL3;
+          // ejectLoopCounts = HandConstants.kHandEjectConeCountsL3;
+          break;
+        case NONE:
+          logger.info("Target Level is NONE");
+          break;
+      }
+    }
     logger.info("{} -> EJECT", currState);
     currState = HandStates.EJECT;
   }
@@ -63,6 +151,10 @@ public class HandSubsystem extends MeasurableSubsystem {
     return hasCone() || hasCube();
   }
 
+  public boolean isFinished() {
+    return currState == HandStates.IDLE;
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
@@ -90,8 +182,8 @@ public class HandSubsystem extends MeasurableSubsystem {
         io.setPct(HandConstants.kCubeSpeed);
         break;
       case EJECT:
-        if (ejectStableCounts < HandConstants.kEjectStableCounts) {
-          io.setPct(-HandConstants.kWaitingSpeed);
+        if (ejectStableCounts < ejectCountsNeeded) {
+          io.setPct(ejectSpeed);
           ejectStableCounts++;
         } else {
           ejectStableCounts = 0;

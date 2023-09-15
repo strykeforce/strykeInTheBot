@@ -32,7 +32,8 @@ public class MinimalShoulderFalconIO implements MinimalShoulderIO {
     shoulder.configReverseSoftLimitEnable(enable);
   }
 
-  public void configStatorCurrentLimit(StatorCurrentLimitConfiguration statorCurrentLimitConfiguration) {
+  public void configStatorCurrentLimit(
+      StatorCurrentLimitConfiguration statorCurrentLimitConfiguration) {
     shoulder.configStatorCurrentLimit(statorCurrentLimitConfiguration);
   }
 
@@ -64,7 +65,7 @@ public class MinimalShoulderFalconIO implements MinimalShoulderIO {
   }
 
   @Override
-  public void updateInputs(ShoulderIOInputs inputs) {
+  public void updateInputs(MinimalShoulderIOInputs inputs) {
     inputs.positionTicks = shoulder.getSelectedSensorPosition();
     inputs.absoluteTicks = shoulder.getSensorCollection().getIntegratedSensorAbsolutePosition();
     inputs.velocityTicksPer100ms = shoulder.getSelectedSensorVelocity();
@@ -82,9 +83,8 @@ public class MinimalShoulderFalconIO implements MinimalShoulderIO {
   }
 
   @Override
-  public void configSupplyCurrentLimit(SupplyCurrentLimitConfiguration shoulderSupplyLimitConfig,
-      int ktalonconfigtimeout) {
+  public void configSupplyCurrentLimit(
+      SupplyCurrentLimitConfiguration shoulderSupplyLimitConfig, int ktalonconfigtimeout) {
     shoulder.configSupplyCurrentLimit(shoulderSupplyLimitConfig, ktalonconfigtimeout);
-
   }
 }
