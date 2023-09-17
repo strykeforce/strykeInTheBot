@@ -6,21 +6,21 @@ import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.GamePiece;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.RobotState;
 
 public class FloorPickupCommand extends CommandBase {
-    private MinimalRobotStateSubsystem robotStateSubsystem;
-    private GamePiece gamePiece;
+  private MinimalRobotStateSubsystem robotStateSubsystem;
+  private GamePiece gamePiece;
 
-    public FloorPickupCommand(MinimalRobotStateSubsystem robotStateSubsystem, GamePiece gamePiece) {
-        this.robotStateSubsystem = robotStateSubsystem;
-        this.gamePiece = gamePiece;
-    }
+  public FloorPickupCommand(MinimalRobotStateSubsystem robotStateSubsystem, GamePiece gamePiece) {
+    this.robotStateSubsystem = robotStateSubsystem;
+    this.gamePiece = gamePiece;
+  }
 
-    @Override
-    public void initialize() {
-        robotStateSubsystem.toFloorPickup(gamePiece);
-    }
+  @Override
+  public void initialize() {
+    robotStateSubsystem.toFloorPickup(gamePiece);
+  }
 
-    @Override
-    public boolean isFinished() {
-        return robotStateSubsystem.getRobotState() == RobotState.STOW;
-    }
+  @Override
+  public boolean isFinished() {
+    return robotStateSubsystem.getRobotState() == RobotState.STOW;
+  }
 }

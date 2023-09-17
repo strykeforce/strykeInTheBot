@@ -98,7 +98,8 @@ public class RobotContainer {
     new JoystickButton(driveJoystick, Button.M_RTRIM_UP.id)
         .onTrue(new XLockCommand(driveSubsystem));
 
-    new JoystickButton(driveJoystick, Button.SWA.id).onTrue(new FloorPickupCommand(robotStateSubsystem, GamePiece.CUBE));
+    new JoystickButton(driveJoystick, Button.SWA.id)
+        .onTrue(new FloorPickupCommand(robotStateSubsystem, GamePiece.CUBE));
   }
 
   private void configTelemetry() {
