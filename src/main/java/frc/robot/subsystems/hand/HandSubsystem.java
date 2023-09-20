@@ -1,5 +1,6 @@
 package frc.robot.subsystems.hand;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.constants.HandConstants;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.GamePiece;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.TargetLevel;
@@ -23,6 +24,7 @@ public class HandSubsystem extends MeasurableSubsystem {
   private int ejectStableCounts = 0;
   private double ejectSpeed;
   private int ejectCountsNeeded;
+  private DigitalInput gamePieceDI = new DigitalInput(0);
 
   public HandSubsystem(HandIO io) {
     this.io = io;
@@ -141,7 +143,7 @@ public class HandSubsystem extends MeasurableSubsystem {
   }
 
   public boolean hasCube() {
-    if (inputs.isRevLimitSwitchClosed) {
+    if (!gamePieceDI.get()) {
       hasCubeStableCounts++;
     } else hasCubeStableCounts = 0;
     return hasCubeStableCounts > HandConstants.kHasCubeStableCounts;
@@ -203,7 +205,9 @@ public class HandSubsystem extends MeasurableSubsystem {
   }
 
   public Set<Measure> getMeasures() {
-    return Set.of(new Measure("State", () -> getState().ordinal()));
+    return Set.of(
+        new Measure("State", () -> getState().ordinal()),
+        new Measure("Digital Input", () -> gamePieceDI.get() ? 1 : 0));
   }
 
   @Override

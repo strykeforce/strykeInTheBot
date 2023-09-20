@@ -91,7 +91,7 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
 
   public void zero() {
     io.configSoftLimitEnable(false);
-    io.configStatorCurrentLimit(MinimalShoulderConstants.getElevStatorCurrentLimitConfiguration());
+    io.configStatorCurrentLimit(MinimalShoulderConstants.getShoulderZeroStatorLimitConfig());
     io.setPct(MinimalShoulderConstants.kZeroSpeed);
     logger.info("Minimal Shoulder is zeroing");
     currState = ShoulderStates.ZEROING;
@@ -141,7 +141,7 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
         break;
 
       case ZEROING:
-        if (Math.abs(io.getSelectedSensorPosition())
+        if (Math.abs(io.getSelectedSensorVelocity())
             < MinimalShoulderConstants.kZeroTargetSpeedTicksPer100ms) {
           zeroStableCounts++;
         } else {
@@ -149,7 +149,6 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
         }
 
         if (zeroStableCounts > MinimalShoulderConstants.kZeroStableCounts) {
-          io.setPct(0);
           io.setSelectedSensorPos(0.0);
 
           io.setPct(0);

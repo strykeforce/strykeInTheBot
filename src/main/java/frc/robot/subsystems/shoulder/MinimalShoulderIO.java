@@ -37,6 +37,8 @@ public interface MinimalShoulderIO {
 
   public double getSelectedSensorPosition();
 
+  public double getSelectedSensorVelocity();
+
   public void configSupplyCurrentLimit(
       SupplyCurrentLimitConfiguration shoulderSupplyLimitConfig, int ktalonconfigtimeout);
 }

@@ -15,59 +15,55 @@ public final class MinimalShoulderConstants {
   public static double kZeroTicks;
 
   // Shoulder scoring
-  public static final double kShoulderCubeL1 = 0;
-  public static final double kShoulderCubeL2 = 0;
-  public static final double kShoulderCubeL3 = 0;
+  public static final double kShoulderCubeL1 = -2_000;
+  public static final double kShoulderCubeL2 = -78_000; // -14_929
+  public static final double kShoulderCubeL3 = -73_000; // -25_000
 
-  public static final double kShoulderConeL1 = 0;
-  public static final double kShoulderConeL2 = 0;
+  public static final double kShoulderConeL1 = -2_000;
+  public static final double kShoulderConeL2 = -13_725;
 
-  public static final double kShoulderMaxFwd = 2_000;
-  public static final double kShoulderMaxRev = -1_000;
+  public static final double kShoulderMaxFwd = -1_000;
+  public static final double kShoulderMaxRev = -120_000;
   public static final double kShoulderZeroTicks = 550;
 
   public static final double kShoulderHoldPos = 500;
   public static final double kShoulderOpenPos = 1_800;
-  public static final double kShoulderCloseEnough = 100;
 
   public static final double kShoulderGearRatio = 1;
 
-  public static final double kCloseEnough = 0; // FIXME
+  public static final double kCloseEnough = 640;
 
-  public static final int kZeroTargetSpeedTicksPer100ms = 10; // FIXME
+  public static final int kZeroTargetSpeedTicksPer100ms = 5; // FIXME
 
-  public static final int kZeroStableCounts = 10; // FIXME
+  public static final int kZeroStableCounts = 2; // FIXME
 
   public static final int kTalonConfigTimeout = 10; // FIXME
 
-  public static final double kZeroSpeed = 0; // FIXME
+  public static final double kZeroSpeed = 0.2; // FIXME
 
-  public static final double kStowShoulderPos = 0; // FIXME
+  public static final double kStowShoulderPos = -2_000; // FIXME
 
-  public static final double kShelfCubeShoulderPos = 0;
+  public static final double kShelfCubeShoulderPos = -9_949;
 
-  public static final double kShelfConeShoulderPos = 0;
+  public static final double kShelfConeShoulderPos = -9_949;
 
-  public static final double kFloorPickupCube = 0;
+  public static final double kFloorPickupCube = -120_000;
 
-  public static final double kFloorPickupCone = 0;
-
-  public static StatorCurrentLimitConfiguration getElevStatorCurrentLimitConfiguration() {
-    return new StatorCurrentLimitConfiguration(true, 8.0, 8.0, 0.001);
-  }
+  public static final double kFloorPickupCone = -100_000;
 
   public static TalonFXConfiguration getShoulderFalconConfig() {
     TalonFXConfiguration falconConfig = new TalonFXConfiguration();
 
     // PID Configs
-    falconConfig.slot0.kP = 2.0;
-    falconConfig.slot0.kI = 0.0;
-    falconConfig.slot0.kD = 50.0;
-    falconConfig.slot0.kF = 0.85;
+    falconConfig.slot0.kP = 0.3;
+    falconConfig.slot0.kI = 0;
+    falconConfig.slot0.kD = 0;
+    falconConfig.slot0.kF = 0.05;
     falconConfig.slot0.integralZone = 0;
-    falconConfig.slot0.allowableClosedloopError = 40;
-    falconConfig.motionCruiseVelocity = 1_000;
-    falconConfig.motionAcceleration = 10_000;
+    falconConfig.slot0.maxIntegralAccumulator = 0;
+    falconConfig.slot0.allowableClosedloopError = 10;
+    falconConfig.motionCruiseVelocity = 5_000;
+    falconConfig.motionAcceleration = 20_000;
 
     // Soft Limits
     falconConfig.forwardSoftLimitEnable = true;
@@ -76,7 +72,7 @@ public final class MinimalShoulderConstants {
     falconConfig.reverseSoftLimitThreshold = kShoulderMaxRev;
 
     // General Talon
-    falconConfig.neutralDeadband = 0.04;
+    falconConfig.neutralDeadband = 0.01;
     falconConfig.velocityMeasurementPeriod = SensorVelocityMeasPeriod.Period_100Ms;
     falconConfig.velocityMeasurementWindow = 64;
     falconConfig.voltageCompSaturation = 12;
@@ -89,7 +85,11 @@ public final class MinimalShoulderConstants {
     return new StatorCurrentLimitConfiguration(false, 0.0, 0.0, 0.0);
   }
 
+  public static StatorCurrentLimitConfiguration getShoulderZeroStatorLimitConfig() {
+    return new StatorCurrentLimitConfiguration(true, 4, 4, 0.001);
+  }
+
   public static SupplyCurrentLimitConfiguration getShoulderSupplyLimitConfig() {
-    return new SupplyCurrentLimitConfiguration(true, 2, 2, 0.3);
+    return new SupplyCurrentLimitConfiguration(true, 15, 15, 0);
   }
 }

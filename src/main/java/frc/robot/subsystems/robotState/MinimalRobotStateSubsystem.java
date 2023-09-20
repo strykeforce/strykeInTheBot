@@ -25,9 +25,12 @@ public class MinimalRobotStateSubsystem extends SubsystemBase {
   private double currShelfPoseX;
 
   public MinimalRobotStateSubsystem(
-      DriveSubsystem driveSubsystem, MinimalShoulderSubsystem shoulderSubsystem) {
+      DriveSubsystem driveSubsystem,
+      MinimalShoulderSubsystem shoulderSubsystem,
+      HandSubsystem handSubsystem) {
     this.driveSubsystem = driveSubsystem;
     this.shoulderSubsystem = shoulderSubsystem;
+    this.handSubsystem = handSubsystem;
   }
 
   public Alliance getAllianceColor() {
@@ -56,6 +59,10 @@ public class MinimalRobotStateSubsystem extends SubsystemBase {
 
   public GamePiece getCurrentPiece() {
     return currentPiece;
+  }
+
+  public void clearGamePiece() {
+    currentPiece = GamePiece.NONE;
   }
 
   public TargetLevel getTargetLevel() {

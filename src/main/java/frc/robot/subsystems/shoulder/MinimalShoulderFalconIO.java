@@ -83,6 +83,11 @@ public class MinimalShoulderFalconIO implements MinimalShoulderIO {
   }
 
   @Override
+  public double getSelectedSensorVelocity() {
+    return shoulder.getSelectedSensorVelocity();
+  }
+
+  @Override
   public void configSupplyCurrentLimit(
       SupplyCurrentLimitConfiguration shoulderSupplyLimitConfig, int ktalonconfigtimeout) {
     shoulder.configSupplyCurrentLimit(shoulderSupplyLimitConfig, ktalonconfigtimeout);
