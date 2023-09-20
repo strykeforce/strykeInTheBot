@@ -132,7 +132,8 @@ public class MinimalRobotStateSubsystem extends SubsystemBase {
     }
   }
 
-  public void toManualSubstation() {
+  public void toManualSubstation(GamePiece targetPiece) {
+    this.targetPiece = targetPiece;
     logger.info("starting manual substation");
 
     if (isStowed()) {
@@ -204,8 +205,10 @@ public class MinimalRobotStateSubsystem extends SubsystemBase {
       case MANUAL_SUBSTATION:
         if (!handSubsystem.hasGamePiece()) break;
         currentPiece = targetPiece;
-        currShelfPoseX = driveSubsystem.getPoseMeters().getX();
-        setRobotStateLogged(RobotState.SHELF_WAIT);
+        // currShelfPoseX = driveSubsystem.getPoseMeters().getX();
+        // setRobotStateLogged(RobotState.SHELF_WAIT);
+        shoulderSubsystem.stow();
+        setRobotStateLogged(RobotState.TO_STOW);
         break;
       case SHELF_WAIT:
         double desiredPoseX;

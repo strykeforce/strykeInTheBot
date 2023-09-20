@@ -12,7 +12,7 @@ import org.strykeforce.telemetry.measurable.Measure;
 
 public class MinimalShoulderSubsystem extends MeasurableSubsystem {
   public static final double kShelfMove = 0;
-  private final MinimalShoulderIO io;
+  private final MinimalShoulderFalconIO io;
   private final MinimalShoulderIOInputsAutoLogged inputs = new MinimalShoulderIOInputsAutoLogged();
   private ShoulderStates currState = ShoulderStates.IDLE;
   private ShoulderStates desiredState = ShoulderStates.IDLE;
@@ -22,7 +22,7 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
       org.littletonrobotics.junction.Logger.getInstance();
   private int zeroStableCounts = 0;
 
-  public MinimalShoulderSubsystem(MinimalShoulderIO io) {
+  public MinimalShoulderSubsystem(MinimalShoulderFalconIO io) {
     this.io = io;
   }
 
@@ -31,7 +31,8 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
   }
 
   public void stow() {
-    io.setPos(MinimalShoulderConstants.kStowShoulderPos);
+    logger.info("Stow Shoulder: {}", MinimalShoulderConstants.kStowShoulderPos);
+    setPos(MinimalShoulderConstants.kStowShoulderPos);
     desiredState = ShoulderStates.STOW;
     currState = ShoulderStates.TRANSITION;
   }
@@ -43,12 +44,13 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
 
   public void substation(GamePiece gamePiece) {
     if (gamePiece == GamePiece.CUBE) {
-      io.setPos(MinimalShoulderConstants.kShelfCubeShoulderPos);
+      logger.info("Substation: {}", MinimalShoulderConstants.kShelfConeShoulderPos);
+      setPos(MinimalShoulderConstants.kShelfCubeShoulderPos);
 
       desiredState = ShoulderStates.SUBSTATION_CUBE;
       currState = ShoulderStates.TRANSITION;
     } else if (gamePiece == GamePiece.CONE) {
-      io.setPos(MinimalShoulderConstants.kShelfConeShoulderPos);
+      setPos(MinimalShoulderConstants.kShelfConeShoulderPos);
 
       desiredState = ShoulderStates.SUBSTATION_CONE;
       currState = ShoulderStates.TRANSITION;
@@ -97,9 +99,13 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
     currState = ShoulderStates.ZEROING;
   }
 
-  public void setPos(double position) {
-    io.setSelectedSensorPos(position);
+  private void setPos(double position) {
+    io.setPos(position);
     setPointTicks = position;
+  }
+
+  public void setSensorPos(double position) {
+    io.setSelectedSensorPos(position);
   }
 
   public boolean isFinished() {
@@ -194,7 +200,10 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
 
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(new Measure("State", () -> getState().ordinal()));
+    return Set.of(
+        new Measure("State", () -> getState().ordinal()),
+        new Measure("isFinished", () -> isFinished() ? 1.0 : 0.0),
+        new Measure("SetpointTicks", () -> setPointTicks));
   }
 
   @Override

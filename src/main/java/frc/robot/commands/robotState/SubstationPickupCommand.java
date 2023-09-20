@@ -2,6 +2,7 @@ package frc.robot.commands.robotState;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.GamePiece;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.RobotState;
 
 public class SubstationPickupCommand extends CommandBase {
@@ -13,7 +14,7 @@ public class SubstationPickupCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    robotStateSubsystem.toManualSubstation();
+    robotStateSubsystem.toManualSubstation(GamePiece.CUBE);
   }
 
   @Override

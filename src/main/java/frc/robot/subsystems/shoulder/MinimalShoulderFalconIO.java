@@ -8,10 +8,13 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import frc.robot.constants.MinimalShoulderConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.strykeforce.telemetry.TelemetryService;
 
 public class MinimalShoulderFalconIO implements MinimalShoulderIO {
   private TalonFX shoulder;
+  private Logger logger = LoggerFactory.getLogger(MinimalShoulderIO.class);
 
   public MinimalShoulderFalconIO() {
     shoulder = new TalonFX(MinimalShoulderConstants.kLeftMainID);
@@ -45,6 +48,7 @@ public class MinimalShoulderFalconIO implements MinimalShoulderIO {
   @Override
   public void setPos(double positionTicks) {
     shoulder.set(ControlMode.MotionMagic, positionTicks);
+    logger.info("Set Shoulder Pos: {}", positionTicks);
   }
 
   @Override
