@@ -192,6 +192,10 @@ public class DriveSubsystem extends MeasurableSubsystem {
         new Pose2d(swerve.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(gyroResetDegs)));
   }
 
+  public void setGyroOffset(Rotation2d rotation) {
+    swerve.setGyroOffset(rotation);
+  }
+
   // Make whether a trajectory is currently active obvious on grapher
   public void grapherTrajectoryActive(Boolean active) {
     if (active) trajectoryActive = 1.0;

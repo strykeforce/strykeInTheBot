@@ -1,4 +1,4 @@
-package frc.robot.subsystems.switch;
+package frc.robot.subsystems.autoSwitch;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -30,7 +30,6 @@ public class AutoSwitch {
   private final RobotStateSubsystem robotStateSubsystem;
   private final DriveSubsystem driveSubsystem;
   private final ArmSubsystem armSubsystem;
-  private final ShoulderSubsystem shoulderSubsystem;
   private final HandSubsystem handSubsystem;
 //   private final VisionSubsystem visionSubsystem;
   AutoCommandInterface defaultCommand;
@@ -39,13 +38,11 @@ public class AutoSwitch {
       RobotStateSubsystem robotStateSubsystem,
       DriveSubsystem driveSubsystem,
       ArmSubsystem armSubsystem,
-      ShoulderSubsystem shoulderSubsystem,
       HandSubsystem handSubsystem) {
       // VisionSubsystem visionSubsystem 
     this.robotStateSubsystem = robotStateSubsystem;
     this.driveSubsystem = driveSubsystem;
     this.armSubsystem = armSubsystem;
-    this.shoulderSubsystem = shoulderSubsystem;
     this.handSubsystem = handSubsystem;
 
     defaultCommand =
