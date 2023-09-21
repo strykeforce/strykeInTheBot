@@ -4,8 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -24,8 +28,10 @@ import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
 import frc.robot.subsystems.robotState.RobotStateSubsystem;
+import frc.robot.subsystems.robotState.RobotStateSubsystem.GamePiece;
 import frc.robot.subsystems.shoulder.ShoulderSubsystem;
 import frc.robot.subsystems.shoulder.ShoulderTalonIO;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
@@ -49,6 +55,11 @@ public class RobotContainer {
 
   private Logger logger;
 
+  private SuppliedValueWidget<Boolean> allianceColor;
+  private Alliance alliance = Alliance.Invalid;
+  private SuppliedValueWidget<Boolean> currGamePiece;
+  private boolean isEvent = false;
+
   public RobotContainer() {
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
@@ -60,6 +71,7 @@ public class RobotContainer {
     armSubsystem = new ArmSubsystem(shoulder, extendoSubsystem, wristSubsystem);
     robotStateSubsystem = new RobotStateSubsystem(driveSubsystem, armSubsystem);
     configureBindings();
+    configureMatchDashboard();
   }
 
   private void configureBindings() {}
@@ -124,6 +136,25 @@ public class RobotContainer {
     return Commands.print("No autonomous command configured");
   }
 
+  private void configureMatchDashboard() {
+    allianceColor =
+        Shuffleboard.getTab("Match")
+            .addBoolean("AllianceColor", () -> alliance != Alliance.Invalid)
+            .withProperties(Map.of("colorWhenFalse", "black"))
+            .withSize(2, 2)
+            .withPosition(0, 0);
+    currGamePiece =
+        Shuffleboard.getTab("Match")
+            .addBoolean("Game Piece", () -> robotStateSubsystem.getCurrentPiece() != GamePiece.NONE)
+            .withProperties(Map.of("colorWhenFalse", "black"))
+            .withSize(2, 2)
+            .withPosition(5, 0);
+    Shuffleboard.getTab("Match")
+        .addBoolean("Is Navx Connected", () -> driveSubsystem.isNavxWorking())
+        .withSize(1, 1)
+        .withPosition(8, 1);
+  }
+
   // Interlink Controller Mapping FIXME
   public enum Axis {
     RIGHT_X(1),
@@ -180,5 +211,44 @@ public class RobotContainer {
     Trim(int id) {
       this.id = id;
     }
+  }
+
+  public void setAllianceColor(Alliance alliance) {
+    this.alliance = alliance;
+    allianceColor.withProperties(
+        Map.of(
+            "colorWhenTrue", alliance == Alliance.Red ? "red" : "blue", "colorWhenFalse", "black"));
+    robotStateSubsystem.setAllianceColor(alliance);
+    // fiveMeterTest.generateTrajectory(); FIXME we will need to test this eventually
+    // balancepath.generateTrajectory();
+    // communityToDockCommandGroup.generateTrajectory();
+    // twoPieceWithDockAutoCommandGroup.generateTrajectory();
+    // threePiecePath.generateTrajectory();
+    // twoPieceAutoPlacePathCommandGroup.generateTrajectory();
+    // bumpSideTwoPieceCommandGroup.generateTrajectory();
+
+    /*if (autoSwitch.getAutoCommand() != null) {
+      autoSwitch.getAutoCommand().generateTrajectory();
+    }                                                   */
+
+    // Flips gyro angle if alliance is red team
+    if (robotStateSubsystem.getAllianceColor() == Alliance.Red) {
+      driveSubsystem.setGyroOffset(Rotation2d.fromDegrees(180));
+    } else {
+      driveSubsystem.setGyroOffset(Rotation2d.fromDegrees(0));
+    }
+  }
+
+  public void setDisabled(boolean isDisabled) {
+    robotStateSubsystem.setDisabled(isDisabled);
+  }
+
+  public void updateGamePiece() {
+    currGamePiece.withProperties(
+        Map.of(
+            "colorWhenTrue",
+            robotStateSubsystem.getCurrentPiece() == GamePiece.CUBE ? "purple" : "yellow",
+            "colorWhenFalse",
+            "black"));
   }
 }

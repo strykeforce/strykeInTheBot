@@ -156,6 +156,10 @@ public class Swerve implements SwerveIO {
     swerveDrive.periodic();
   }
 
+  public boolean isConnected() {
+    return ahrs.isConnected();
+  }
+
   public ChassisSpeeds getFieldRelSpeed() {
     SwerveDriveKinematics kinematics = swerveDrive.getKinematics();
     SwerveModule[] swerveModules = swerveDrive.getSwerveModules();
