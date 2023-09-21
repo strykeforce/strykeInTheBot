@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.drive.DriveTeleopCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
@@ -106,6 +107,9 @@ public class RobotContainer {
 
     new JoystickButton(driveJoystick, Button.M_RTRIM_UP.id)
         .onTrue(new XLockCommand(driveSubsystem));
+
+    new JoystickButton(driveJoystick, Button.M_SWC.id)
+        .onTrue(new DriveAutonCommand(driveSubsystem, "fetchBumpPath", false, false));
   }
 
   private void configTelemetry() {

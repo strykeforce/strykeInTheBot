@@ -84,7 +84,7 @@ public class RobotStateSubsystem extends SubsystemBase {
   }
 
   public boolean isShelfPieceCube() {
-    // FIXME maybe flip isBlueAlliance boolean
+    // TODO: check if this actually works
     double angle = driveSubsystem.getGyroRotation2d().getRadians();
     if (isBlueAlliance()) {
       return (angle > Math.PI * -0.5) && (angle < Math.PI * 0.5);
