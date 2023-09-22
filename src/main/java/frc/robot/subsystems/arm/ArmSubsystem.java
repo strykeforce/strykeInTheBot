@@ -2,9 +2,9 @@ package frc.robot.subsystems.arm;
 
 import frc.robot.constants.ArmConstants;
 import frc.robot.subsystems.extendo.ExtendoSubsystem;
-import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.robotState.RobotStateSubsystem.GamePiece;
 import frc.robot.subsystems.shoulder.ShoulderSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

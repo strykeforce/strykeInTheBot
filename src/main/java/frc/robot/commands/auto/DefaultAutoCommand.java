@@ -34,9 +34,9 @@ public class DefaultAutoCommand extends SequentialCommandGroup implements AutoCo
             new SetGamePieceCommand(robotStateSubsystem, GamePiece.CONE),
             new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.HIGH),
             new AutoGrabConeCommand(handSubsystem),
-        new ManualScoreCommand(robotStateSubsystem, armSubsystem, handSubsystem),
-        new ReleaseGamepieceCommand(handSubsystem, robotStateSubsystem),
-        defaultPath));
+            new ManualScoreCommand(robotStateSubsystem, armSubsystem, handSubsystem),
+            new ReleaseGamepieceCommand(handSubsystem, robotStateSubsystem),
+            defaultPath));
   }
 
   public void generateTrajectory() {

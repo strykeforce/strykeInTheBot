@@ -57,7 +57,7 @@ public class Robot extends LoggedRobot {
         .add("SetAllianceBlue", new SetAllianceCommand(Alliance.Blue, m_robotContainer))
         .withPosition(2, 1)
         .withSize(1, 1);
-        
+
     if (RobotBase.isReal()) {
       advLogger.addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to USB stick
       advLogger.addDataReceiver(new NT4Publisher()); // Publish data to Network Tables

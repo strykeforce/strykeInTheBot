@@ -1,8 +1,6 @@
 package frc.robot.subsystems.extendo;
 
 import frc.robot.constants.ExtendoConstants;
-import frc.robot.subsystems.extendo.ExtendoIOInputsAutoLogged;
-
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

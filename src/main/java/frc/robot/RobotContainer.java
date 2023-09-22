@@ -6,8 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +21,7 @@ import frc.robot.commands.drive.ZeroGyroCommand;
 import frc.robot.controllers.FlyskyJoystick;
 import frc.robot.controllers.FlyskyJoystick.Button;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.autoSwitch.AutoSwitch;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.Swerve;
 import frc.robot.subsystems.example.ExampleIOTalon;
@@ -35,10 +36,7 @@ import frc.robot.subsystems.shoulder.ShoulderTalonIO;
 import frc.robot.subsystems.wrist.WristEncoderIOCanandcoder;
 import frc.robot.subsystems.wrist.WristIOTalon;
 import frc.robot.subsystems.wrist.WristSubsystem;
-import frc.robot.subsystems.autoSwitch.AutoSwitch;
-
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
@@ -84,12 +82,7 @@ public class RobotContainer {
     robotStateSubsystem = new RobotStateSubsystem(driveSubsystem, armSubsystem);
     configureBindings();
 
-    autoSwitch = new AutoSwitch(
-        robotStateSubsystem,
-        driveSubsystem,
-        armSubsystem,
-        handSubsystem);
-
+    autoSwitch = new AutoSwitch(robotStateSubsystem, driveSubsystem, armSubsystem, handSubsystem);
   }
 
   public void setAllianceColor(Alliance alliance) {
@@ -116,8 +109,7 @@ public class RobotContainer {
     }
   }
 
-  private void configureBindings() {
-  }
+  private void configureBindings() {}
 
   public boolean configureDriverButtonBindings() {
     String joystick = DriverStation.getJoystickName(0);
@@ -140,8 +132,7 @@ public class RobotContainer {
     return success;
   }
 
-  private void configureInterlinkDriverButtonBindings() {
-  }
+  private void configureInterlinkDriverButtonBindings() {}
 
   private void configureFlyskyDriverButtonBindings() {
 
@@ -165,11 +156,12 @@ public class RobotContainer {
   }
 
   private void configureMatchDashboard() {
-    allianceColor = Shuffleboard.getTab("Match")
-        .addBoolean("AllianceColor", () -> alliance != Alliance.Invalid)
-        .withProperties(Map.of("colorWhenFalse", "black"))
-        .withSize(2, 2)
-        .withPosition(0, 0);
+    allianceColor =
+        Shuffleboard.getTab("Match")
+            .addBoolean("AllianceColor", () -> alliance != Alliance.Invalid)
+            .withProperties(Map.of("colorWhenFalse", "black"))
+            .withSize(2, 2)
+            .withPosition(0, 0);
   }
 
   private void configTelemetry() {

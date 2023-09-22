@@ -7,14 +7,15 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.drive.AutoBalanceCommand;
 import frc.robot.commands.drive.DriveAutonCommand;
-import frc.robot.commands.drive.ZeroGyroCommand;
 import frc.robot.commands.drive.XLockCommand;
+import frc.robot.commands.drive.ZeroGyroCommand;
 import frc.robot.commands.robotState.ClearGamePieceCommand;
 import frc.robot.commands.robotState.ManualScoreCommand;
 import frc.robot.commands.robotState.ReleaseGamepieceCommand;
 import frc.robot.commands.robotState.SetGamePieceCommand;
 import frc.robot.commands.robotState.SetTargetLevelCommand;
-// import frc.robot.commands.vision.SetVisionUpdateCommand; // FIXME currently no visionSubsystem exists
+// import frc.robot.commands.vision.SetVisionUpdateCommand; // FIXME currently no visionSubsystem
+// exists
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
@@ -41,7 +42,7 @@ public class MiddleToDockWithMobility extends SequentialCommandGroup
       RobotStateSubsystem robotStateSubsystem,
       ArmSubsystem armSubsystem,
       HandSubsystem handSubsystem,
-    //   VisionSubsystem visionSubsystem,
+      //   VisionSubsystem visionSubsystem,
       String pathOne,
       String pathTwo) {
     firstPath = new DriveAutonCommand(driveSubsystem, pathOne, false, true);

@@ -15,5 +15,6 @@ public class AutoGrabConeCommand extends InstantCommand {
   @Override
   public void initialize() {
     handSubsystem.grabPiece();
-  };
+  }
+  ;
 }

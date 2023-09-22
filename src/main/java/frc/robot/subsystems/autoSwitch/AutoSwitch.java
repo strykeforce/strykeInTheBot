@@ -2,18 +2,16 @@ package frc.robot.subsystems.autoSwitch;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.commands.auto.AutoCommandInterface;
+import frc.robot.commands.auto.DefaultAutoCommand;
+// import frc.robot.commands.auto.DefaultAutoCommand;
+// import frc.robot.commands.auto.DoNothingAutonCommand;
+import frc.robot.commands.auto.MiddleToDockWithMobility;
 import frc.robot.constants.AutonConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.robotState.RobotStateSubsystem;
-import frc.robot.subsystems.shoulder.ShoulderSubsystem;
-import frc.robot.commands.auto.AutoCommandInterface;
-import frc.robot.commands.auto.DefaultAutoCommand;
-import frc.robot.commands.auto.OnePieceWithMobilityCommandGroup;
-// import frc.robot.commands.auto.DefaultAutoCommand;
-// import frc.robot.commands.auto.DoNothingAutonCommand;
-import frc.robot.commands.auto.MiddleToDockWithMobility;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +30,7 @@ public class AutoSwitch {
   private final DriveSubsystem driveSubsystem;
   private final ArmSubsystem armSubsystem;
   private final HandSubsystem handSubsystem;
-//   private final VisionSubsystem visionSubsystem;
+  //   private final VisionSubsystem visionSubsystem;
   AutoCommandInterface defaultCommand;
 
   public AutoSwitch(
@@ -40,15 +38,14 @@ public class AutoSwitch {
       DriveSubsystem driveSubsystem,
       ArmSubsystem armSubsystem,
       HandSubsystem handSubsystem) {
-      // VisionSubsystem visionSubsystem 
+    // VisionSubsystem visionSubsystem
     this.robotStateSubsystem = robotStateSubsystem;
     this.driveSubsystem = driveSubsystem;
     this.armSubsystem = armSubsystem;
     this.handSubsystem = handSubsystem;
 
     defaultCommand =
-        new DefaultAutoCommand(
-            driveSubsystem, robotStateSubsystem, handSubsystem, armSubsystem);
+        new DefaultAutoCommand(driveSubsystem, robotStateSubsystem, handSubsystem, armSubsystem);
 
     for (int i = AutonConstants.kStartSwitchID; i <= AutonConstants.kEndSwitchId; i++) {
       switchInputs.add(new DigitalInput(i));
