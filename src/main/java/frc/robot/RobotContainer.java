@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.drive.DriveTeleopCommand;
+import frc.robot.commands.drive.LockZeroCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
 import frc.robot.commands.robotState.ClearGamepieceCommand;
@@ -72,7 +74,6 @@ public class RobotContainer {
   private boolean isEvent = false;
 
   public RobotContainer() {
-    configureMatchDashboard();
     shoulderSubsystem = new MinimalShoulderSubsystem(new MinimalShoulderFalconIO());
     handSubsystem = new HandSubsystem(new HandIOFalcon());
     robotStateSubsystem =
@@ -82,8 +83,10 @@ public class RobotContainer {
 
     configureDriverButtonBindings();
     configureOperatorBindings();
-
     configTelemetry();
+
+    configurePitDashboard();
+    configureMatchDashboard();
   }
 
   private void configureOperatorBindings() {
@@ -231,6 +234,10 @@ public class RobotContainer {
         .withPosition(8, 1);
   }
 
+  private void configurePitDashboard() {
+      Shuffleboard.getTab("Pit")
+        .add("LockZero", new LockZeroCommand(driveSubsystem)).withPosition(0, 2);
+  }
   // Interlink Controller Mapping FIXME
   public enum Axis {
     RIGHT_X(1),
