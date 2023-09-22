@@ -10,6 +10,7 @@ import frc.robot.subsystems.robotState.RobotStateSubsystem;
 import frc.robot.subsystems.shoulder.ShoulderSubsystem;
 import frc.robot.commands.auto.AutoCommandInterface;
 import frc.robot.commands.auto.DefaultAutoCommand;
+import frc.robot.commands.auto.OnePieceWithMobilityCommandGroup;
 // import frc.robot.commands.auto.DefaultAutoCommand;
 // import frc.robot.commands.auto.DoNothingAutonCommand;
 import frc.robot.commands.auto.MiddleToDockWithMobility;
@@ -99,15 +100,13 @@ public class AutoSwitch {
     switch (switchPos) {
         // Non-Bump Side
       case 0x00:
-        // // Cone Lvl 3, Cube Lvl 3, Auto Balance
-        // return new TwoPieceWithDockAutoCommandGroup(
+        // Cone Lvl 3, Cube Lvl 3, Auto Balance
+        // return new OnePieceWithMobilityCommandGroup(
         //     driveSubsystem,
         //     robotStateSubsystem,
         //     armSubsystem,
         //     handSubsystem,
-        //     "pieceOneFetchPath",
-        //     "pieceOnePlacePath",
-        //     "pieceTwoToDockPath");
+        //     "mobilityPath"); FIXME pathname needs changing
       case 0x01:
         // // Cone Lvl 3, Cube Lvl 3
         // return new TwoPieceLvl3AutoCommandGroup(
@@ -169,15 +168,13 @@ public class AutoSwitch {
             "tinyLittleToBalancePath");
         // Bump Side
       case 0x20:
-        // // Cone Lvl 3, Cube Lvl 3
-        // return new TwoPieceLvl3BumpAutoCommandGroup(
+        // Cone Lvl 3, Cube Lvl 3
+        // return new OnePieceWithMobilityCommandGroup(
         //     driveSubsystem,
         //     robotStateSubsystem,
         //     armSubsystem,
         //     handSubsystem,
-        //     "pieceOneFetchPathBump",
-        //     "pieceOneDeliverBumpPathPt1",
-        //     "pieceOneDeliverBumpPathPt2");
+        //     "mobilityBumpPath"); FIXME pathname needs changing
       case 0x21:
         // // FALLBACK - Cone Lvl 3, cube lvl 2 and 3
         // return new ThreePieceBumpFallbackAutoCommandGroup(
