@@ -151,8 +151,9 @@ public class RobotContainer {
     new JoystickButton(driveJoystick, Button.M_RTRIM_UP.id)
         .onTrue(new XLockCommand(driveSubsystem));
 
-    new JoystickButton(driveJoystick, Button.M_SWC.id)
+    new JoystickButton(driveJoystick, Button.M_RTRIM_R.id)
         .onTrue(new DriveAutonCommand(driveSubsystem, "fetchBumpPath", false, false));
+
     new JoystickButton(driveJoystick, Button.SWB_DWN.id)
         .onTrue(
             new FloorPickupCommand(
