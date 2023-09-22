@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.drive.DriveAutonCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.drive.DriveTeleopCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
@@ -65,7 +65,7 @@ public class RobotContainer {
     handSubsystem = new HandSubsystem(new HandIOFalcon());
     robotStateSubsystem =
         new MinimalRobotStateSubsystem(driveSubsystem, shoulderSubsystem, handSubsystem);
-    driveSubsystem = new DriveSubsystem(new Swerve(telemetryService));
+    driveSubsystem = new DriveSubsystem();
     driveSubsystem.setRobotStateSubsystem(robotStateSubsystem);
 
     configureDriverButtonBindings();
@@ -152,7 +152,7 @@ public class RobotContainer {
         .onTrue(new XLockCommand(driveSubsystem));
 
     new JoystickButton(driveJoystick, Button.M_RTRIM_R.id)
-        .onTrue(new DriveAutonCommand(driveSubsystem, "fetchBumpPath", false, false));
+        .onTrue(new DriveAutonCommand(driveSubsystem, "fiveMeterPath", true, true));
 
     new JoystickButton(driveJoystick, Button.SWB_DWN.id)
         .onTrue(
