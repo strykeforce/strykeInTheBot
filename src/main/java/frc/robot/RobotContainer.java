@@ -72,6 +72,8 @@ public class RobotContainer {
     configureOperatorBindings();
 
     configTelemetry();
+
+    driveSubsystem.teleResetGyro();
   }
 
   private void configureOperatorBindings() {
