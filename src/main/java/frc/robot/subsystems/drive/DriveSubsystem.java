@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants.DriveConstants;
-import frc.robot.subsystems.robotState.RobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
 import frc.robot.subsystems.timestampedpose.TimestampedPose;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class DriveSubsystem extends MeasurableSubsystem {
   private final SwerveDrive swerveDrive;
   private final HolonomicDriveController holonomicController;
   private Alliance allianceColor = DriverStation.getAlliance();
-  private RobotStateSubsystem robotStateSubsystem;
+  private MinimalRobotStateSubsystem robotStateSubsystem;
 
   private final ProfiledPIDController omegaController;
   private final PIDController xController;
@@ -159,7 +159,7 @@ public class DriveSubsystem extends MeasurableSubsystem {
         false);
   }
 
-  public void setRobotStateSubsystem(RobotStateSubsystem robotStateSubsystem) {
+  public void setRobotStateSubsystem(MinimalRobotStateSubsystem robotStateSubsystem) {
     this.robotStateSubsystem = robotStateSubsystem;
   }
 
