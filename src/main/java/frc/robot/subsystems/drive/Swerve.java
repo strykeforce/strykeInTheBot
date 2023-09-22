@@ -54,10 +54,6 @@ public class Swerve implements SwerveIO {
       azimuthTalon.enableCurrentLimit(true);
       azimuthTalon.enableVoltageCompensation(true);
       azimuthTalon.setNeutralMode(NeutralMode.Coast);
-      swerveModules[i] =
-          moduleBuilder.azimuthTalon(azimuthTalon).wheelLocationMeters(wheelLocations[i]).build();
-
-      // telemetryService.register(azimuthTalon);
 
       var driveTalon = new TalonFX(i + 10);
       driveTalon.configFactoryDefault(Constants.kTalonConfigTimeout);
@@ -65,10 +61,6 @@ public class Swerve implements SwerveIO {
           DriveConstants.getDriveTalonConfig(), Constants.kTalonConfigTimeout);
       driveTalon.enableVoltageCompensation(true);
       driveTalon.setNeutralMode(NeutralMode.Brake);
-      swerveModules[i] =
-          moduleBuilder.driveTalon(driveTalon).wheelLocationMeters(wheelLocations[i]).build();
-
-      // telemetryService.register(driveTalon);
 
       // var driveTalonFollower = new TalonFX(i + 14);
       // driveTalonFollower.configFactoryDefault(Constants.kTalonConfigTimeout);

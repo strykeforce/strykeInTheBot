@@ -98,7 +98,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     // logger.info("Disabled Init");
-    m_robotContainer.setDisabled(true);
+    //m_robotContainer.setDisabled(true);
   }
 
   @Override

@@ -117,7 +117,7 @@ public class RobotStateSubsystem extends SubsystemBase {
       switch (targetPiece) {
         case CUBE:
           armSubsystem.floor(GamePiece.CUBE, true);
-          handSubsystem.grabPiece();
+          handSubsystem.grabFromFloor();
           break;
         case CONE:
           if (isConePickupUpright) {
@@ -125,7 +125,7 @@ public class RobotStateSubsystem extends SubsystemBase {
           } else {
             armSubsystem.floor(GamePiece.CONE, false);
           }
-          handSubsystem.grabPiece();
+          handSubsystem.grabFromFloor();
           break;
         default:
           logger.warn("no target piece given for floor pickup!");
@@ -200,6 +200,7 @@ public class RobotStateSubsystem extends SubsystemBase {
     logger.info("starting manual score");
 
     if (isStowed()) {
+
       setRobotStateLogged(RobotState.TO_MANUAL_SCORE);
     } else {
       toStow(RobotState.MANUAL_SCORE);
@@ -300,7 +301,7 @@ public class RobotStateSubsystem extends SubsystemBase {
         if (handSubsystem.getState() == HandStates.IDLE) {
           currentPiece = GamePiece.NONE;
           toStow();
-        } else handSubsystem.ejectPiece();
+        } else handSubsystem.ejectPiece(currentPiece, targetLevel);
         break;
       case AUTOBALANCE:
         // TODO: add autobalance functionality
@@ -311,18 +312,18 @@ public class RobotStateSubsystem extends SubsystemBase {
         break;
       case TO_FLOOR_PICKUP:
         if (!armSubsystem.isFinished()) break;
-        handSubsystem.grabPiece();
+        handSubsystem.grabFromFloor();
         setRobotStateLogged(RobotState.FLOOR_PICKUP);
         break;
       case TO_AUTO_SHELF:
         if (!armSubsystem.isFinished()) break;
-        handSubsystem.grabPiece();
+        handSubsystem.grabFromSubstation();
         // driveSubsystem.driveToPose();
         setRobotStateLogged(RobotState.AUTO_SHELF);
         break;
       case TO_MANUAL_SHELF:
         if (!armSubsystem.isFinished()) break;
-        handSubsystem.grabPiece();
+        handSubsystem.grabFromSubstation();
         setRobotStateLogged(RobotState.MANUAL_SHELF);
         break;
       case TO_AUTO_SCORE:
