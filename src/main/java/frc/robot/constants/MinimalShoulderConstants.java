@@ -39,7 +39,7 @@ public final class MinimalShoulderConstants {
 
   public static final int kTalonConfigTimeout = 10; // FIXME
 
-  public static final double kZeroSpeed = 0.2; // FIXME
+  public static final double kZeroSpeed = 0.3; // FIXME
 
   public static final double kStowShoulderPos = -2_000; // FIXME
 
@@ -62,7 +62,7 @@ public final class MinimalShoulderConstants {
     falconConfig.slot0.integralZone = 0;
     falconConfig.slot0.maxIntegralAccumulator = 0;
     falconConfig.slot0.allowableClosedloopError = 10;
-    falconConfig.motionCruiseVelocity = 5_000;
+    falconConfig.motionCruiseVelocity = 10_000;
     falconConfig.motionAcceleration = 20_000;
 
     // Soft Limits

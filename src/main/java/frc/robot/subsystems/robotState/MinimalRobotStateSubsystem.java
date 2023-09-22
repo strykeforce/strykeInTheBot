@@ -2,20 +2,22 @@ package frc.robot.subsystems.robotState;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem.HandStates;
 import frc.robot.subsystems.shoulder.MinimalShoulderSubsystem;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.telemetry.measurable.MeasurableSubsystem;
+import org.strykeforce.telemetry.measurable.Measure;
 
-public class MinimalRobotStateSubsystem extends SubsystemBase {
+public class MinimalRobotStateSubsystem extends MeasurableSubsystem {
   private DriveSubsystem driveSubsystem;
   private MinimalShoulderSubsystem shoulderSubsystem;
   private HandSubsystem handSubsystem;
   private Alliance allianceColor = DriverStation.getAlliance();
-  private Logger logger = LoggerFactory.getLogger(RobotStateSubsystem.class);
+  private Logger logger = LoggerFactory.getLogger(MinimalRobotStateSubsystem.class);
   private RobotState currRobotState = RobotState.STOW;
   private RobotState nextRobotState = RobotState.STOW;
   private GamePiece currentPiece = GamePiece.NONE;
@@ -178,7 +180,7 @@ public class MinimalRobotStateSubsystem extends SubsystemBase {
         break;
       case TO_FLOOR_PICKUP:
         if (!shoulderSubsystem.isFinished()) break;
-        handSubsystem.grabPiece();
+        handSubsystem.grabFromFloor();
         setRobotStateLogged(RobotState.FLOOR_PICKUP);
         break;
       case MANUAL_SCORE:
@@ -195,7 +197,7 @@ public class MinimalRobotStateSubsystem extends SubsystemBase {
         break;
       case TO_MANUAL_SUBSTATION:
         if (!shoulderSubsystem.isFinished()) break;
-        handSubsystem.grabPiece();
+        handSubsystem.grabFromSubstation();
         setRobotStateLogged(RobotState.MANUAL_SUBSTATION);
         break;
       case TO_MANUAL_SCORE:
@@ -232,6 +234,11 @@ public class MinimalRobotStateSubsystem extends SubsystemBase {
         logger.warn("{} is an invalid robot state!", currRobotState);
         break;
     }
+  }
+
+  @Override
+  public Set<Measure> getMeasures() {
+    return Set.of(new Measure("State", () -> getRobotState().ordinal()));
   }
 
   public enum RobotState {

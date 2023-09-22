@@ -17,12 +17,18 @@ public class DriveConstants {
 
   public static final int kTalonConfigTimeout = 10; // ms
 
-  public static final double kRobotLength = 0;
-  public static final double kRobotWidth = 0;
+  public static final double kRobotLength = 0.5725;
+  public static final double kRobotWidth = 0.525;
 
-  public static final double kDriveGearRatio = 0;
-  public static final double kWheelDiameterInches = 0;
-  public static final double kMaxSpeedMetersPerSecond = 0;
+  public static final double kDriveMotorOutputGear = 30;
+  public static final double kDriveInputGear = 44;
+  public static final double kBevelInputGear = 15;
+  public static final double kBevelOutputGear = 45;
+
+  public static final double kDriveGearRatio =
+      (kDriveMotorOutputGear / kDriveInputGear) * (kBevelInputGear / kBevelOutputGear);
+  public static final double kWheelDiameterInches = 3.0 * 500.0 / 500.0;
+  public static final double kMaxSpeedMetersPerSecond = 5.44;
 
   public static final double kMaxOmega =
       (kMaxSpeedMetersPerSecond / Math.hypot(kRobotWidth / 2.0, kRobotLength / 2.0))

@@ -23,6 +23,7 @@ public class HandSubsystem extends MeasurableSubsystem {
   private int hasCubeStableCounts;
   private int ejectStableCounts = 0;
   private double ejectSpeed;
+  private double intakeSpeed;
   private int ejectCountsNeeded;
   private DigitalInput gamePieceDI = new DigitalInput(0);
 
@@ -34,9 +35,35 @@ public class HandSubsystem extends MeasurableSubsystem {
     return currState;
   }
 
-  public void grabPiece() {
+  public void grabPiece(PieceSource pieceSource) {
+    logger.info("{} -> WAITING ({})", currState, pieceSource);
+    currState = HandStates.WAITING;
+
+    switch (pieceSource) {
+      case FLOOR:
+        intakeSpeed = HandConstants.kWaitingFloorSpeed;
+        break;
+      case SUBSTATION:
+        intakeSpeed = HandConstants.kWaitingSubstationSpeed;
+        break;
+      default:
+        logger.info("Unknown piece source: {}", pieceSource);
+        break;
+    }
+  }
+
+  public void grabFromFloor() {
+    logger.info("{} -> WAITING ({})", currState);
+    currState = HandStates.WAITING;
+
+    intakeSpeed = HandConstants.kWaitingFloorSpeed;
+  }
+
+  public void grabFromSubstation() {
     logger.info("{} -> WAITING", currState);
     currState = HandStates.WAITING;
+
+    intakeSpeed = HandConstants.kWaitingSubstationSpeed;
   }
 
   public void ejectPiece(GamePiece gamePiece, TargetLevel targetLevel) {
@@ -167,7 +194,7 @@ public class HandSubsystem extends MeasurableSubsystem {
         io.setPct(0.0);
         break;
       case WAITING:
-        io.setPct(HandConstants.kWaitingSpeed);
+        io.setPct(intakeSpeed);
         if (hasCone()) {
           logger.info("WAITING -> CONE");
           currState = HandStates.CONE;
@@ -201,7 +228,12 @@ public class HandSubsystem extends MeasurableSubsystem {
     WAITING,
     CONE,
     CUBE,
-    EJECT
+    EJECT,
+  }
+
+  public enum PieceSource {
+    FLOOR,
+    SUBSTATION
   }
 
   public Set<Measure> getMeasures() {
