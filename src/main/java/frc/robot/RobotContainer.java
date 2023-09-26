@@ -150,7 +150,8 @@ public class RobotContainer {
             () -> flysky.getYaw(),
             driveJoystick,
             driveSubsystem,
-            robotStateSubsystem));
+            robotStateSubsystem,
+            handSubsystem));
 
     new JoystickButton(driveJoystick, Button.M_LTRIM_UP.id)
         .onTrue(new ZeroGyroCommand(driveSubsystem));

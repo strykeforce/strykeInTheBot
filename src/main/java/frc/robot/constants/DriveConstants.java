@@ -34,6 +34,9 @@ public class DriveConstants {
       (kMaxSpeedMetersPerSecond / Math.hypot(kRobotWidth / 2.0, kRobotLength / 2.0))
           / 2.0; // wheel locations below
 
+  public static final double kPlaceMovePercent = 0.2;
+  public static final double kPlaceYawPercent = 0.2;
+  
   public static Translation2d[] getWheelLocationMeters() {
     final double x = kRobotLength / 2.0; // front-back, was ROBOT_LENGTH
     final double y = kRobotWidth / 2.0; // left-right, was ROBOT_WIDTH
