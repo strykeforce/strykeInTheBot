@@ -41,8 +41,8 @@ public final class ShoulderConstants {
     shoulderConfig.slot0.kF = 0.85;
     shoulderConfig.slot0.integralZone = 0;
     shoulderConfig.slot0.allowableClosedloopError = 40;
-    shoulderConfig.motionCruiseVelocity = 1_000;
-    shoulderConfig.motionAcceleration = 10_000;
+    shoulderConfig.motionCruiseVelocity = 10_000;
+    shoulderConfig.motionAcceleration = 75_000;
 
     // Soft Limits
     shoulderConfig.forwardSoftLimitEnable = true;

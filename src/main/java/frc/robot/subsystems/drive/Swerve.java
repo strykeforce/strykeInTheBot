@@ -36,7 +36,7 @@ public class Swerve implements SwerveIO {
 
   private AHRS ahrs;
 
-  public Swerve(TelemetryService telemetryService) {
+  public Swerve() {
     var moduleBuilder =
         new TalonSwerveModule.Builder()
             .driveGearRatio(DriveConstants.kDriveGearRatio)

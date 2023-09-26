@@ -25,7 +25,6 @@ import frc.robot.commands.shoulder.ZeroShoulderCommand;
 import frc.robot.controllers.FlyskyJoystick;
 import frc.robot.controllers.FlyskyJoystick.Button;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.drive.Swerve;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
 import frc.robot.subsystems.hand.HandIOFalcon;
@@ -65,13 +64,15 @@ public class RobotContainer {
     handSubsystem = new HandSubsystem(new HandIOFalcon());
     robotStateSubsystem =
         new MinimalRobotStateSubsystem(driveSubsystem, shoulderSubsystem, handSubsystem);
-    driveSubsystem = new DriveSubsystem(new Swerve(telemetryService));
+    driveSubsystem = new DriveSubsystem();
     driveSubsystem.setRobotStateSubsystem(robotStateSubsystem);
 
     configureDriverButtonBindings();
     configureOperatorBindings();
 
     configTelemetry();
+
+    driveSubsystem.teleResetGyro();
   }
 
   private void configureOperatorBindings() {
@@ -157,7 +158,9 @@ public class RobotContainer {
     new JoystickButton(driveJoystick, Button.M_RTRIM_UP.id)
         .onTrue(new XLockCommand(driveSubsystem));
 
-    // Floor Pickup
+    // new JoystickButton(driveJoystick, Button.M_RTRIM_R.id)
+    //     .onTrue(new DriveAutonCommand(driveSubsystem, "fiveMeterPath", true, true));
+
     new JoystickButton(driveJoystick, Button.SWB_DWN.id)
         .onTrue(
             new FloorPickupCommand(
@@ -197,6 +200,7 @@ public class RobotContainer {
     handSubsystem.registerWith(telemetryService);
     robotStateSubsystem.registerWith(telemetryService);
     driveSubsystem.registerWith(telemetryService);
+
     telemetryService.start();
   }
 
