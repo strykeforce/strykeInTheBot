@@ -27,3 +27,18 @@ Clone of 2910 2023 Robot
 | Wrist      | FX       | wrist                 | 40 |          |  falcon       |         |
 | Wrist      | Encoder  | wristEncoder          | 41 |          |  CANAndCoder  |         |
 | Hand       | FX       | hand                  | 50 |          |  falcon       |         |
+
+
+## Minimal Robot
+| Subsystem  | Type     | Talon                 | ID | PDP      | Motor         | Breaker |
+| ---------- | -------- | --------------------- | -- | -------- | ------------- | ------- |
+| Drive      | SRX      | azimuth               | 0  |   4      |  9015         |  30     |
+| Drive      | SRX      | azimuth               | 1  |   11     |  9015         |  30     |
+| Drive      | SRX      | azimuth               | 2  |   7      |  9015         |  30     |
+| Drive      | SRX      | azimuth               | 3  |   8      |  9015         |  30     |
+| Drive      | FX       | drive                 | 10 |   0      |  falcon       |  40     |
+| Drive      | FX       | drive                 | 11 |   15     |  falcon       |         |
+| Drive      | FX       | drive                 | 12 |   3      |  falcon       |         |
+| Drive      | FX       | drive                 | 13 |   12     |  falcon       |         |
+| Shoulder   | FX       | shoulder              | 20 |   1      |  falcon       |         |
+| Hand       | FX       | hand                  | 50 |   13     |  falcon       |         |
