@@ -83,26 +83,32 @@ public class RobotContainer {
     Trigger rightTrigger =
         new Trigger(() -> xboxController.getRightTriggerAxis() >= 0.1)
             .onTrue(new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.HIGH));
+
     // Level 2
     new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value)
         .onTrue(new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.MID));
     new JoystickButton(xboxController, XboxController.Button.kRightBumper.value)
         .onTrue(new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.MID));
+
     // Level 1
     Trigger floorPlace = new Trigger(() -> xboxController.getPOV() == 0);
     floorPlace.onTrue(new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.LOW));
-    // Shelf
+
+    // Shelf (substation)
     new JoystickButton(xboxController, XboxController.Button.kY.value)
         .onTrue(new SubstationPickupCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem));
 
+    // Clear gamepiece
     new JoystickButton(xboxController, XboxController.Button.kB.value)
         .onTrue(new ClearGamepieceCommand(robotStateSubsystem));
 
+    // Floor pickup
     new JoystickButton(xboxController, XboxController.Button.kX.value)
         .onTrue(
             new FloorPickupCommand(
                 robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE));
 
+    // Stow
     new JoystickButton(xboxController, XboxController.Button.kBack.value)
         .onTrue(new StowCommand(robotStateSubsystem, shoulderSubsystem));
   }
@@ -151,34 +157,37 @@ public class RobotContainer {
     new JoystickButton(driveJoystick, Button.M_RTRIM_UP.id)
         .onTrue(new XLockCommand(driveSubsystem));
 
+    // Floor Pickup
     new JoystickButton(driveJoystick, Button.SWB_DWN.id)
         .onTrue(
             new FloorPickupCommand(
-                robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE));
-    new JoystickButton(driveJoystick, Button.SWB_DWN.id)
+                robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE))
         .onFalse(
             new FloorPickupCommand(
                 robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE));
     new JoystickButton(driveJoystick, Button.SWB_UP.id)
         .onTrue(
             new FloorPickupCommand(
-                robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE));
-    new JoystickButton(driveJoystick, Button.SWB_UP.id)
+                robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE))
         .onFalse(
             new FloorPickupCommand(
                 robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE));
 
+    // Zero Shoulder
     new JoystickButton(driveJoystick, Button.M_SWC.id)
         .onTrue(new ZeroShoulderCommand(shoulderSubsystem));
-    new JoystickButton(driveJoystick, Button.M_SWH.id)
+
+    // Manual stage arm
+    new JoystickButton(driveJoystick, Button.M_SWE.id)
         .onTrue(new ManualStageArmCommand(robotStateSubsystem, shoulderSubsystem));
 
-    new JoystickButton(driveJoystick, Button.M_SWE.id)
+    // Release game piece
+    new JoystickButton(driveJoystick, Button.M_SWH.id)
         .onTrue(new ReleaseGamePieceCommand(robotStateSubsystem, handSubsystem));
 
+    // Stow
     new JoystickButton(driveJoystick, Button.SWD.id)
-        .onTrue(new StowCommand(robotStateSubsystem, shoulderSubsystem));
-    new JoystickButton(driveJoystick, Button.SWD.id)
+        .onTrue(new StowCommand(robotStateSubsystem, shoulderSubsystem))
         .onFalse(new StowCommand(robotStateSubsystem, shoulderSubsystem));
   }
 
@@ -192,7 +201,7 @@ public class RobotContainer {
   }
 
   public void zeroShoulder() {
-    shoulderSubsystem.zero();
+    if (!shoulderSubsystem.hasZeroed()) shoulderSubsystem.zero();
   }
 
   public Command getAutonomousCommand() {
