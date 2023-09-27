@@ -21,7 +21,7 @@ import frc.robot.commands.drive.DriveTeleopCommand;
 import frc.robot.commands.drive.LockZeroCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
-import frc.robot.commands.robotState.ClearGamePieceCommand;
+import frc.robot.commands.robotState.ClearGamepieceCommand;
 import frc.robot.commands.robotState.FloorPickupCommand;
 import frc.robot.commands.robotState.ManualStageArmCommand;
 import frc.robot.commands.robotState.ReleaseGamepieceCommand;
@@ -49,7 +49,6 @@ import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
 
 public class RobotContainer {
-  private final Logger logger;
   // Grapher
   private final TelemetryService telemetryService = new TelemetryService(TelemetryController::new);
 
@@ -72,6 +71,7 @@ public class RobotContainer {
   private TestBalanceCommand balancepath;
   private DriveAutonCommand fiveMeterTest;
 
+  private Logger logger;
   private SuppliedValueWidget<Boolean> allianceColor;
   private Alliance alliance = Alliance.Invalid;
   private SuppliedValueWidget<Boolean> currGamePiece;
@@ -129,7 +129,7 @@ public class RobotContainer {
 
     // Clear gamepiece
     new JoystickButton(xboxController, XboxController.Button.kB.value)
-        .onTrue(new ClearGamePieceCommand(robotStateSubsystem));
+        .onTrue(new ClearGamepieceCommand(robotStateSubsystem));
 
     // Floor pickup
     new JoystickButton(xboxController, XboxController.Button.kX.value)
