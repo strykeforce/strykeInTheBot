@@ -11,7 +11,6 @@ import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem.HandStates;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.RobotState;
-
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.util.ExpoScale;
 
@@ -70,13 +69,13 @@ public class DriveTeleopCommand extends CommandBase {
     //         joystick.getRawAxis(RobotContainer.Axis.RIGHT_Y.id));
 
     if (robotStateSubsystem.getRobotState() == RobotState.AUTO_SCORE
-    || robotStateSubsystem.getRobotState() == RobotState.MANUAL_SCORE
-    || robotStateSubsystem.getRobotState() == RobotState.TO_MANUAL_SCORE
-    || robotStateSubsystem.getRobotState() == RobotState.RELEASE_GAMEPIECE
-        && handSubsystem.getState() != HandStates.EJECT) {
-    yawPercent = DriveConstants.kPlaceYawPercent;
-    movePercent = DriveConstants.kPlaceMovePercent;
-}
+        || robotStateSubsystem.getRobotState() == RobotState.MANUAL_SCORE
+        || robotStateSubsystem.getRobotState() == RobotState.TO_MANUAL_SCORE
+        || robotStateSubsystem.getRobotState() == RobotState.RELEASE_GAMEPIECE
+            && handSubsystem.getState() != HandStates.EJECT) {
+      yawPercent = DriveConstants.kPlaceYawPercent;
+      movePercent = DriveConstants.kPlaceMovePercent;
+    }
 
     if (robotStateSubsystem.getAllianceColor() == Alliance.Blue) {
       driveSubsystem.drive(

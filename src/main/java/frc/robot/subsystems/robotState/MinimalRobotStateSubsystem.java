@@ -103,13 +103,9 @@ public class MinimalRobotStateSubsystem extends MeasurableSubsystem {
     logger.info("starting floor pickup");
 
     this.targetPiece = targetPiece;
-    if (isStowed()) {
-      shoulderSubsystem.floorPickup(targetPiece);
+    shoulderSubsystem.floorPickup(targetPiece);
 
-      setRobotStateLogged(RobotState.TO_FLOOR_PICKUP);
-    } else {
-      toStow(RobotState.TO_FLOOR_PICKUP);
-    }
+    setRobotStateLogged(RobotState.TO_FLOOR_PICKUP);
   }
 
   public void toStow(RobotState nextState) {
@@ -126,25 +122,17 @@ public class MinimalRobotStateSubsystem extends MeasurableSubsystem {
   public void toManualScore() {
     logger.info("starting manual score");
 
-    if (isStowed()) {
-      shoulderSubsystem.score(currentPiece, targetLevel);
-      setRobotStateLogged(RobotState.TO_MANUAL_SCORE);
-    } else {
-      toStow(RobotState.MANUAL_SCORE);
-    }
+    shoulderSubsystem.score(currentPiece, targetLevel);
+    setRobotStateLogged(RobotState.TO_MANUAL_SCORE);
   }
 
   public void toManualSubstation(GamePiece targetPiece) {
     this.targetPiece = targetPiece;
     logger.info("starting manual substation");
 
-    if (isStowed()) {
-      shoulderSubsystem.substation(targetPiece);
+    shoulderSubsystem.substation(targetPiece);
 
-      setRobotStateLogged(RobotState.TO_MANUAL_SUBSTATION);
-    } else {
-      toStow(RobotState.MANUAL_SUBSTATION);
-    }
+    setRobotStateLogged(RobotState.TO_MANUAL_SUBSTATION);
   }
 
   public void toReleaseGamepiece() {
@@ -155,13 +143,8 @@ public class MinimalRobotStateSubsystem extends MeasurableSubsystem {
 
   public void toAutobalance() {
     logger.info("starting autobalance");
-
-    if (isStowed()) {
-      // TODO: add autobalance functionality
-      setRobotStateLogged(RobotState.TO_AUTOBALANCE);
-    } else {
-      toStow(RobotState.AUTOBALANCE);
-    }
+    // TODO: add autobalance functionality
+    setRobotStateLogged(RobotState.TO_AUTOBALANCE);
   }
 
   @Override
