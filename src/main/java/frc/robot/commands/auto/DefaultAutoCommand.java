@@ -4,10 +4,12 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drive.DriveAutonCommand;
+import frc.robot.commands.drive.ZeroGyroCommand;
 import frc.robot.commands.robotState.ManualScoreCommand;
 import frc.robot.commands.robotState.ReleaseGamepieceCommand;
 import frc.robot.commands.robotState.SetGamePieceCommand;
 import frc.robot.commands.robotState.SetTargetLevelCommand;
+import frc.robot.commands.shoulder.ZeroShoulderCommand;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
@@ -31,8 +33,10 @@ public class DefaultAutoCommand extends SequentialCommandGroup implements AutoCo
 
     addCommands(
         new ParallelCommandGroup(
-            new SetGamePieceCommand(robotStateSubsystem, GamePiece.CONE),
-            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.HIGH),
+            new ZeroGyroCommand(driveSubsystem),
+            new ZeroShoulderCommand(shoulderSubsystem),
+            new SetGamePieceCommand(robotStateSubsystem, GamePiece.CUBE),
+            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.MID),
             new AutoHoldCubeCommand(handSubsystem)),
         new ManualScoreCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem),
         new ReleaseGamepieceCommand(robotStateSubsystem, handSubsystem),

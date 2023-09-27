@@ -3,6 +3,7 @@ package frc.robot.subsystems.autoSwitch;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.commands.auto.AutoCommandInterface;
+import frc.robot.commands.auto.DefaultAutoCommand;
 // import frc.robot.commands.auto.DefaultAutoCommand;
 // import frc.robot.commands.auto.DoNothingAutonCommand;
 import frc.robot.commands.auto.MiddleToDockWithMobility;
@@ -57,8 +58,8 @@ public class AutoSwitch {
     //         "tinyLittleToBalancePath");
 
     defaultCommand =
-        new PiecePlaceMobilityBump(
-            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchBumpPath");
+        new DefaultAutoCommand(
+            driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
 
     // new DefaultAutoCommand(
     //     driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
@@ -116,58 +117,8 @@ public class AutoSwitch {
         // Cube lvl 2, mobility
         return new PiecePlaceMobility(
             driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchPath");
-      case 0x01:
-        // // Cone Lvl 3, Cube Lvl 3
-        // return new TwoPieceLvl3AutoCommandGroup(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem,
-        //     handSubsystem,
-        //     "pieceOneFetchPath",
-        //     "pieceOnePlacePath");
-      case 0x02:
-        // // Same as 0x00 but scores cone mid
-        // return new TwoPieceWithDockAutoMidCommandGroup(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem,
-        //     handSubsystem,
-        //     "pieceOneFetchPath",
-        //     "pieceOnePlacePath",
-        //     "pieceTwoToDockPath");
-      case 0x03:
-        // // Cone lvl 3, Cube lvl 3, Cube lvl 2
-        // return new ThreePieceSmoothAutoCommandGroup(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem,
-        //     handSubsystem,
-        //     "pieceOneFetchCubeThreePath",
-        //     "pieceOnePlaceCubeThreePath",
-        //     "pieceTwoFetchCubeFourPath",
-        //     "pieceTwoPlaceCubeFourPath",
-        //     "pieceScoreWithoutAutoPath");
+
       case 0x10:
-        // // Cone lvl 3, cube lvl 3, balance
-        // return new TwoPieceMiddleBalanceAutoCommandGroup(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem,
-        //     handSubsystem,
-        //     "pieceFetchChargeStation",
-        //     "pieceScoreChargeStation",
-        //     "pieceScoreWithoutAutoChargeStation",
-        //     "middleScoreToBalance");
-
-      case 0x11:
-        // return new MiddleToDock(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem,
-        //     handSubsystem,
-        //     "middleScoreToBalance");
-
-      case 0x12:
         return new MiddleToDockWithMobility(
             driveSubsystem,
             robotStateSubsystem,
@@ -179,64 +130,12 @@ public class AutoSwitch {
       case 0x20:
         // Cube lvl 2, mobility, bump side
         return new PiecePlaceMobilityBump(
-            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchPathBump");
-      case 0x21:
-        // // FALLBACK - Cone Lvl 3, cube lvl 2 and 3
-        // return new ThreePieceBumpFallbackAutoCommandGroup(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem,
-        //     handSubsystem,
-        //     "pieceOneFetchBumpCubeOneFallback",
-        //     "pieceOneDeliverBumpCubeOneFallback",
-        //     "pieceTwoFetchBumpCubeTwoFallback",
-        //     "pieceTwoDeliverBumpCubeTwoFallback",
-        //     "pieceScoreWithoutAutoBumpFallback");
-      case 0x22:
-        // // Cone Lvl3, Cube Lvl3
-        // return new TwoPieceBumpWithDockAutoCommandGroup(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem,
-        //     handSubsystem,
-        //     "pieceOneFetchPathBump",
-        //     "pieceOneDeliverBumpPath",
-        //     "pieceTwoToDockBumpPath",
-        //     "pieceScoreWithoutAutoBump");
-      case 0x23:
-        // // Cone Lvl 3, cube lvl 2 and 3
-        // return new ThreePieceBumpAutoCommandGroup(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem,
-        //     handSubsystem,
-        //     "pieceOneFetchBumpCubeTwo",
-        //     "pieceOneDeliverBumpCubeTwo",
-        //     "pieceTwoFetchBumpCubeOne",
-        //     "pieceTwoDeliverBumpCubeOne",
-        //     "pieceScoreWithoutAutoBump");
-      case 0x24:
-        // // Cone Lvl 1, Cube Lvl 3 and 2
-        // return new ThreePieceBumpLowAutoCommandGroup(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem,
-        //     handSubsystem,
-        //     "pieceOneFetchBumpCubeTwo",
-        //     "pieceOneDeliverBumpCubeTwo",
-        //     "pieceTwoFetchBumpCubeOne",
-        //     "pieceTwoDeliverBumpCubeOne",
-        //     "pieceScoreWithoutAutoBump");
-      case 0x30:
-        // return new DoNothingAutonCommand(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem
+            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchBumpPath");
       default:
         String msg = String.format("no auto command assigned for switch pos: %02X", switchPos);
         DriverStation.reportWarning(msg, false);
-        return new PiecePlaceMobilityBump(
-            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchBumpPath");
+        return new DefaultAutoCommand(
+            driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
     }
   }
 }

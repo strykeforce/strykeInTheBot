@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -21,13 +22,15 @@ import org.slf4j.LoggerFactory;
 
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
+  private Boolean haveAlliance = false;
 
   private RobotContainer m_robotContainer;
+  Logger logger;
 
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    Logger logger = LoggerFactory.getLogger(Robot.class);
+    logger = LoggerFactory.getLogger(Robot.class);
     org.littletonrobotics.junction.Logger advLogger =
         org.littletonrobotics.junction.Logger.getInstance();
 
@@ -78,13 +81,24 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    if (!haveAlliance) {
+      Alliance alliance = DriverStation.getAlliance();
+      if (alliance != Alliance.Invalid) {
+        haveAlliance = true;
+        m_robotContainer.setAllianceColor(alliance);
+        logger.info("Set Allince {}", alliance);
+        m_robotContainer.getAutoSwitch().getAutoCommand().generateTrajectory();
+      }
+    }
   }
 
   @Override
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.getAutoSwitch().checkSwitch();
+  }
 
   @Override
   public void disabledExit() {}
