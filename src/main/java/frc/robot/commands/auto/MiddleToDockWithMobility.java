@@ -9,9 +9,9 @@ import frc.robot.commands.drive.AutoBalanceCommand;
 import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
-import frc.robot.commands.robotState.ClearGamepieceCommand;
+import frc.robot.commands.robotState.ClearGamePieceCommand;
 import frc.robot.commands.robotState.ManualScoreCommand;
-import frc.robot.commands.robotState.ReleaseGamePieceCommand;
+import frc.robot.commands.robotState.ReleaseGamepieceCommand;
 import frc.robot.commands.robotState.SetGamePieceCommand;
 import frc.robot.commands.robotState.SetTargetLevelCommand;
 import frc.robot.commands.shoulder.ZeroShoulderCommand;
@@ -60,7 +60,7 @@ public class MiddleToDockWithMobility extends SequentialCommandGroup
             // ,new SetVisionUpdateCommand(driveSubsystem, false)
             ),
         new ManualScoreCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem),
-        new ReleaseGamePieceCommand(robotStateSubsystem, handSubsystem),
+        new ReleaseGamepieceCommand(robotStateSubsystem, handSubsystem),
         new WaitCommand(1.0),
         firstPath,
         new WaitCommand(0.75),
@@ -70,7 +70,7 @@ public class MiddleToDockWithMobility extends SequentialCommandGroup
                 secondPath, new AutoBalanceCommand(false, driveSubsystem, robotStateSubsystem))),
         new XLockCommand(driveSubsystem));
     new ParallelCommandGroup(
-        new ClearGamepieceCommand(robotStateSubsystem)
+        new ClearGamePieceCommand(robotStateSubsystem)
         // ,new SetVisionUpdateCommand(driveSubsystem, true)
         );
   }

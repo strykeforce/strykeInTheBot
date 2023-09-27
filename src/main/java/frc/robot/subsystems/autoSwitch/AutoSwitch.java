@@ -57,8 +57,8 @@ public class AutoSwitch {
     //         "tinyLittleToBalancePath");
 
     defaultCommand =
-        new PiecePlaceMobility(
-            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchPath");
+        new PiecePlaceMobilityBump(
+            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchBumpPath");
 
     // new DefaultAutoCommand(
     //     driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
@@ -235,13 +235,8 @@ public class AutoSwitch {
       default:
         String msg = String.format("no auto command assigned for switch pos: %02X", switchPos);
         DriverStation.reportWarning(msg, false);
-        return new MiddleToDockWithMobility(
-            driveSubsystem,
-            robotStateSubsystem,
-            shoulderSubsystem,
-            handSubsystem,
-            "piecePlaceOverLinePath",
-            "tinyLittleToBalancePath");
+        return new PiecePlaceMobilityBump(
+            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchBumpPath");
     }
   }
 }

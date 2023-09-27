@@ -20,10 +20,10 @@ import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.drive.DriveTeleopCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
-import frc.robot.commands.robotState.ClearGamepieceCommand;
+import frc.robot.commands.robotState.ClearGamePieceCommand;
 import frc.robot.commands.robotState.FloorPickupCommand;
 import frc.robot.commands.robotState.ManualStageArmCommand;
-import frc.robot.commands.robotState.ReleaseGamePieceCommand;
+import frc.robot.commands.robotState.ReleaseGamepieceCommand;
 import frc.robot.commands.robotState.SetTargetLevelCommand;
 import frc.robot.commands.robotState.StowCommand;
 import frc.robot.commands.robotState.SubstationPickupCommand;
@@ -151,7 +151,7 @@ public class RobotContainer {
 
     // Clear gamepiece
     new JoystickButton(xboxController, XboxController.Button.kB.value)
-        .onTrue(new ClearGamepieceCommand(robotStateSubsystem));
+        .onTrue(new ClearGamePieceCommand(robotStateSubsystem));
 
     // Floor pickup
     new JoystickButton(xboxController, XboxController.Button.kX.value)
@@ -236,7 +236,7 @@ public class RobotContainer {
 
     // Release game piece
     new JoystickButton(driveJoystick, Button.M_SWH.id)
-        .onTrue(new ReleaseGamePieceCommand(robotStateSubsystem, handSubsystem));
+        .onTrue(new ReleaseGamepieceCommand(robotStateSubsystem, handSubsystem));
 
     // Stow
     new JoystickButton(driveJoystick, Button.SWD.id)

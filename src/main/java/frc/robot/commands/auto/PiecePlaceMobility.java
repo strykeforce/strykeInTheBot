@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
-import frc.robot.commands.robotState.ClearGamepieceCommand;
+import frc.robot.commands.robotState.ClearGamePieceCommand;
 import frc.robot.commands.robotState.ManualScoreCommand;
-import frc.robot.commands.robotState.ReleaseGamePieceCommand;
+import frc.robot.commands.robotState.ReleaseGamepieceCommand;
 import frc.robot.commands.robotState.SetGamePieceCommand;
 import frc.robot.commands.robotState.SetTargetLevelCommand;
 import frc.robot.commands.shoulder.ZeroShoulderCommand;
@@ -53,9 +53,9 @@ public class PiecePlaceMobility extends SequentialCommandGroup implements AutoCo
             // ,new SetVisionUpdateCommand(driveSubsystem, false)
             ),
         new ManualScoreCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem),
-        new ReleaseGamePieceCommand(robotStateSubsystem, handSubsystem),
+        new ReleaseGamepieceCommand(robotStateSubsystem, handSubsystem),
         firstPath,
-        new ParallelCommandGroup(new ClearGamepieceCommand(robotStateSubsystem))
+        new ParallelCommandGroup(new ClearGamePieceCommand(robotStateSubsystem))
         // ,new SetVisionUpdateCommand(driveSubsystem, true)
         );
   }
