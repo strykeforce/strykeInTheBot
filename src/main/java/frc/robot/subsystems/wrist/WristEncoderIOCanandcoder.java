@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Wrist;
+package frc.robot.subsystems.wrist;
 
 import com.reduxrobotics.sensors.canandcoder.CANandcoder;
 import frc.robot.constants.WristConstants;

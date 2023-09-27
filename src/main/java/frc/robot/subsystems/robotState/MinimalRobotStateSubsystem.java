@@ -87,8 +87,8 @@ public class MinimalRobotStateSubsystem extends MeasurableSubsystem {
     return targetPiece;
   }
 
-  public void setTargetPiece(GamePiece targetPiece) {
-    this.targetPiece = targetPiece;
+  public void setGamePiece(GamePiece currentPiece) {
+    this.currentPiece = currentPiece;
   }
 
   public boolean isStowed() {
@@ -141,10 +141,15 @@ public class MinimalRobotStateSubsystem extends MeasurableSubsystem {
     setRobotStateLogged(RobotState.RELEASE_GAMEPIECE);
   }
 
-  public void toAutobalance() {
+  public void toAutobalance(boolean isOnAllianceSide) {
     logger.info("starting autobalance");
-    // TODO: add autobalance functionality
-    setRobotStateLogged(RobotState.TO_AUTOBALANCE);
+
+    if (isStowed()) {
+      driveSubsystem.autoBalance(isOnAllianceSide);
+      setRobotStateLogged(RobotState.TO_AUTOBALANCE);
+    } else {
+      toStow(RobotState.AUTOBALANCE);
+    }
   }
 
   @Override

@@ -5,10 +5,10 @@ import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.RobotState;
 
-public class ReleaseGamePieceCommand extends CommandBase {
+public class ReleaseGamepieceCommand extends CommandBase {
   private MinimalRobotStateSubsystem robotStateSubsystem;
 
-  public ReleaseGamePieceCommand(
+  public ReleaseGamepieceCommand(
       MinimalRobotStateSubsystem robotStateSubsystem, HandSubsystem handSubsystem) {
     this.robotStateSubsystem = robotStateSubsystem;
     addRequirements(handSubsystem);
