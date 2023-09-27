@@ -144,12 +144,8 @@ public class MinimalRobotStateSubsystem extends MeasurableSubsystem {
   public void toAutobalance(boolean isOnAllianceSide) {
     logger.info("starting autobalance");
 
-    if (isStowed()) {
-      driveSubsystem.autoBalance(isOnAllianceSide);
-      setRobotStateLogged(RobotState.TO_AUTOBALANCE);
-    } else {
-      toStow(RobotState.AUTOBALANCE);
-    }
+    driveSubsystem.autoBalance(isOnAllianceSide);
+    setRobotStateLogged(RobotState.TO_AUTOBALANCE);
   }
 
   @Override
