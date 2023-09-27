@@ -26,6 +26,7 @@ public class RobotStateSubsystem extends SubsystemBase {
   private TargetCol targetCol = TargetCol.NONE;
   private double currShelfPoseX;
   private boolean isConePickupUpright = true;
+  private boolean isDisabled;
 
   public RobotStateSubsystem(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem) {
     this.driveSubsystem = driveSubsystem;
@@ -231,6 +232,11 @@ public class RobotStateSubsystem extends SubsystemBase {
 
   public void toPulseAutoBalance(boolean isOnAllianceSide) {
     // FIXME: IMPLEMENT THIS METHOD
+  }
+
+  public void setDisabled(boolean isDisabled) {
+    this.isDisabled = isDisabled;
+    logger.info("Disabled RobotState");
   }
 
   @Override

@@ -100,7 +100,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
             DriveConstants.kDAutoDrive,
             new TrapezoidProfile.Constraints(
                 DriveConstants.kAutoDriveMaxVelocity, DriveConstants.kAutoDriveMaxAccel));
-    // xAutoDriveController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
+    // xAutoDriveController.enableContinuousInput(Math.toRadians(-180),
+    // Math.toRadians(180));
 
     yAutoDriveController =
         new ProfiledPIDController(
@@ -109,7 +110,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
             DriveConstants.kDAutoDrive,
             new TrapezoidProfile.Constraints(
                 DriveConstants.kAutoDriveMaxVelocity, DriveConstants.kAutoDriveMaxAccel));
-    // yAutoDriveController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
+    // yAutoDriveController.enableContinuousInput(Math.toRadians(-180),
+    // Math.toRadians(180));
 
     omegaController =
         new ProfiledPIDController(
@@ -129,7 +131,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
             DriveConstants.kPHolonomic, DriveConstants.kIHolonomic, DriveConstants.kDHolonomic);
     // yController.setIntegratorRange(DriveConstants.kIMin, DriveConstants.kIMax);
     holonomicController = new HolonomicDriveController(xController, yController, omegaController);
-    // Disabling the holonomic controller makes the robot directly follow the trajectory output (no
+    // Disabling the holonomic controller makes the robot directly follow the
+    // trajectory output (no
     // closing the loop on x,y,theta errors)
     holonomicController.setEnabled(true);
   }
@@ -138,6 +141,7 @@ public class DriveSubsystem extends MeasurableSubsystem {
   public void drive(double vXmps, double vYmps, double vOmegaRadps) {
     swerveDrive.drive(vXmps, vYmps, vOmegaRadps, true);
   }
+
   // Closed-Loop (Velocity Controlled) Swerve Movement
   public void move(double vXmps, double vYmps, double vOmegaRadps, boolean isFieldOriented) {
     swerveDrive.move(vXmps, vYmps, vOmegaRadps, isFieldOriented);
@@ -149,7 +153,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
     holoContAngle = desiredAngle;
     holoContOutput =
         holonomicController.calculate(swerve.getPoseMeters(), desiredState, desiredAngle);
-    // logger.info("input: {}, output: {}, angle: {}", holoContInput, holoContOutput, desiredAngle);
+    // logger.info("input: {}, output: {}, angle: {}", holoContInput,
+    // holoContOutput, desiredAngle);
     swerveDrive.move(
         holoContOutput.vxMetersPerSecond,
         holoContOutput.vyMetersPerSecond,
@@ -257,7 +262,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
       ArrayList<Translation2d> path = new ArrayList<>();
       logger.info("Toml Internal Points Array Size: {}", internalPointsToml.size());
 
-      // Create a table for each internal point and put them into a translation2d waypoint
+      // Create a table for each internal point and put them into a translation2d
+      // waypoint
       for (int i = 0; i < internalPointsToml.size(); i++) {
         TomlTable waypointToml = internalPointsToml.getTable(i);
         Translation2d waypoint =
@@ -266,7 +272,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
         path.add(waypoint);
       }
 
-      // Trajectory Config parsed from toml - any additional constraints would be added here
+      // Trajectory Config parsed from toml - any additional constraints would be
+      // added here
       TrajectoryConfig trajectoryConfig =
           new TrajectoryConfig(
               parseResult.getDouble("max_velocity"), parseResult.getDouble("max_acceleration"));
@@ -380,6 +387,10 @@ public class DriveSubsystem extends MeasurableSubsystem {
     return (swerve.getGyroRoll() <= threshold && swerve.getGyroRoll() >= -threshold);
   }
 
+  public boolean isNavxWorking() {
+    return swerve.isConnected();
+  }
+
   @Override
   public void periodic() {
     swerve.updateInputs(inputs);
@@ -399,7 +410,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
       case IDLE:
         break;
       case AUTO_BALANCE_EDGE:
-        // if the gyro measures past the edge threshold, go to auto balance drive state and start a
+        // if the gyro measures past the edge threshold, go to auto balance drive state
+        // and start a
         // timer and keep driving
         if (Math.abs(swerve.getGyroPitch()) - Math.abs(tempRoll)
             >= DriveConstants.kAutoBalanceEdgeTriggerThreshold) {
@@ -410,7 +422,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
         }
         break;
       case AUTO_BALANCE_DRIVE:
-        // keep driving and once the timer reaches a certain point, switch to the averaging state
+        // keep driving and once the timer reaches a certain point, switch to the
+        // averaging state
         // and restart the timer and make a variable for the gyro direction
         if (autoBalanceTimer.hasElapsed(DriveConstants.kAutoBalanceSlowdownTimeSec)) {
           logger.info("{} -> AUTO_BALANCE_AVERAGE", currDriveState);
@@ -425,7 +438,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
         autoBalanceAvgCount++;
         logger.info("AutoBalanceAverageCount: {}", autoBalanceAvgCount);
 
-        // after the timer reaches a certain value, the robot slows down and the timer resets
+        // after the timer reaches a certain value, the robot slows down and the timer
+        // resets
         if (autoBalanceTimer.hasElapsed(DriveConstants.kAutoBalanceLoopFixTimer)) {
           avgStartingRoll = sumRoll / autoBalanceAvgCount;
           logger.info("Average Starting Roll: {}", avgStartingRoll);
@@ -457,7 +471,8 @@ public class DriveSubsystem extends MeasurableSubsystem {
         }
         break;
       case AUTO_BALANCE_RECOVERY:
-        // the recovery phase in the case that the robot isn't stable on the charging station
+        // the recovery phase in the case that the robot isn't stable on the charging
+        // station
         if (autoBalanceRecoveryTimer.hasElapsed(DriveConstants.kSettleTime)) {
           autoBalanceRecoveryTimer.stop();
           // isOnAllianceSide is true move positive

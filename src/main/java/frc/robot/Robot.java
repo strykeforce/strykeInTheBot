@@ -81,6 +81,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    m_robotContainer.updateGamePiece();
     if (!haveAlliance) {
       Alliance alliance = DriverStation.getAlliance();
       if (alliance != Alliance.Invalid) {
@@ -93,7 +94,10 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    // logger.info("Disabled Init");
+    // m_robotContainer.setDisabled(true);
+  }
 
   @Override
   public void disabledPeriodic() {

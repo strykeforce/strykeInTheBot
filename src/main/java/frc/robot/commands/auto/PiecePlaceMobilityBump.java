@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
-import frc.robot.commands.robotState.ClearGamePieceCommand;
+import frc.robot.commands.robotState.ClearGamepieceCommand;
 import frc.robot.commands.robotState.ManualScoreCommand;
 import frc.robot.commands.robotState.ReleaseGamepieceCommand;
 import frc.robot.commands.robotState.SetGamePieceCommand;
@@ -55,7 +55,7 @@ public class PiecePlaceMobilityBump extends SequentialCommandGroup implements Au
         new ManualScoreCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem),
         new ReleaseGamepieceCommand(robotStateSubsystem, handSubsystem),
         firstPath,
-        new ParallelCommandGroup(new ClearGamePieceCommand(robotStateSubsystem))
+        new ParallelCommandGroup(new ClearGamepieceCommand(robotStateSubsystem))
         // ,new SetVisionUpdateCommand(driveSubsystem, true)
         );
   }

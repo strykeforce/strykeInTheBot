@@ -18,9 +18,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.auto.TestBalanceCommand;
 import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.drive.DriveTeleopCommand;
+import frc.robot.commands.drive.LockZeroCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
-import frc.robot.commands.robotState.ClearGamePieceCommand;
+import frc.robot.commands.robotState.ClearGamepieceCommand;
 import frc.robot.commands.robotState.FloorPickupCommand;
 import frc.robot.commands.robotState.ManualStageArmCommand;
 import frc.robot.commands.robotState.ReleaseGamepieceCommand;
@@ -48,10 +49,6 @@ import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
 
 public class RobotContainer {
-  // field data
-  private SuppliedValueWidget<Boolean> allianceColor;
-  private Alliance alliance = Alliance.Invalid;
-
   // Grapher
   private final TelemetryService telemetryService = new TelemetryService(TelemetryController::new);
 
@@ -75,6 +72,10 @@ public class RobotContainer {
   private DriveAutonCommand fiveMeterTest;
 
   private Logger logger;
+  private SuppliedValueWidget<Boolean> allianceColor;
+  private Alliance alliance = Alliance.Invalid;
+  private SuppliedValueWidget<Boolean> currGamePiece;
+  private boolean isEvent = false;
 
   public RobotContainer() {
     logger = LoggerFactory.getLogger(RobotContainer.class);
@@ -100,30 +101,6 @@ public class RobotContainer {
     configureOperatorBindings();
     configureMatchDashboard();
     configTelemetry();
-  }
-
-  public void setAllianceColor(Alliance alliance) {
-    this.alliance = alliance;
-    allianceColor.withProperties(
-        Map.of(
-            "colorWhenTrue", alliance == Alliance.Red ? "red" : "blue", "colorWhenFalse", "black"));
-    robotStateSubsystem.setAllianceColor(alliance);
-    // fiveMeterTest.generateTrajectory();
-    // balancepath.generateTrajectory();
-    // communityToDockCommandGroup.generateTrajectory();
-    // twoPieceWithDockAutoCommandGroup.generateTrajectory();
-    // threePiecePath.generateTrajectory();
-    // twoPieceAutoPlacePathCommandGroup.generateTrajectory();
-    // bumpSideTwoPieceCommandGroup.generateTrajectory();
-    if (autoSwitch.getAutoCommand() != null) {
-      autoSwitch.getAutoCommand().generateTrajectory();
-    }
-    // Flips gyro angle if alliance is red team
-    if (robotStateSubsystem.getAllianceColor() == Alliance.Red) {
-      driveSubsystem.setGyroOffset(Rotation2d.fromDegrees(180));
-    } else {
-      driveSubsystem.setGyroOffset(Rotation2d.fromDegrees(0));
-    }
   }
 
   private void configureOperatorBindings() {
@@ -152,7 +129,7 @@ public class RobotContainer {
 
     // Clear gamepiece
     new JoystickButton(xboxController, XboxController.Button.kB.value)
-        .onTrue(new ClearGamePieceCommand(robotStateSubsystem));
+        .onTrue(new ClearGamepieceCommand(robotStateSubsystem));
 
     // Floor pickup
     new JoystickButton(xboxController, XboxController.Button.kX.value)
@@ -246,15 +223,6 @@ public class RobotContainer {
         .onFalse(new StowCommand(robotStateSubsystem, shoulderSubsystem));
   }
 
-  private void configureMatchDashboard() {
-    allianceColor =
-        Shuffleboard.getTab("Match")
-            .addBoolean("AllianceColor", () -> alliance != Alliance.Invalid)
-            .withProperties(Map.of("colorWhenFalse", "black"))
-            .withSize(2, 2)
-            .withPosition(0, 0);
-  }
-
   private void configTelemetry() {
     exampleSubsystem.registerWith(telemetryService);
     shoulderSubsystem.registerWith(telemetryService);
@@ -277,6 +245,30 @@ public class RobotContainer {
     return autoSwitch;
   }
 
+  private void configureMatchDashboard() {
+    allianceColor =
+        Shuffleboard.getTab("Match")
+            .addBoolean("AllianceColor", () -> alliance != Alliance.Invalid)
+            .withProperties(Map.of("colorWhenFalse", "black"))
+            .withSize(2, 2)
+            .withPosition(0, 0);
+    currGamePiece =
+        Shuffleboard.getTab("Match")
+            .addBoolean("Game Piece", () -> robotStateSubsystem.getCurrentPiece() != GamePiece.NONE)
+            .withProperties(Map.of("colorWhenFalse", "black"))
+            .withSize(2, 2)
+            .withPosition(5, 0);
+    Shuffleboard.getTab("Match")
+        .addBoolean("Is Navx Connected", () -> driveSubsystem.isNavxWorking())
+        .withSize(1, 1)
+        .withPosition(8, 1);
+  }
+
+  private void configurePitDashboard() {
+    Shuffleboard.getTab("Pit")
+        .add("LockZero", new LockZeroCommand(driveSubsystem))
+        .withPosition(0, 2);
+  }
   // Interlink Controller Mapping FIXME
   public enum Axis {
     RIGHT_X(1),
@@ -333,5 +325,44 @@ public class RobotContainer {
     Trim(int id) {
       this.id = id;
     }
+  }
+
+  public void setAllianceColor(Alliance alliance) {
+    this.alliance = alliance;
+    allianceColor.withProperties(
+        Map.of(
+            "colorWhenTrue", alliance == Alliance.Red ? "red" : "blue", "colorWhenFalse", "black"));
+    robotStateSubsystem.setAllianceColor(alliance);
+    // fiveMeterTest.generateTrajectory(); FIXME we will need to test this eventually
+    // balancepath.generateTrajectory();
+    // communityToDockCommandGroup.generateTrajectory();
+    // twoPieceWithDockAutoCommandGroup.generateTrajectory();
+    // threePiecePath.generateTrajectory();
+    // twoPieceAutoPlacePathCommandGroup.generateTrajectory();
+    // bumpSideTwoPieceCommandGroup.generateTrajectory();
+
+    /*if (autoSwitch.getAutoCommand() != null) {
+      autoSwitch.getAutoCommand().generateTrajectory();
+    }                                                   */
+
+    // Flips gyro angle if alliance is red team
+    if (robotStateSubsystem.getAllianceColor() == Alliance.Red) {
+      driveSubsystem.setGyroOffset(Rotation2d.fromDegrees(180));
+    } else {
+      driveSubsystem.setGyroOffset(Rotation2d.fromDegrees(0));
+    }
+  }
+
+  // public void setDisabled(boolean isDisabled) {
+  //   robotStateSubsystem.setDisabled(isDisabled);
+  // }
+
+  public void updateGamePiece() {
+    currGamePiece.withProperties(
+        Map.of(
+            "colorWhenTrue",
+            robotStateSubsystem.getCurrentPiece() == GamePiece.CUBE ? "purple" : "yellow",
+            "colorWhenFalse",
+            "black"));
   }
 }

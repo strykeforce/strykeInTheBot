@@ -9,7 +9,7 @@ import frc.robot.commands.drive.AutoBalanceCommand;
 import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
-import frc.robot.commands.robotState.ClearGamePieceCommand;
+import frc.robot.commands.robotState.ClearGamepieceCommand;
 import frc.robot.commands.robotState.ManualScoreCommand;
 import frc.robot.commands.robotState.ReleaseGamepieceCommand;
 import frc.robot.commands.robotState.SetGamePieceCommand;
@@ -70,7 +70,7 @@ public class MiddleToDockWithMobility extends SequentialCommandGroup
                 secondPath, new AutoBalanceCommand(false, driveSubsystem, robotStateSubsystem))),
         new XLockCommand(driveSubsystem));
     new ParallelCommandGroup(
-        new ClearGamePieceCommand(robotStateSubsystem)
+        new ClearGamepieceCommand(robotStateSubsystem)
         // ,new SetVisionUpdateCommand(driveSubsystem, true)
         );
   }
