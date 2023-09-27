@@ -74,9 +74,10 @@ public class RobotContainer {
   private TestBalanceCommand balancepath;
   private DriveAutonCommand fiveMeterTest;
 
-  private Logger logger = LoggerFactory.getLogger(RobotContainer.class);
+  private Logger logger;
 
   public RobotContainer() {
+    logger = LoggerFactory.getLogger(RobotContainer.class);
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
     shoulderSubsystem = new MinimalShoulderSubsystem(new MinimalShoulderFalconIO());
