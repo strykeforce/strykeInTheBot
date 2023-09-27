@@ -2,9 +2,10 @@ package frc.robot.subsystems.robotState;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ArmConstants;
-import frc.robot.subsystems.Arm.ArmSubsystem;
+import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem.HandStates;
@@ -85,7 +86,7 @@ public class RobotStateSubsystem extends SubsystemBase {
   }
 
   public boolean isShelfPieceCube() {
-    // FIXME maybe flip isBlueAlliance boolean
+    // TODO: check if this actually works
     double angle = driveSubsystem.getGyroRotation2d().getRadians();
     if (isBlueAlliance()) {
       return (angle > Math.PI * -0.5) && (angle < Math.PI * 0.5);
@@ -211,6 +212,11 @@ public class RobotStateSubsystem extends SubsystemBase {
     logger.info("starting release gamepiece");
 
     setRobotStateLogged(RobotState.RELEASE_GAMEPIECE);
+  }
+
+  public void clearGamePiece() {
+    this.currentPiece = GamePiece.NONE;
+    logger.info("Cleared Gamepiece");
   }
 
   public void toAutobalance(boolean isOnAllianceSide) {

@@ -22,13 +22,15 @@ import org.slf4j.LoggerFactory;
 
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
+  private Boolean haveAlliance = false;
 
   private RobotContainer m_robotContainer;
-  private boolean haveAlliance;
+  Logger logger;
 
   @Override
   public void robotInit() {
-    Logger logger = LoggerFactory.getLogger(Robot.class);
+    m_robotContainer = new RobotContainer();
+    logger = LoggerFactory.getLogger(Robot.class);
     org.littletonrobotics.junction.Logger advLogger =
         org.littletonrobotics.junction.Logger.getInstance();
 
@@ -49,6 +51,17 @@ public class Robot extends LoggedRobot {
         advLogger.recordMetadata("GitDirty", "Unknown");
         break;
     }
+
+    Shuffleboard.getTab("Match")
+        .add("SetAllianceRed", new SetAllianceCommand(Alliance.Red, m_robotContainer))
+        .withPosition(2, 0)
+        .withSize(1, 1);
+
+    Shuffleboard.getTab("Match")
+        .add("SetAllianceBlue", new SetAllianceCommand(Alliance.Blue, m_robotContainer))
+        .withPosition(2, 1)
+        .withSize(1, 1);
+
     if (RobotBase.isReal()) {
       advLogger.addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to USB stick
       advLogger.addDataReceiver(new NT4Publisher()); // Publish data to Network Tables
@@ -63,34 +76,19 @@ public class Robot extends LoggedRobot {
 
     // Start Advantage kit logger
     advLogger.start();
-
-    m_robotContainer = new RobotContainer();
-
-    haveAlliance = false;
-
-    Shuffleboard.getTab("Match")
-        .add("SetAllianceRed", new SetAllianceCommand(Alliance.Red, m_robotContainer))
-        .withPosition(2, 0)
-        .withSize(1, 1);
-
-    Shuffleboard.getTab("Match")
-        .add("SetAllianceBlue", new SetAllianceCommand(Alliance.Blue, m_robotContainer))
-        .withPosition(2, 1)
-        .withSize(1, 1);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     m_robotContainer.updateGamePiece();
-
     if (!haveAlliance) {
       Alliance alliance = DriverStation.getAlliance();
       if (alliance != Alliance.Invalid) {
         haveAlliance = true;
         m_robotContainer.setAllianceColor(alliance);
-        // logger.info("Set Alliance {}", alliance);
-        // m_robotContainer.getAutoSwitch().getAutoCommand().generateTrajectory();
+        logger.info("Set Allince {}", alliance);
+        m_robotContainer.getAutoSwitch().getAutoCommand().generateTrajectory();
       }
     }
   }
@@ -98,18 +96,20 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     // logger.info("Disabled Init");
-    //m_robotContainer.setDisabled(true);
+    // m_robotContainer.setDisabled(true);
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.getAutoSwitch().checkSwitch();
+  }
 
   @Override
   public void disabledExit() {}
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutoSwitch().getAutoCommand();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -127,6 +127,7 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.zeroShoulder();
   }
 
   @Override

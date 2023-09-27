@@ -52,6 +52,10 @@ public class HandSubsystem extends MeasurableSubsystem {
     }
   }
 
+  public void autoHoldCube() {
+    currState = HandStates.CUBE;
+  }
+
   public void grabFromFloor() {
     logger.info("{} -> WAITING ({})", currState);
     currState = HandStates.WAITING;

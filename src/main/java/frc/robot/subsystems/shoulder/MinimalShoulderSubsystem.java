@@ -21,6 +21,7 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
   private org.littletonrobotics.junction.Logger advLogger =
       org.littletonrobotics.junction.Logger.getInstance();
   private int zeroStableCounts = 0;
+  private boolean hasZeroed = false;
 
   public MinimalShoulderSubsystem(MinimalShoulderFalconIO io) {
     this.io = io;
@@ -28,6 +29,10 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
 
   public ShoulderStates getState() {
     return currState;
+  }
+
+  public boolean hasZeroed() {
+    return hasZeroed;
   }
 
   public void stow() {
@@ -102,6 +107,8 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
   private void setPos(double position) {
     io.setPos(position);
     setPointTicks = position;
+    currState = ShoulderStates.TRANSITION;
+    desiredState = ShoulderStates.SCORE;
   }
 
   public void setSensorPos(double position) {
@@ -168,6 +175,7 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
 
           setPointTicks = 0;
           currState = ShoulderStates.ZEROED;
+          hasZeroed = true;
           logger.info("MinimalShoulder is zeroed");
         }
         break;
@@ -180,6 +188,7 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
         break;
 
       default:
+        break;
     }
 
     // Log Outputs
@@ -195,7 +204,8 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
     ZEROING,
     ZEROED,
     SUBSTATION_CUBE,
-    SUBSTATION_CONE
+    SUBSTATION_CONE,
+    SCORE
   }
 
   @Override

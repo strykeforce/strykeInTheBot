@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Wrist;
+package frc.robot.subsystems.wrist;
 
 import frc.robot.constants.WristConstants;
 import java.util.Set;

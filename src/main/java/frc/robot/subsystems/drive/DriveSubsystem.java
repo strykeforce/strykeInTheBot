@@ -12,7 +12,6 @@ import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -42,7 +41,6 @@ public class DriveSubsystem extends MeasurableSubsystem {
   private final Swerve swerve;
   private final SwerveDrive swerveDrive;
   private final HolonomicDriveController holonomicController;
-  private Alliance allianceColor = DriverStation.getAlliance();
   private MinimalRobotStateSubsystem robotStateSubsystem;
 
   private final ProfiledPIDController omegaController;
@@ -196,6 +194,10 @@ public class DriveSubsystem extends MeasurableSubsystem {
         new Pose2d(swerve.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(gyroResetDegs)));
   }
 
+  public void setGyroOffset(Rotation2d rotation) {
+    swerve.setGyroOffset(rotation);
+  }
+
   // Make whether a trajectory is currently active obvious on grapher
   public void grapherTrajectoryActive(Boolean active) {
     if (active) trajectoryActive = 1.0;
@@ -208,7 +210,7 @@ public class DriveSubsystem extends MeasurableSubsystem {
   }
 
   private boolean shouldFlip() {
-    return allianceColor == Alliance.Red;
+    return robotStateSubsystem.getAllianceColor() == Alliance.Red;
   }
 
   // Field flipping stuff
@@ -387,10 +389,6 @@ public class DriveSubsystem extends MeasurableSubsystem {
 
   public boolean isNavxWorking() {
     return swerve.isConnected();
-  }
-
-  public void setGyroOffset(Rotation2d angle) {
-    swerve.setGyroOffset(angle);
   }
 
   @Override
@@ -597,6 +595,9 @@ public class DriveSubsystem extends MeasurableSubsystem {
   @Override
   public Set<Measure> getMeasures() {
     return Set.of(
+        new Measure("State", () -> currDriveState.ordinal()),
+        new Measure("Gyro roll", () -> swerve.getGyroRoll()),
+        new Measure("Gyro pitch", () -> swerve.getGyroPitch()),
         new Measure("Gyro Rotation2D(deg)", () -> swerve.getGyroRotation2d().getDegrees()),
         new Measure("Odometry X", () -> swerve.getPoseMeters().getX()),
         new Measure("Odometry Y", () -> swerve.getPoseMeters().getY()),

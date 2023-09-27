@@ -41,11 +41,12 @@ public final class MinimalShoulderConstants {
 
   public static final double kZeroSpeed = 0.3; // FIXME
 
-  public static final double kStowShoulderPos = -2_000; // FIXME
+  public static final double kStowShoulderPos = -2_000;
 
-  public static final double kShelfCubeShoulderPos = -9_949;
+  public static final double kShelfCubeShoulderPos =
+      -50_785; // OLD: -9_949 (fwd pickup, not backwards)
 
-  public static final double kShelfConeShoulderPos = -9_949;
+  public static final double kShelfConeShoulderPos = -9_949; // Unused
 
   public static final double kFloorPickupCube = -120_000;
 

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Extendo;
+package frc.robot.subsystems.extendo;
 
 import frc.robot.constants.ExtendoConstants;
 import java.util.Set;

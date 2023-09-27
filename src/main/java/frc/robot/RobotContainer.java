@@ -8,65 +8,69 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.auto.TestBalanceCommand;
+import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.drive.DriveTeleopCommand;
 import frc.robot.commands.drive.LockZeroCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
-import frc.robot.commands.robotState.ClearGamepieceCommand;
+import frc.robot.commands.robotState.ClearGamePieceCommand;
 import frc.robot.commands.robotState.FloorPickupCommand;
 import frc.robot.commands.robotState.ManualStageArmCommand;
-import frc.robot.commands.robotState.ReleaseGamePieceCommand;
+import frc.robot.commands.robotState.ReleaseGamepieceCommand;
 import frc.robot.commands.robotState.SetTargetLevelCommand;
 import frc.robot.commands.robotState.StowCommand;
 import frc.robot.commands.robotState.SubstationPickupCommand;
 import frc.robot.commands.shoulder.ZeroShoulderCommand;
 import frc.robot.controllers.FlyskyJoystick;
 import frc.robot.controllers.FlyskyJoystick.Button;
+import frc.robot.subsystems.autoSwitch.AutoSwitch;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.drive.Swerve;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem;
-import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.GamePiece;
-import frc.robot.subsystems.shoulder.ShoulderSubsystem;
-import frc.robot.subsystems.shoulder.ShoulderTalonIO;
-import java.util.Map;
 import frc.robot.subsystems.hand.HandIOFalcon;
 import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.GamePiece;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.TargetLevel;
 import frc.robot.subsystems.shoulder.MinimalShoulderFalconIO;
 import frc.robot.subsystems.shoulder.MinimalShoulderSubsystem;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
 
 public class RobotContainer {
-
+  private final Logger logger;
   // Grapher
   private final TelemetryService telemetryService = new TelemetryService(TelemetryController::new);
 
   // Subsystems
-  private ExampleSubsystem exampleSubsystem;
-  private DriveSubsystem driveSubsystem;
-  private MinimalShoulderSubsystem shoulderSubsystem;
-  private HandSubsystem handSubsystem;
-  private MinimalRobotStateSubsystem robotStateSubsystem;
+  private final ExampleSubsystem exampleSubsystem;
+  private final DriveSubsystem driveSubsystem;
+  private final MinimalShoulderSubsystem shoulderSubsystem;
+  // private final ExtendoSubsystem extendoSubsystem;
+  // private final WristSubsystem wristSubsystem;
+  // private final ArmSubsystem armSubsystem;
+  private final MinimalRobotStateSubsystem robotStateSubsystem;
+  private final HandSubsystem handSubsystem;
+  private final AutoSwitch autoSwitch;
 
   // IO Objects
   private final Joystick driveJoystick = new Joystick(0);
   private final XboxController xboxController = new XboxController(1);
 
-  private Logger logger = LoggerFactory.getLogger(RobotContainer.class);
+  // auton stuff
+  private TestBalanceCommand balancepath;
+  private DriveAutonCommand fiveMeterTest;
 
   private SuppliedValueWidget<Boolean> allianceColor;
   private Alliance alliance = Alliance.Invalid;
@@ -74,19 +78,29 @@ public class RobotContainer {
   private boolean isEvent = false;
 
   public RobotContainer() {
+    logger = LoggerFactory.getLogger(RobotContainer.class);
+
+    exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
     shoulderSubsystem = new MinimalShoulderSubsystem(new MinimalShoulderFalconIO());
     handSubsystem = new HandSubsystem(new HandIOFalcon());
+    driveSubsystem = new DriveSubsystem();
     robotStateSubsystem =
         new MinimalRobotStateSubsystem(driveSubsystem, shoulderSubsystem, handSubsystem);
-    driveSubsystem = new DriveSubsystem();
     driveSubsystem.setRobotStateSubsystem(robotStateSubsystem);
+
+    // extendoSubsystem = new ExtendoSubsystem(new ExtendoIOTalon());
+    // wristSubsystem = new WristSubsystem(new WristIOTalon(), new WristEncoderIOCanandcoder());
+    // armSubsystem = new ArmSubsystem(shoulderSubsystem, extendoSubsystem, wristSubsystem);
+
+    driveSubsystem.teleResetGyro();
+
+    autoSwitch =
+        new AutoSwitch(robotStateSubsystem, driveSubsystem, handSubsystem, shoulderSubsystem);
 
     configureDriverButtonBindings();
     configureOperatorBindings();
-    configTelemetry();
-
-    configurePitDashboard();
     configureMatchDashboard();
+    configTelemetry();
   }
 
   private void configureOperatorBindings() {
@@ -98,26 +112,32 @@ public class RobotContainer {
     Trigger rightTrigger =
         new Trigger(() -> xboxController.getRightTriggerAxis() >= 0.1)
             .onTrue(new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.HIGH));
+
     // Level 2
     new JoystickButton(xboxController, XboxController.Button.kLeftBumper.value)
         .onTrue(new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.MID));
     new JoystickButton(xboxController, XboxController.Button.kRightBumper.value)
         .onTrue(new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.MID));
+
     // Level 1
     Trigger floorPlace = new Trigger(() -> xboxController.getPOV() == 0);
     floorPlace.onTrue(new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.LOW));
-    // Shelf
+
+    // Shelf (substation)
     new JoystickButton(xboxController, XboxController.Button.kY.value)
         .onTrue(new SubstationPickupCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem));
 
+    // Clear gamepiece
     new JoystickButton(xboxController, XboxController.Button.kB.value)
-        .onTrue(new ClearGamepieceCommand(robotStateSubsystem));
+        .onTrue(new ClearGamePieceCommand(robotStateSubsystem));
 
+    // Floor pickup
     new JoystickButton(xboxController, XboxController.Button.kX.value)
         .onTrue(
             new FloorPickupCommand(
                 robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE));
 
+    // Stow
     new JoystickButton(xboxController, XboxController.Button.kBack.value)
         .onTrue(new StowCommand(robotStateSubsystem, shoulderSubsystem));
   }
@@ -158,7 +178,8 @@ public class RobotContainer {
             () -> flysky.getYaw(),
             driveJoystick,
             driveSubsystem,
-            robotStateSubsystem));
+            robotStateSubsystem,
+            handSubsystem));
 
     new JoystickButton(driveJoystick, Button.M_LTRIM_UP.id)
         .onTrue(new ZeroGyroCommand(driveSubsystem));
@@ -166,34 +187,39 @@ public class RobotContainer {
     new JoystickButton(driveJoystick, Button.M_RTRIM_UP.id)
         .onTrue(new XLockCommand(driveSubsystem));
 
+    // new JoystickButton(driveJoystick, Button.M_RTRIM_R.id)
+    //     .onTrue(new DriveAutonCommand(driveSubsystem, "fiveMeterPath", true, true));
+
     new JoystickButton(driveJoystick, Button.SWB_DWN.id)
         .onTrue(
             new FloorPickupCommand(
-                robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE));
-    new JoystickButton(driveJoystick, Button.SWB_DWN.id)
+                robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE))
         .onFalse(
             new FloorPickupCommand(
                 robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE));
     new JoystickButton(driveJoystick, Button.SWB_UP.id)
         .onTrue(
             new FloorPickupCommand(
-                robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE));
-    new JoystickButton(driveJoystick, Button.SWB_UP.id)
+                robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE))
         .onFalse(
             new FloorPickupCommand(
                 robotStateSubsystem, shoulderSubsystem, handSubsystem, GamePiece.CUBE));
 
+    // Zero Shoulder
     new JoystickButton(driveJoystick, Button.M_SWC.id)
         .onTrue(new ZeroShoulderCommand(shoulderSubsystem));
-    new JoystickButton(driveJoystick, Button.M_SWH.id)
+
+    // Manual stage arm
+    new JoystickButton(driveJoystick, Button.M_SWE.id)
         .onTrue(new ManualStageArmCommand(robotStateSubsystem, shoulderSubsystem));
 
-    new JoystickButton(driveJoystick, Button.M_SWE.id)
-        .onTrue(new ReleaseGamePieceCommand(robotStateSubsystem, handSubsystem));
+    // Release game piece
+    new JoystickButton(driveJoystick, Button.M_SWH.id)
+        .onTrue(new ReleaseGamepieceCommand(robotStateSubsystem, handSubsystem));
 
+    // Stow
     new JoystickButton(driveJoystick, Button.SWD.id)
-        .onTrue(new StowCommand(robotStateSubsystem, shoulderSubsystem));
-    new JoystickButton(driveJoystick, Button.SWD.id)
+        .onTrue(new StowCommand(robotStateSubsystem, shoulderSubsystem))
         .onFalse(new StowCommand(robotStateSubsystem, shoulderSubsystem));
   }
 
@@ -208,11 +234,15 @@ public class RobotContainer {
   }
 
   public void zeroShoulder() {
-    shoulderSubsystem.zero();
+    if (!shoulderSubsystem.hasZeroed()) shoulderSubsystem.zero();
   }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
+  }
+
+  public AutoSwitch getAutoSwitch() {
+    return autoSwitch;
   }
 
   private void configureMatchDashboard() {
@@ -235,8 +265,9 @@ public class RobotContainer {
   }
 
   private void configurePitDashboard() {
-      Shuffleboard.getTab("Pit")
-        .add("LockZero", new LockZeroCommand(driveSubsystem)).withPosition(0, 2);
+    Shuffleboard.getTab("Pit")
+        .add("LockZero", new LockZeroCommand(driveSubsystem))
+        .withPosition(0, 2);
   }
   // Interlink Controller Mapping FIXME
   public enum Axis {

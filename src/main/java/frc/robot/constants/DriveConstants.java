@@ -27,12 +27,15 @@ public class DriveConstants {
 
   public static final double kDriveGearRatio =
       (kDriveMotorOutputGear / kDriveInputGear) * (kBevelInputGear / kBevelOutputGear);
-  public static final double kWheelDiameterInches = 3.0 * 500.0 / 500.0;
+  public static final double kWheelDiameterInches = 3.0 * 506.0 / 500.0;
   public static final double kMaxSpeedMetersPerSecond = 5.44;
 
   public static final double kMaxOmega =
       (kMaxSpeedMetersPerSecond / Math.hypot(kRobotWidth / 2.0, kRobotLength / 2.0))
           / 2.0; // wheel locations below
+
+  public static final double kPlaceMovePercent = 0.2;
+  public static final double kPlaceYawPercent = 0.2;
 
   public static Translation2d[] getWheelLocationMeters() {
     final double x = kRobotLength / 2.0; // front-back, was ROBOT_LENGTH
@@ -141,7 +144,7 @@ public class DriveConstants {
   public static final double kAutoBalanceSlowDriveVel = 0.35; // 0.6
   public static final double kAutoBalanceRecoveryDriveVel = 0.25;
   public static final double kAutoBalanceFinalDriveVel = 1.0; // 0.5 0.75
-  public static final double kAutoBalanceSlowdownTimeSec = 1.0; // 1.3-> 1.15
+  public static final double kAutoBalanceSlowdownTimeSec = 1.2; // 1.3-> 1.15
   public static final double kAutoBalanceStopThresholdDegrees = 1.5; // 1 0.6 1.5
   public static final double kAutoBalanceEdgeTriggerThreshold = 3; // 5
   public static final double kAutoBalanceAvgRollCount = 7; // 5 10 7
