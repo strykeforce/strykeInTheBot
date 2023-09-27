@@ -5,27 +5,27 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.robotState.ManualScoreCommand;
-import frc.robot.commands.robotState.ReleaseGamepieceCommand;
+import frc.robot.commands.robotState.ReleaseGamePieceCommand;
 import frc.robot.commands.robotState.SetGamePieceCommand;
 import frc.robot.commands.robotState.SetTargetLevelCommand;
-import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem.GamePiece;
-import frc.robot.subsystems.robotState.RobotStateSubsystem.TargetLevel;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.GamePiece;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.TargetLevel;
+import frc.robot.subsystems.shoulder.MinimalShoulderSubsystem;
 
 public class DefaultAutoCommand extends SequentialCommandGroup implements AutoCommandInterface {
   private boolean hasGenerated = false;
   private Alliance alliance = Alliance.Invalid;
   private DriveAutonCommand defaultPath;
-  private RobotStateSubsystem robotStateSubsystem;
+  private MinimalRobotStateSubsystem robotStateSubsystem;
 
   public DefaultAutoCommand(
       DriveSubsystem driveSubsystem,
-      RobotStateSubsystem robotStateSubsystem,
+      MinimalRobotStateSubsystem robotStateSubsystem,
       HandSubsystem handSubsystem,
-      ArmSubsystem armSubsystem) {
+      MinimalShoulderSubsystem shoulderSubsystem) {
     defaultPath = new DriveAutonCommand(driveSubsystem, "straightPathX", true, true);
     this.robotStateSubsystem = robotStateSubsystem;
 
@@ -33,10 +33,10 @@ public class DefaultAutoCommand extends SequentialCommandGroup implements AutoCo
         new ParallelCommandGroup(
             new SetGamePieceCommand(robotStateSubsystem, GamePiece.CONE),
             new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.HIGH),
-            new AutoGrabConeCommand(handSubsystem),
-            new ManualScoreCommand(robotStateSubsystem, armSubsystem, handSubsystem),
-            new ReleaseGamepieceCommand(handSubsystem, robotStateSubsystem),
-            defaultPath));
+            new AutoHoldCubeCommand(handSubsystem)),
+        new ManualScoreCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem),
+        new ReleaseGamePieceCommand(robotStateSubsystem, handSubsystem),
+        defaultPath);
   }
 
   public void generateTrajectory() {

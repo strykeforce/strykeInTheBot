@@ -30,15 +30,10 @@ import frc.robot.commands.robotState.SubstationPickupCommand;
 import frc.robot.commands.shoulder.ZeroShoulderCommand;
 import frc.robot.controllers.FlyskyJoystick;
 import frc.robot.controllers.FlyskyJoystick.Button;
-import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.autoSwitch.AutoSwitch;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.example.ExampleIOTalon;
 import frc.robot.subsystems.example.ExampleSubsystem;
-import frc.robot.subsystems.extendo.ExtendoIOTalon;
-import frc.robot.subsystems.extendo.ExtendoSubsystem;
-import frc.robot.subsystems.hand.HandIOFalcon;
-import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.hand.HandIOFalcon;
 import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
@@ -46,9 +41,6 @@ import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.GamePiece;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.TargetLevel;
 import frc.robot.subsystems.shoulder.MinimalShoulderFalconIO;
 import frc.robot.subsystems.shoulder.MinimalShoulderSubsystem;
-import frc.robot.subsystems.wrist.WristEncoderIOCanandcoder;
-import frc.robot.subsystems.wrist.WristIOTalon;
-import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,11 +58,11 @@ public class RobotContainer {
   // Subsystems
   private final ExampleSubsystem exampleSubsystem;
   private final DriveSubsystem driveSubsystem;
-  private final ShoulderSubsystem shoulderSubsystem;
-  private final ExtendoSubsystem extendoSubsystem;
-  private final WristSubsystem wristSubsystem;
-  private final ArmSubsystem armSubsystem;
-  private final RobotStateSubsystem robotStateSubsystem;
+  private final MinimalShoulderSubsystem shoulderSubsystem;
+  // private final ExtendoSubsystem extendoSubsystem;
+  // private final WristSubsystem wristSubsystem;
+  // private final ArmSubsystem armSubsystem;
+  private final MinimalRobotStateSubsystem robotStateSubsystem;
   private final HandSubsystem handSubsystem;
   private final AutoSwitch autoSwitch;
 
@@ -89,20 +81,24 @@ public class RobotContainer {
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
     shoulderSubsystem = new MinimalShoulderSubsystem(new MinimalShoulderFalconIO());
     handSubsystem = new HandSubsystem(new HandIOFalcon());
+    driveSubsystem = new DriveSubsystem();
     robotStateSubsystem =
         new MinimalRobotStateSubsystem(driveSubsystem, shoulderSubsystem, handSubsystem);
-    driveSubsystem = new DriveSubsystem();
     driveSubsystem.setRobotStateSubsystem(robotStateSubsystem);
 
-    configureDriverButtonBindings();
-    extendoSubsystem = new ExtendoSubsystem(new ExtendoIOTalon());
-    wristSubsystem = new WristSubsystem(new WristIOTalon(), new WristEncoderIOCanandcoder());
-    armSubsystem = new ArmSubsystem(shoulderSubsystem, extendoSubsystem, wristSubsystem);
-    handSubsystem = new HandSubsystem(new HandIOFalcon());
-    robotStateSubsystem = new RobotStateSubsystem(driveSubsystem, armSubsystem);
-    configureBindings();
+    // extendoSubsystem = new ExtendoSubsystem(new ExtendoIOTalon());
+    // wristSubsystem = new WristSubsystem(new WristIOTalon(), new WristEncoderIOCanandcoder());
+    // armSubsystem = new ArmSubsystem(shoulderSubsystem, extendoSubsystem, wristSubsystem);
 
-    autoSwitch = new AutoSwitch(robotStateSubsystem, driveSubsystem, armSubsystem, handSubsystem);
+    driveSubsystem.teleResetGyro();
+
+    autoSwitch =
+        new AutoSwitch(robotStateSubsystem, driveSubsystem, handSubsystem, shoulderSubsystem);
+
+    configureDriverButtonBindings();
+    configureOperatorBindings();
+    configureMatchDashboard();
+    configTelemetry();
   }
 
   public void setAllianceColor(Alliance alliance) {
@@ -111,8 +107,8 @@ public class RobotContainer {
         Map.of(
             "colorWhenTrue", alliance == Alliance.Red ? "red" : "blue", "colorWhenFalse", "black"));
     robotStateSubsystem.setAllianceColor(alliance);
-    fiveMeterTest.generateTrajectory();
-    balancepath.generateTrajectory();
+    // fiveMeterTest.generateTrajectory();
+    // balancepath.generateTrajectory();
     // communityToDockCommandGroup.generateTrajectory();
     // twoPieceWithDockAutoCommandGroup.generateTrajectory();
     // threePiecePath.generateTrajectory();
@@ -257,15 +253,6 @@ public class RobotContainer {
             .withPosition(0, 0);
   }
 
-  private void configureMatchDashboard() {
-    allianceColor =
-        Shuffleboard.getTab("Match")
-            .addBoolean("AllianceColor", () -> alliance != Alliance.Invalid)
-            .withProperties(Map.of("colorWhenFalse", "black"))
-            .withSize(2, 2)
-            .withPosition(0, 0);
-  }
-
   private void configTelemetry() {
     exampleSubsystem.registerWith(telemetryService);
     shoulderSubsystem.registerWith(telemetryService);
@@ -282,6 +269,10 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
+  }
+
+  public AutoSwitch getAutoSwitch() {
+    return autoSwitch;
   }
 
   // Interlink Controller Mapping FIXME

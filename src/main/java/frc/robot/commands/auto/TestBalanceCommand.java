@@ -5,22 +5,22 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drive.AutoBalanceCommand;
 import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.drive.XLockCommand;
-import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
+import frc.robot.subsystems.shoulder.MinimalShoulderSubsystem;
 
 public class TestBalanceCommand extends SequentialCommandGroup implements AutoCommandInterface {
   DriveAutonCommand firstPath;
   DriveAutonCommand secondPath;
   private boolean hasGenerated = false;
   private Alliance alliance = Alliance.Invalid;
-  private RobotStateSubsystem robotStateSubsystem;
+  private MinimalRobotStateSubsystem robotStateSubsystem;
 
   public TestBalanceCommand(
       DriveSubsystem driveSubsystem,
-      RobotStateSubsystem robotStateSubsystem,
-      ArmSubsystem armSubsystem,
+      MinimalRobotStateSubsystem robotStateSubsystem,
+      MinimalShoulderSubsystem shoulderSubsystem,
       HandSubsystem handSubsystem,
       String pathOne,
       String pathTwo) {

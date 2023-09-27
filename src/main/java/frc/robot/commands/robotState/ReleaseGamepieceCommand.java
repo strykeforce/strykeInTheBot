@@ -2,17 +2,15 @@ package frc.robot.commands.robotState;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.hand.HandSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem.RobotState;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.RobotState;
 
-public class ReleaseGamepieceCommand extends CommandBase {
-  private RobotStateSubsystem robotStateSubsystem;
-  private HandSubsystem handSubsystem;
+public class ReleaseGamePieceCommand extends CommandBase {
+  private MinimalRobotStateSubsystem robotStateSubsystem;
 
-  public ReleaseGamepieceCommand(
-      HandSubsystem handSubsystem, RobotStateSubsystem robotStateSubsystem) {
+  public ReleaseGamePieceCommand(
+      MinimalRobotStateSubsystem robotStateSubsystem, HandSubsystem handSubsystem) {
     this.robotStateSubsystem = robotStateSubsystem;
-    this.handSubsystem = handSubsystem;
     addRequirements(handSubsystem);
   }
 
@@ -23,10 +21,6 @@ public class ReleaseGamepieceCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    RobotState currState = robotStateSubsystem.getCurrRobotState();
-    return handSubsystem.isFinished()
-        && (currState == RobotState.RELEASE_GAMEPIECE
-            || currState == RobotState.TO_STOW
-            || currState == RobotState.STOW);
+    return robotStateSubsystem.getRobotState() == RobotState.STOW;
   }
 }

@@ -26,6 +26,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
+    m_robotContainer = new RobotContainer();
     Logger logger = LoggerFactory.getLogger(Robot.class);
     org.littletonrobotics.junction.Logger advLogger =
         org.littletonrobotics.junction.Logger.getInstance();
@@ -72,8 +73,6 @@ public class Robot extends LoggedRobot {
 
     // Start Advantage kit logger
     advLogger.start();
-
-    m_robotContainer = new RobotContainer();
   }
 
   @Override
@@ -92,7 +91,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutoSwitch().getAutoCommand();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

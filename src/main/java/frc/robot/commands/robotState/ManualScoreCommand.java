@@ -1,19 +1,19 @@
 package frc.robot.commands.robotState;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem.RobotState;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.RobotState;
+import frc.robot.subsystems.shoulder.MinimalShoulderSubsystem;
 
 public class ManualScoreCommand extends CommandBase {
-  private RobotStateSubsystem robotStateSubsystem;
+  private MinimalRobotStateSubsystem robotStateSubsystem;
 
   public ManualScoreCommand(
-      RobotStateSubsystem robotStateSubsystem,
-      ArmSubsystem armSubsystem,
+      MinimalRobotStateSubsystem robotStateSubsystem,
+      MinimalShoulderSubsystem shoulderSubsystem,
       HandSubsystem handSubsystem) {
-    addRequirements(armSubsystem, handSubsystem);
+    addRequirements(shoulderSubsystem, handSubsystem);
     this.robotStateSubsystem = robotStateSubsystem;
   }
 
@@ -24,8 +24,7 @@ public class ManualScoreCommand extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return robotStateSubsystem.getCurrRobotState() == RobotState.STOW
-        || robotStateSubsystem.getCurrRobotState() == RobotState.MANUAL_SCORE
-        || robotStateSubsystem.getCurrRobotState() == RobotState.MANUAL_SHELF;
+    return robotStateSubsystem.getCurrRobotState() == RobotState.MANUAL_SCORE
+        || robotStateSubsystem.getCurrRobotState() == RobotState.MANUAL_SUBSTATION;
   }
 }

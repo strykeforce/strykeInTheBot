@@ -3,10 +3,10 @@ package frc.robot.commands.auto;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.hand.HandSubsystem;
 
-public class AutoGrabConeCommand extends InstantCommand {
+public class AutoHoldCubeCommand extends InstantCommand {
   private HandSubsystem handSubsystem;
 
-  public AutoGrabConeCommand(HandSubsystem handSubsystem) {
+  public AutoHoldCubeCommand(HandSubsystem handSubsystem) {
     this.handSubsystem = handSubsystem;
 
     addRequirements(handSubsystem);
@@ -14,7 +14,6 @@ public class AutoGrabConeCommand extends InstantCommand {
 
   @Override
   public void initialize() {
-    handSubsystem.grabPiece();
+    handSubsystem.autoHoldCube();
   }
-  ;
 }

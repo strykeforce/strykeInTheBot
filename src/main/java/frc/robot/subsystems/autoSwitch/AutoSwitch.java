@@ -3,15 +3,16 @@ package frc.robot.subsystems.autoSwitch;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.commands.auto.AutoCommandInterface;
-import frc.robot.commands.auto.DefaultAutoCommand;
 // import frc.robot.commands.auto.DefaultAutoCommand;
 // import frc.robot.commands.auto.DoNothingAutonCommand;
 import frc.robot.commands.auto.MiddleToDockWithMobility;
+import frc.robot.commands.auto.PiecePlaceMobility;
+import frc.robot.commands.auto.PiecePlaceMobilityBump;
 import frc.robot.constants.AutonConstants;
-import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
+import frc.robot.subsystems.shoulder.MinimalShoulderSubsystem;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,26 +27,41 @@ public class AutoSwitch {
   private Logger logger = LoggerFactory.getLogger(AutoSwitch.class);
 
   private AutoCommandInterface autoCommand;
-  private final RobotStateSubsystem robotStateSubsystem;
+  private final MinimalRobotStateSubsystem robotStateSubsystem;
   private final DriveSubsystem driveSubsystem;
-  private final ArmSubsystem armSubsystem;
+  // private final ArmSubsystem armSubsystem;
+  private final MinimalShoulderSubsystem shoulderSubsystem;
   private final HandSubsystem handSubsystem;
   //   private final VisionSubsystem visionSubsystem;
   AutoCommandInterface defaultCommand;
 
   public AutoSwitch(
-      RobotStateSubsystem robotStateSubsystem,
+      MinimalRobotStateSubsystem robotStateSubsystem,
       DriveSubsystem driveSubsystem,
-      ArmSubsystem armSubsystem,
-      HandSubsystem handSubsystem) {
+      HandSubsystem handSubsystem,
+      MinimalShoulderSubsystem shoulderSubsystem) {
     // VisionSubsystem visionSubsystem
     this.robotStateSubsystem = robotStateSubsystem;
     this.driveSubsystem = driveSubsystem;
-    this.armSubsystem = armSubsystem;
+    // this.armSubsystem = armSubsystem;
+    this.shoulderSubsystem = shoulderSubsystem;
     this.handSubsystem = handSubsystem;
 
+    // defaultCommand =
+    //     new MiddleToDockWithMobility(
+    //         driveSubsystem,
+    //         robotStateSubsystem,
+    //         shoulderSubsystem,
+    //         handSubsystem,
+    //         "piecePlaceOverLinePath",
+    //         "tinyLittleToBalancePath");
+
     defaultCommand =
-        new DefaultAutoCommand(driveSubsystem, robotStateSubsystem, handSubsystem, armSubsystem);
+        new PiecePlaceMobility(
+            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchPath");
+
+    // new DefaultAutoCommand(
+    //     driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
 
     for (int i = AutonConstants.kStartSwitchID; i <= AutonConstants.kEndSwitchId; i++) {
       switchInputs.add(new DigitalInput(i));
@@ -97,13 +113,9 @@ public class AutoSwitch {
     switch (switchPos) {
         // Non-Bump Side
       case 0x00:
-        // Cone Lvl 3, Cube Lvl 3, Auto Balance
-        // return new OnePieceWithMobilityCommandGroup(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem,
-        //     handSubsystem,
-        //     "mobilityPath"); FIXME pathname needs changing
+        // Cube lvl 2, mobility
+        return new PiecePlaceMobility(
+            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchPath");
       case 0x01:
         // // Cone Lvl 3, Cube Lvl 3
         // return new TwoPieceLvl3AutoCommandGroup(
@@ -159,19 +171,15 @@ public class AutoSwitch {
         return new MiddleToDockWithMobility(
             driveSubsystem,
             robotStateSubsystem,
-            armSubsystem,
+            shoulderSubsystem,
             handSubsystem,
             "piecePlaceOverLinePath",
             "tinyLittleToBalancePath");
         // Bump Side
       case 0x20:
-        // Cone Lvl 3, Cube Lvl 3
-        // return new OnePieceWithMobilityCommandGroup(
-        //     driveSubsystem,
-        //     robotStateSubsystem,
-        //     armSubsystem,
-        //     handSubsystem,
-        //     "mobilityBumpPath"); FIXME pathname needs changing
+        // Cube lvl 2, mobility, bump side
+        return new PiecePlaceMobilityBump(
+            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchPathBump");
       case 0x21:
         // // FALLBACK - Cone Lvl 3, cube lvl 2 and 3
         // return new ThreePieceBumpFallbackAutoCommandGroup(
@@ -227,8 +235,13 @@ public class AutoSwitch {
       default:
         String msg = String.format("no auto command assigned for switch pos: %02X", switchPos);
         DriverStation.reportWarning(msg, false);
-        return new DefaultAutoCommand(
-            driveSubsystem, robotStateSubsystem, handSubsystem, armSubsystem);
+        return new MiddleToDockWithMobility(
+            driveSubsystem,
+            robotStateSubsystem,
+            shoulderSubsystem,
+            handSubsystem,
+            "piecePlaceOverLinePath",
+            "tinyLittleToBalancePath");
     }
   }
 }

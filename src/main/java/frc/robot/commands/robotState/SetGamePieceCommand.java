@@ -1,20 +1,20 @@
 package frc.robot.commands.robotState;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.subsystems.robotState.RobotStateSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem.GamePiece;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.GamePiece;
 
 public class SetGamePieceCommand extends InstantCommand {
-  private RobotStateSubsystem robotStateSubsystem;
+  private MinimalRobotStateSubsystem robotStateSubsystem;
   private GamePiece gamePiece;
 
-  public SetGamePieceCommand(RobotStateSubsystem robotStateSubsystem, GamePiece gamePiece) {
+  public SetGamePieceCommand(MinimalRobotStateSubsystem robotStateSubsystem, GamePiece gamePiece) {
     this.robotStateSubsystem = robotStateSubsystem;
     this.gamePiece = gamePiece;
   }
 
   @Override
   public void initialize() {
-    robotStateSubsystem.setTargetPiece(gamePiece);
+    robotStateSubsystem.setGamePiece(gamePiece);
   }
 }

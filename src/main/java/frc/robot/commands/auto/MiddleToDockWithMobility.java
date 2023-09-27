@@ -9,20 +9,21 @@ import frc.robot.commands.drive.AutoBalanceCommand;
 import frc.robot.commands.drive.DriveAutonCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
-import frc.robot.commands.robotState.ClearGamePieceCommand;
+import frc.robot.commands.robotState.ClearGamepieceCommand;
 import frc.robot.commands.robotState.ManualScoreCommand;
-import frc.robot.commands.robotState.ReleaseGamepieceCommand;
+import frc.robot.commands.robotState.ReleaseGamePieceCommand;
 import frc.robot.commands.robotState.SetGamePieceCommand;
 import frc.robot.commands.robotState.SetTargetLevelCommand;
+import frc.robot.commands.shoulder.ZeroShoulderCommand;
 // import frc.robot.commands.vision.SetVisionUpdateCommand; // FIXME currently no visionSubsystem
 // exists
-import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem;
-import frc.robot.subsystems.robotState.RobotStateSubsystem.GamePiece;
-import frc.robot.subsystems.robotState.RobotStateSubsystem.TargetLevel;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.GamePiece;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem.TargetLevel;
 // import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.shoulder.MinimalShoulderSubsystem;
 
 public class MiddleToDockWithMobility extends SequentialCommandGroup
     implements AutoCommandInterface {
@@ -35,12 +36,12 @@ public class MiddleToDockWithMobility extends SequentialCommandGroup
   DriveAutonCommand fallbackPath2;
   private boolean hasGenerated = false;
   private Alliance alliance = Alliance.Invalid;
-  private RobotStateSubsystem robotStateSubsystem;
+  private MinimalRobotStateSubsystem robotStateSubsystem;
 
   public MiddleToDockWithMobility(
       DriveSubsystem driveSubsystem,
-      RobotStateSubsystem robotStateSubsystem,
-      ArmSubsystem armSubsystem,
+      MinimalRobotStateSubsystem robotStateSubsystem,
+      MinimalShoulderSubsystem shoulderSubsystem,
       HandSubsystem handSubsystem,
       //   VisionSubsystem visionSubsystem,
       String pathOne,
@@ -52,13 +53,14 @@ public class MiddleToDockWithMobility extends SequentialCommandGroup
     addCommands(
         new ParallelCommandGroup(
             new ZeroGyroCommand(driveSubsystem),
-            new SetGamePieceCommand(robotStateSubsystem, GamePiece.CONE),
-            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.HIGH),
-            new AutoGrabConeCommand(handSubsystem)
+            new ZeroShoulderCommand(shoulderSubsystem),
+            new SetGamePieceCommand(robotStateSubsystem, GamePiece.CUBE),
+            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.MID),
+            new AutoHoldCubeCommand(handSubsystem)
             // ,new SetVisionUpdateCommand(driveSubsystem, false)
             ),
-        new ManualScoreCommand(robotStateSubsystem, armSubsystem, handSubsystem),
-        new ReleaseGamepieceCommand(handSubsystem, robotStateSubsystem),
+        new ManualScoreCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem),
+        new ReleaseGamePieceCommand(robotStateSubsystem, handSubsystem),
         new WaitCommand(1.0),
         firstPath,
         new WaitCommand(0.75),
@@ -68,7 +70,7 @@ public class MiddleToDockWithMobility extends SequentialCommandGroup
                 secondPath, new AutoBalanceCommand(false, driveSubsystem, robotStateSubsystem))),
         new XLockCommand(driveSubsystem));
     new ParallelCommandGroup(
-        new ClearGamePieceCommand(robotStateSubsystem)
+        new ClearGamepieceCommand(robotStateSubsystem)
         // ,new SetVisionUpdateCommand(driveSubsystem, true)
         );
   }
