@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Extendo;
+package frc.robot.subsystems.extendo;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import org.littletonrobotics.junction.AutoLog;

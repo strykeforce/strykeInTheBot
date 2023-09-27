@@ -3,20 +3,20 @@ package frc.robot.commands.drive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem.DriveStates;
-import frc.robot.subsystems.robotState.RobotStateSubsystem;
+import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AutoBalanceCommand extends CommandBase {
   private DriveSubsystem driveSubsystem;
-  private RobotStateSubsystem robotStateSubsystem;
+  private MinimalRobotStateSubsystem robotStateSubsystem;
   private boolean isOnAllianceSide;
   private static final Logger logger = LoggerFactory.getLogger(AutoBalanceCommand.class);
 
   public AutoBalanceCommand(
       boolean isOnAllianceSide,
       DriveSubsystem driveSubsystem,
-      RobotStateSubsystem robotStateSubsystem) {
+      MinimalRobotStateSubsystem robotStateSubsystem) {
     this.driveSubsystem = driveSubsystem;
     this.robotStateSubsystem = robotStateSubsystem;
     this.isOnAllianceSide = isOnAllianceSide;

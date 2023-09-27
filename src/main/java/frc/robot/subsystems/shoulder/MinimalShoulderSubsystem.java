@@ -107,6 +107,8 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
   private void setPos(double position) {
     io.setPos(position);
     setPointTicks = position;
+    currState = ShoulderStates.TRANSITION;
+    desiredState = ShoulderStates.SCORE;
   }
 
   public void setSensorPos(double position) {
@@ -202,7 +204,8 @@ public class MinimalShoulderSubsystem extends MeasurableSubsystem {
     ZEROING,
     ZEROED,
     SUBSTATION_CUBE,
-    SUBSTATION_CONE
+    SUBSTATION_CONE,
+    SCORE
   }
 
   @Override

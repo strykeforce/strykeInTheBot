@@ -1,12 +1,12 @@
 package frc.robot.commands.robotState;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
+import frc.robot.subsystems.robotState.RobotStateSubsystem;
 
 public class ClearGamePieceCommand extends InstantCommand {
-  private MinimalRobotStateSubsystem robotStateSubsystem;
+  private RobotStateSubsystem robotStateSubsystem;
 
-  public ClearGamePieceCommand(MinimalRobotStateSubsystem robotStateSubsystem) {
+  public ClearGamePieceCommand(RobotStateSubsystem robotStateSubsystem) {
     this.robotStateSubsystem = robotStateSubsystem;
   }
 
