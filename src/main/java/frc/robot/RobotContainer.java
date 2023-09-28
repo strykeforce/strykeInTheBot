@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
@@ -48,6 +49,8 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
 
+import ch.qos.logback.classic.util.ContextInitializer;
+
 public class RobotContainer {
   // Grapher
   private final TelemetryService telemetryService = new TelemetryService(TelemetryController::new);
@@ -78,6 +81,12 @@ public class RobotContainer {
   private boolean isEvent = false;
 
   public RobotContainer() {
+    DigitalInput eventFlag = new DigitalInput(7);
+    isEvent = eventFlag.get();
+    if(isEvent){
+      System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, "logback-event.xml");
+      System.out.println("Event Flag Removed - logging to file in ~lvuser/logs/");
+    }
     logger = LoggerFactory.getLogger(RobotContainer.class);
 
     exampleSubsystem = new ExampleSubsystem(new ExampleIOTalon());
@@ -100,7 +109,10 @@ public class RobotContainer {
     configureDriverButtonBindings();
     configureOperatorBindings();
     configureMatchDashboard();
-    configTelemetry();
+    if(!isEvent){
+      configurePitDashboard();
+      configTelemetry();
+    }
   }
 
   private void configureOperatorBindings() {
