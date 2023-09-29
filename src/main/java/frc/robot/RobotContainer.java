@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import ch.qos.logback.classic.util.ContextInitializer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -22,6 +23,7 @@ import frc.robot.commands.drive.DriveTeleopCommand;
 import frc.robot.commands.drive.LockZeroCommand;
 import frc.robot.commands.drive.XLockCommand;
 import frc.robot.commands.drive.ZeroGyroCommand;
+import frc.robot.commands.hand.HandReleaseGamepieceCommand;
 import frc.robot.commands.robotState.ClearGamepieceCommand;
 import frc.robot.commands.robotState.FloorPickupCommand;
 import frc.robot.commands.robotState.ManualStageArmCommand;
@@ -48,8 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.telemetry.TelemetryController;
 import org.strykeforce.telemetry.TelemetryService;
-
-import ch.qos.logback.classic.util.ContextInitializer;
 
 public class RobotContainer {
   // Grapher
@@ -83,7 +83,7 @@ public class RobotContainer {
   public RobotContainer() {
     DigitalInput eventFlag = new DigitalInput(7);
     isEvent = eventFlag.get();
-    if(isEvent){
+    if (isEvent) {
       System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, "logback-event.xml");
       System.out.println("Event Flag Removed - logging to file in ~lvuser/logs/");
     }
@@ -109,7 +109,7 @@ public class RobotContainer {
     configureDriverButtonBindings();
     configureOperatorBindings();
     configureMatchDashboard();
-    if(!isEvent){
+    if (!isEvent) {
       configurePitDashboard();
       configTelemetry();
     }
@@ -152,6 +152,10 @@ public class RobotContainer {
     // Stow
     new JoystickButton(xboxController, XboxController.Button.kBack.value)
         .onTrue(new StowCommand(robotStateSubsystem, shoulderSubsystem));
+
+    // Release gamepiece
+    new JoystickButton(xboxController, XboxController.Button.kA.value)
+        .onTrue(new HandReleaseGamepieceCommand(handSubsystem, robotStateSubsystem));
   }
 
   public boolean configureDriverButtonBindings() {
@@ -353,9 +357,9 @@ public class RobotContainer {
     // twoPieceAutoPlacePathCommandGroup.generateTrajectory();
     // bumpSideTwoPieceCommandGroup.generateTrajectory();
 
-    /*if (autoSwitch.getAutoCommand() != null) {
+    if (autoSwitch.getAutoCommand() != null) {
       autoSwitch.getAutoCommand().generateTrajectory();
-    }                                                   */
+    }
 
     // Flips gyro angle if alliance is red team
     if (robotStateSubsystem.getAllianceColor() == Alliance.Red) {

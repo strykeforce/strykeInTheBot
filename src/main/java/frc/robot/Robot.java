@@ -95,7 +95,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledInit() {
-    // logger.info("Disabled Init");
+    logger.info("Disabled Init");
     // m_robotContainer.setDisabled(true);
   }
 
@@ -114,6 +114,7 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    logger.info("Autonomous init");
   }
 
   @Override
@@ -128,6 +129,7 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.cancel();
     }
     m_robotContainer.zeroShoulder();
+    logger.info("Teleop init");
   }
 
   @Override
@@ -139,6 +141,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+    logger.info("Test init");
   }
 
   @Override

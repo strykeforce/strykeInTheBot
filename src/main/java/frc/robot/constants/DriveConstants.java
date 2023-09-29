@@ -36,6 +36,7 @@ public class DriveConstants {
 
   public static final double kPlaceMovePercent = 0.2;
   public static final double kPlaceYawPercent = 0.2;
+  public static final double kIntakeYawPercent = .75;
 
   public static Translation2d[] getWheelLocationMeters() {
     final double x = kRobotLength / 2.0; // front-back, was ROBOT_LENGTH
