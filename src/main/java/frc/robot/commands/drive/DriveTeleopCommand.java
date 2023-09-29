@@ -77,6 +77,10 @@ public class DriveTeleopCommand extends CommandBase {
       movePercent = DriveConstants.kPlaceMovePercent;
     }
 
+    if (robotStateSubsystem.getRobotState() == RobotState.TO_FLOOR_PICKUP
+        || robotStateSubsystem.getRobotState() == RobotState.FLOOR_PICKUP) {
+      yawPercent = DriveConstants.kIntakeYawPercent;
+    }
     if (robotStateSubsystem.getAllianceColor() == Alliance.Blue) {
       driveSubsystem.drive(
           movePercent
