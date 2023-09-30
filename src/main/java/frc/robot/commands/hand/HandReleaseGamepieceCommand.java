@@ -13,7 +13,7 @@ public class HandReleaseGamepieceCommand extends CommandBase {
   public HandReleaseGamepieceCommand(
       HandSubsystem handSubsystem, MinimalRobotStateSubsystem minimalRobotStateSubsystem) {
     this.handSubsystem = handSubsystem;
-    this.robotStateSubsystem = robotStateSubsystem;
+    this.robotStateSubsystem = minimalRobotStateSubsystem;
     addRequirements(handSubsystem);
   }
 
