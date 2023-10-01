@@ -35,14 +35,14 @@ public class HandConstants {
   public static final double kConeVelLimit = 50; // used comp robot number
 
   public static final int kHasConeStableCounts = 10; // used comp robot number
-  public static final int kHasCubeStableCounts = 10; // used comp robot number
+  public static final int kHasCubeStableCounts = 15; // used comp robot number
   public static final int kEjectStableCounts = 5; // FIXME guessed at number
 
   public static final double kHandEjectConeSpeedL1 = -0.2;
   public static final double kHandEjectConeSpeedL2 = 0;
   public static final double kHandEjectConeSpeedL3 = 0;
 
-  public static final double kHandEjectCubeSpeedL1 = -0.2;
+  public static final double kHandEjectCubeSpeedL1 = -0.15;
   public static final double kHandEjectCubeSpeedL2 = -1;
   public static final double kHandEjectCubeSpeedL3 = -1;
 

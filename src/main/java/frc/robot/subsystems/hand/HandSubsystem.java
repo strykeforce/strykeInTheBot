@@ -26,6 +26,7 @@ public class HandSubsystem extends MeasurableSubsystem {
   private double intakeSpeed;
   private int ejectCountsNeeded;
   private DigitalInput gamePieceDI = new DigitalInput(0);
+  private boolean hasReleased = false;
 
   public HandSubsystem(HandIO io) {
     this.io = io;
@@ -33,6 +34,14 @@ public class HandSubsystem extends MeasurableSubsystem {
 
   public HandStates getState() {
     return currState;
+  }
+
+  public boolean hasReleasedPiece() {
+    return hasReleased;
+  }
+
+  public void setReleased(boolean released) {
+    hasReleased = released;
   }
 
   public void grabPiece(PieceSource pieceSource) {
@@ -71,7 +80,7 @@ public class HandSubsystem extends MeasurableSubsystem {
   }
 
   public void ejectPiece(GamePiece gamePiece, TargetLevel targetLevel) {
-
+    hasReleased = false;
     if (gamePiece == GamePiece.CUBE) {
       switch (targetLevel) {
         case LOW:
@@ -195,7 +204,7 @@ public class HandSubsystem extends MeasurableSubsystem {
 
     switch (currState) {
       case IDLE:
-        io.setPct(0.0);
+        io.setPct(HandConstants.kCubeSpeed);
         break;
       case WAITING:
         io.setPct(intakeSpeed);
@@ -220,6 +229,7 @@ public class HandSubsystem extends MeasurableSubsystem {
           ejectStableCounts++;
         } else {
           ejectStableCounts = 0;
+          hasReleased = true;
           logger.info("EJECT -> IDLE");
           currState = HandStates.IDLE;
         }

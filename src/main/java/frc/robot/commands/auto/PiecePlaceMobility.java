@@ -48,7 +48,7 @@ public class PiecePlaceMobility extends SequentialCommandGroup implements AutoCo
             new ZeroGyroCommand(driveSubsystem),
             new ZeroShoulderCommand(shoulderSubsystem),
             new SetGamePieceCommand(robotStateSubsystem, GamePiece.CUBE),
-            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.MID),
+            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.HIGH),
             new AutoHoldCubeCommand(handSubsystem)
             // ,new SetVisionUpdateCommand(driveSubsystem, false)
             ),

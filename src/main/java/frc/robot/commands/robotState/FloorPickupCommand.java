@@ -22,7 +22,7 @@ public class FloorPickupCommand extends CommandBase {
     this.gamePiece = gamePiece;
     this.handSubsystem = handSubsystem;
 
-    addRequirements(shoulderSubsystem);
+    addRequirements(shoulderSubsystem, handSubsystem);
   }
 
   @Override

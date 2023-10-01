@@ -26,7 +26,7 @@ import frc.robot.commands.drive.ZeroGyroCommand;
 import frc.robot.commands.hand.HandReleaseGamepieceCommand;
 import frc.robot.commands.robotState.ClearGamepieceCommand;
 import frc.robot.commands.robotState.FloorPickupCommand;
-import frc.robot.commands.robotState.ManualStageArmCommand;
+import frc.robot.commands.robotState.ManualScoreCommand;
 import frc.robot.commands.robotState.ReleaseGamepieceCommand;
 import frc.robot.commands.robotState.SetTargetLevelCommand;
 import frc.robot.commands.robotState.StowCommand;
@@ -227,7 +227,7 @@ public class RobotContainer {
 
     // Manual stage arm
     new JoystickButton(driveJoystick, Button.M_SWE.id)
-        .onTrue(new ManualStageArmCommand(robotStateSubsystem, shoulderSubsystem));
+        .onTrue(new ManualScoreCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem));
 
     // Release game piece
     new JoystickButton(driveJoystick, Button.M_SWH.id)

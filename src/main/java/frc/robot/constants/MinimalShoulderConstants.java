@@ -15,9 +15,9 @@ public final class MinimalShoulderConstants {
   public static double kZeroTicks;
 
   // Shoulder scoring
-  public static final double kShoulderCubeL1 = -2_000;
+  public static final double kShoulderCubeL1 = -78_000; // -2_000
   public static final double kShoulderCubeL2 = -78_000; // -14_929
-  public static final double kShoulderCubeL3 = -73_000; // -25_000
+  public static final double kShoulderCubeL3 = -74_000; // -25_000, -73_000
 
   public static final double kShoulderConeL1 = -2_000;
   public static final double kShoulderConeL2 = -13_725;

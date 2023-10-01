@@ -55,13 +55,13 @@ public class MiddleToDockWithMobility extends SequentialCommandGroup
             new ZeroGyroCommand(driveSubsystem),
             new ZeroShoulderCommand(shoulderSubsystem),
             new SetGamePieceCommand(robotStateSubsystem, GamePiece.CUBE),
-            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.MID),
+            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.HIGH),
             new AutoHoldCubeCommand(handSubsystem)
             // ,new SetVisionUpdateCommand(driveSubsystem, false)
             ),
         new ManualScoreCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem),
         new ReleaseGamepieceCommand(robotStateSubsystem, handSubsystem),
-        new WaitCommand(1.0),
+        new WaitCommand(0.5),
         firstPath,
         new WaitCommand(0.75),
         new ParallelRaceGroup(
