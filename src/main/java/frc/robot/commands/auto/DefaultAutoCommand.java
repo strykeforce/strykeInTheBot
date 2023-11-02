@@ -36,7 +36,7 @@ public class DefaultAutoCommand extends SequentialCommandGroup implements AutoCo
             new ZeroGyroCommand(driveSubsystem),
             new ZeroShoulderCommand(shoulderSubsystem),
             new SetGamePieceCommand(robotStateSubsystem, GamePiece.CUBE),
-            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.MID),
+            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.HIGH),
             new AutoHoldCubeCommand(handSubsystem)),
         new ManualScoreCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem),
         new ReleaseGamepieceCommand(robotStateSubsystem, handSubsystem),

@@ -112,6 +112,7 @@ public class MinimalRobotStateSubsystem extends MeasurableSubsystem {
     nextRobotState = nextState;
     handSubsystem.idle();
     shoulderSubsystem.stow();
+    handSubsystem.setReleased(false);
     setRobotStateLogged(RobotState.TO_STOW);
   }
 
@@ -138,7 +139,7 @@ public class MinimalRobotStateSubsystem extends MeasurableSubsystem {
   public void toReleaseGamepiece() {
     logger.info("starting release gamepiece");
 
-    setRobotStateLogged(RobotState.RELEASE_GAMEPIECE);
+    setRobotStateLogged(RobotState.TO_RELEASE_GAMEPIECE);
   }
 
   public void toAutobalance(boolean isOnAllianceSide) {
@@ -169,11 +170,15 @@ public class MinimalRobotStateSubsystem extends MeasurableSubsystem {
         break;
       case MANUAL_SCORE:
         break;
+      case TO_RELEASE_GAMEPIECE:
+        handSubsystem.ejectPiece(currentPiece, targetLevel);
+        setRobotStateLogged(RobotState.RELEASE_GAMEPIECE);
+        break;
       case RELEASE_GAMEPIECE:
-        if (handSubsystem.getState() == HandStates.IDLE) {
+        if (handSubsystem.getState() == HandStates.IDLE && handSubsystem.hasReleasedPiece()) {
           currentPiece = GamePiece.NONE;
           toStow();
-        } else handSubsystem.ejectPiece(currentPiece, targetLevel);
+        }
         break;
       case TO_STOW:
         if (!shoulderSubsystem.isFinished()) break;
@@ -242,6 +247,7 @@ public class MinimalRobotStateSubsystem extends MeasurableSubsystem {
     TO_AUTO_SCORE,
     TO_MANUAL_SCORE,
     TO_AUTOBALANCE,
+    TO_RELEASE_GAMEPIECE
   }
 
   public enum GamePiece {

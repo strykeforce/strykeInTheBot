@@ -35,7 +35,7 @@ public class OnePieceWithMobilityCommandGroup extends SequentialCommandGroup
     addCommands(
         new ParallelCommandGroup(
             new SetGamePieceCommand(robotStateSubsystem, GamePiece.CUBE),
-            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.MID)),
+            new SetTargetLevelCommand(robotStateSubsystem, TargetLevel.HIGH)),
         new ManualScoreCommand(robotStateSubsystem, shoulderSubsystem, handSubsystem),
         new ReleaseGamepieceCommand(robotStateSubsystem, handSubsystem),
         firstPath);

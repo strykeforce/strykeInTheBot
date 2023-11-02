@@ -2,6 +2,7 @@ package frc.robot.commands.hand;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.hand.HandSubsystem;
+import frc.robot.subsystems.hand.HandSubsystem.HandStates;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
 import frc.robot.subsystems.robotState.RobotStateSubsystem;
 import frc.robot.subsystems.robotState.RobotStateSubsystem.GamePiece;
@@ -13,7 +14,7 @@ public class HandReleaseGamepieceCommand extends CommandBase {
   public HandReleaseGamepieceCommand(
       HandSubsystem handSubsystem, MinimalRobotStateSubsystem minimalRobotStateSubsystem) {
     this.handSubsystem = handSubsystem;
-    this.robotStateSubsystem = robotStateSubsystem;
+    this.robotStateSubsystem = minimalRobotStateSubsystem;
     addRequirements(handSubsystem);
   }
 
@@ -21,5 +22,10 @@ public class HandReleaseGamepieceCommand extends CommandBase {
   public void initialize() {
     handSubsystem.ejectPiece(GamePiece.CUBE, RobotStateSubsystem.TargetLevel.MID);
     robotStateSubsystem.clearGamePiece();
+  }
+
+  @Override
+  public boolean isFinished() {
+    return handSubsystem.getState() == HandStates.IDLE;
   }
 }

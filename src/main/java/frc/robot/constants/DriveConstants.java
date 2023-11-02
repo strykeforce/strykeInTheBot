@@ -37,6 +37,7 @@ public class DriveConstants {
   public static final double kPlaceMovePercent = 0.2;
   public static final double kPlaceYawPercent = 0.2;
   public static final double kIntakeYawPercent = .75;
+  public static final double kIntakeMovePercent = .75;
 
   public static Translation2d[] getWheelLocationMeters() {
     final double x = kRobotLength / 2.0; // front-back, was ROBOT_LENGTH
@@ -144,7 +145,7 @@ public class DriveConstants {
 
   public static final double kAutoBalanceSlowDriveVel = 0.35; // 0.6
   public static final double kAutoBalanceRecoveryDriveVel = 0.25;
-  public static final double kAutoBalanceFinalDriveVel = 1.0; // 0.5 0.75
+  public static final double kAutoBalanceFinalDriveVel = 1.1; // 0.5 0.75 1.0
   public static final double kAutoBalanceSlowdownTimeSec = 1.2; // 1.3-> 1.15
   public static final double kAutoBalanceStopThresholdDegrees = 1.5; // 1 0.6 1.5
   public static final double kAutoBalanceEdgeTriggerThreshold = 3; // 5
