@@ -4,6 +4,9 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
+import com.ctre.phoenixpro.configs.CurrentLimitsConfigs;
+import com.ctre.phoenixpro.configs.Slot0Configs;
+import com.ctre.phoenixpro.signals.NeutralModeValue;
 
 public final class MinimalShoulderConstants {
   public static int kLeftMainID = 20;
@@ -82,6 +85,46 @@ public final class MinimalShoulderConstants {
     return falconConfig;
   }
 
+  public static com.ctre.phoenixpro.configs.TalonFXConfiguration getShoulderFalconP6Config() {
+    com.ctre.phoenixpro.configs.TalonFXConfiguration falconConfig = new com.ctre.phoenixpro.configs.TalonFXConfiguration();
+
+    // PID Configs
+    // falconConfig.integralZone = 0;
+    // falconConfig.maxIntegralAccumulator = 0;
+    // falconConfig.allowableClosedloopError = 10;
+    falconConfig.Slot0.kP = 0.720703;
+    falconConfig.Slot0.kI = 0;
+    falconConfig.Slot0.kD = 0;
+    falconConfig.Slot0.kV = 0.120117;
+    falconConfig.MotionMagic.MotionMagicCruiseVelocity = 10_000;
+    falconConfig.MotionMagic.MotionMagicAcceleration = 20_000;
+
+    // Soft Limits
+    falconConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    falconConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = kShoulderMaxFwd;
+    falconConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    falconConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = kShoulderMaxRev;
+
+    // General Talon
+    falconConfig.MotorOutput.DutyCycleNeutralDeadband = 0.01;
+    // falconConfig.velocityMeasurementPeriod = SensorVelocityMeasPeriod.Period_100Ms;
+    // falconConfig.velocityMeasurementWindow = 64;
+    // falconConfig.voltageCompSaturation = 12;
+    // falconConfig.voltageMeasurementFilter = 32;
+
+    falconConfig.CurrentLimits.StatorCurrentLimit = 0.0;
+    falconConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    falconConfig.CurrentLimits.SupplyCurrentLimit = 15;
+    falconConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
+    falconConfig.CurrentLimits.SupplyCurrentThreshold = 15.0;
+    falconConfig.CurrentLimits.SupplyTimeThreshold = 0.0;
+
+    falconConfig.HardwareLimitSwitch.ForwardLimitEnable = false;
+    falconConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    return falconConfig;
+  }
+
   public static StatorCurrentLimitConfiguration getShoulderStatorTurnOff() {
     return new StatorCurrentLimitConfiguration(false, 0.0, 0.0, 0.0);
   }
@@ -92,5 +135,16 @@ public final class MinimalShoulderConstants {
 
   public static SupplyCurrentLimitConfiguration getShoulderSupplyLimitConfig() {
     return new SupplyCurrentLimitConfiguration(true, 15, 15, 0);
+  }
+
+  public static CurrentLimitsConfigs getShoulderZeroCurrentSim() {
+    CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs();
+    currentLimitsConfigs.StatorCurrentLimit = 0.0;
+    currentLimitsConfigs.StatorCurrentLimitEnable = false;
+    currentLimitsConfigs.SupplyCurrentLimit = 15;
+    currentLimitsConfigs.SupplyCurrentLimitEnable = false;
+    currentLimitsConfigs.SupplyCurrentThreshold = 15.0;
+    currentLimitsConfigs.SupplyTimeThreshold = 0.0;
+    return currentLimitsConfigs;
   }
 }
