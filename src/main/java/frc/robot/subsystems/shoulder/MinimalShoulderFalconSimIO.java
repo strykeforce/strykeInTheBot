@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenixpro.configs.CurrentLimitsConfigs;
 import com.ctre.phoenixpro.configs.HardwareLimitSwitchConfigs;
+import com.ctre.phoenixpro.configs.MotorOutputConfigs;
 import com.ctre.phoenixpro.configs.TalonFXConfiguration;
 import com.ctre.phoenixpro.controls.DutyCycleOut;
 import com.ctre.phoenixpro.controls.MotionMagicDutyCycle;
@@ -31,10 +32,8 @@ public class MinimalShoulderFalconSimIO implements MinimalShoulderIO {
   public MinimalShoulderFalconSimIO() {
     shoulder = new TalonFX(MinimalShoulderConstants.kLeftMainID);
     configFalcon(shoulder);
-    shoulder.configForwardLimitSwitchSource(
-        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled, 20);
 
-    armSim.setInputs(shoulder.getMotorVoltage());
+    armSim.setInput(shoulder.getSupplyVoltage().getValue());
   }
 
   private void configFalcon(TalonFX falcon) {
@@ -62,7 +61,7 @@ public class MinimalShoulderFalconSimIO implements MinimalShoulderIO {
 
   @Override
   public void setPos(double positionTicks) {
-    shoulder.setControl(new MotionMagicDutyCycle(positionTicks))
+    shoulder.setControl(new MotionMagicDutyCycle(positionTicks));
     logger.info("Set Shoulder Pos: {}", positionTicks);
   }
 
@@ -77,40 +76,56 @@ public class MinimalShoulderFalconSimIO implements MinimalShoulderIO {
       CurrentLimitsConfigs config = new CurrentLimitsConfigs();
       config.SupplyCurrentLimit = supplyCurrentLimitConfiguration.currentLimit;
       config.SupplyCurrentLimitEnable = supplyCurrentLimitConfiguration.enable;
+      shoulder.getConfigurator().apply(config);
   }
 
   @Override
   public void disableOutput() {
-    shoulder.configPeakOutputForward(0);
-    shoulder.configPeakOutputReverse(0);
+    shoulder.disable();
   }
 
   @Override
   public void updateInputs(MinimalShoulderIOInputs inputs) {
-    inputs.positionTicks = shoulder.getSelectedSensorPosition();
-    inputs.absoluteTicks = shoulder.getSensorCollection().getIntegratedSensorAbsolutePosition();
-    inputs.velocityTicksPer100ms = shoulder.getSelectedSensorVelocity();
-    inputs.isFwdLimitSwitchClosed = shoulder.isFwdLimitSwitchClosed() == 1.0;
+    armSim.update(0.02);
+    inputs.positionTicks = shoulder.getPosition().getValue();
+    inputs.absoluteTicks = shoulder.getRotorPosition().getValue();
+    inputs.velocityTicksPer100ms = shoulder.getVelocity().getValue();
+    inputs.isFwdLimitSwitchClosed = shoulder.getForwardLimit().getValue().value == 1.0;
   }
 
   @Override
   public void registerWith(TelemetryService telemetryService) {
-    telemetryService.register(shoulder);
   }
 
   @Override
   public double getSelectedSensorPosition() {
-    return shoulder.getSelectedSensorPosition();
+    return shoulder.getRotorPosition().getValue();
   }
 
   @Override
   public double getSelectedSensorVelocity() {
-    return shoulder.getSelectedSensorVelocity();
+    return shoulder.getRotorVelocity().getValue();
   }
 
   @Override
   public void configSupplyCurrentLimit(
       SupplyCurrentLimitConfiguration shoulderSupplyLimitConfig, int ktalonconfigtimeout) {
-    shoulder.configSupplyCurrentLimit(shoulderSupplyLimitConfig, ktalonconfigtimeout);
+      CurrentLimitsConfigs config = new CurrentLimitsConfigs();
+      config.SupplyCurrentLimit = shoulderSupplyLimitConfig.currentLimit;
+      config.SupplyCurrentLimitEnable = shoulderSupplyLimitConfig.enable; 
+      config.SupplyCurrentThreshold = shoulderSupplyLimitConfig.triggerThresholdCurrent;
+      config.SupplyTimeThreshold = shoulderSupplyLimitConfig.triggerThresholdTime;
+    shoulder.getConfigurator().apply(config, ktalonconfigtimeout);
+  }
+
+  @Override
+  public void configStatorCurrentLimit(
+    StatorCurrentLimitConfiguration elevStatorCurrentLimitConfiguration) {
+      CurrentLimitsConfigs config = new CurrentLimitsConfigs();
+      config.SupplyCurrentLimit = elevStatorCurrentLimitConfiguration.currentLimit;
+      config.SupplyCurrentLimitEnable = elevStatorCurrentLimitConfiguration.enable; 
+      config.SupplyCurrentThreshold = elevStatorCurrentLimitConfiguration.triggerThresholdCurrent;
+      config.SupplyTimeThreshold = elevStatorCurrentLimitConfiguration.triggerThresholdTime;
+    shoulder.getConfigurator().apply(config);
   }
 }
