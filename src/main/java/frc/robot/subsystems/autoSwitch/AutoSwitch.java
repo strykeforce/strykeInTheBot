@@ -9,6 +9,7 @@ import frc.robot.commands.auto.DefaultAutoCommand;
 import frc.robot.commands.auto.MiddleToDockWithMobility;
 import frc.robot.commands.auto.PiecePlaceMobility;
 import frc.robot.commands.auto.PiecePlaceMobilityBump;
+import frc.robot.commands.auto.newAuto4Piece;
 import frc.robot.constants.AutonConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
@@ -131,6 +132,9 @@ public class AutoSwitch {
         // Cube lvl 2, mobility, bump side
         return new PiecePlaceMobilityBump(
             driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchBumpPath");
+      case 0x34:
+        // 2024 test auton
+        return new newAuto4Piece(driveSubsystem, robotStateSubsystem, "2024-startToPiece1");
       default:
         String msg = String.format("no auto command assigned for switch pos: %02X", switchPos);
         DriverStation.reportWarning(msg, false);
