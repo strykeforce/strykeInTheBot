@@ -3,7 +3,7 @@ package frc.robot.commands.auto;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drive.DriveAutonCommand;
-import frc.robot.commands.drive.setAngleOffsetCommand;
+import frc.robot.commands.drive.ZeroGyroCommand;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
 
@@ -26,7 +26,9 @@ public class newAuto4Piece extends SequentialCommandGroup implements AutoCommand
     firstPath = new DriveAutonCommand(driveSubsystem, pathOne, true, true);
     this.robotStateSubsystem = robotStateSubsystem;
 
-    addCommands(new setAngleOffsetCommand(driveSubsystem, -30.0), firstPath);
+    addCommands(
+        /*new setAngleOffsetCommand(driveSubsystem, 330.0),*/ new ZeroGyroCommand(driveSubsystem),
+        firstPath);
   }
 
   public void generateTrajectory() {

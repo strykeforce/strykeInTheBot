@@ -134,7 +134,7 @@ public class AutoSwitch {
             driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchBumpPath");
       case 0x34:
         // 2024 test auton
-        return new newAuto4Piece(driveSubsystem, robotStateSubsystem, "2024-startToPiece1");
+        return new newAuto4Piece(driveSubsystem, robotStateSubsystem, "fiveMeterPath");
       default:
         String msg = String.format("no auto command assigned for switch pos: %02X", switchPos);
         DriverStation.reportWarning(msg, false);
