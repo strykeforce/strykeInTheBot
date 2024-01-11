@@ -26,9 +26,9 @@ public class newAuto4Piece extends SequentialCommandGroup implements AutoCommand
     firstPath = new DriveAutonCommand(driveSubsystem, pathOne, true, true);
     this.robotStateSubsystem = robotStateSubsystem;
 
-    addCommands(
-        /*new setAngleOffsetCommand(driveSubsystem, 330.0),*/ new ZeroGyroCommand(driveSubsystem),
-        firstPath);
+    // addCommands(new setAngleOffsetCommand(driveSubsystem, 30.0 * (Math.PI / 180.0)), firstPath);
+    // addCommands(new setAngleOffsetCommand(driveSubsystem, 30.0 * (Math.PI / 180.0)), firstPath);
+    addCommands(new ZeroGyroCommand(driveSubsystem), firstPath);
   }
 
   public void generateTrajectory() {

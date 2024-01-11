@@ -1,14 +1,10 @@
 package frc.robot.subsystems.autoSwitch;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.commands.auto.AutoCommandInterface;
 import frc.robot.commands.auto.DefaultAutoCommand;
 // import frc.robot.commands.auto.DefaultAutoCommand;
 // import frc.robot.commands.auto.DoNothingAutonCommand;
-import frc.robot.commands.auto.MiddleToDockWithMobility;
-import frc.robot.commands.auto.PiecePlaceMobility;
-import frc.robot.commands.auto.PiecePlaceMobilityBump;
 import frc.robot.commands.auto.newAuto4Piece;
 import frc.robot.constants.AutonConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -114,32 +110,36 @@ public class AutoSwitch {
   private AutoCommandInterface getAutoCommand(int switchPos) {
     switch (switchPos) {
         // Non-Bump Side
-      case 0x00:
-        // Cube lvl 2, mobility
-        return new PiecePlaceMobility(
-            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchPath");
+        // case 0x00:
+        //   // Cube lvl 2, mobility
+        //   return new PiecePlaceMobility(
+        //       driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem,
+        // "fetchPath");
 
-      case 0x10:
-        return new MiddleToDockWithMobility(
-            driveSubsystem,
-            robotStateSubsystem,
-            shoulderSubsystem,
-            handSubsystem,
-            "piecePlaceOverLinePath",
-            "tinyLittleToBalancePath");
-        // Bump Side
-      case 0x20:
-        // Cube lvl 2, mobility, bump side
-        return new PiecePlaceMobilityBump(
-            driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem, "fetchBumpPath");
-      case 0x34:
+        // case 0x10:
+        //   return new MiddleToDockWithMobility(
+        //       driveSubsystem,
+        //       robotStateSubsystem,
+        //       shoulderSubsystem,
+        //       handSubsystem,
+        //       "piecePlaceOverLinePath",
+        //       "tinyLittleToBalancePath");
+        //   // Bump Side
+        // case 0x20:
+        //   // Cube lvl 2, mobility, bump side
+        //   return new PiecePlaceMobilityBump(
+        //       driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem,
+        // "fetchBumpPath");
+        // case 0x34:
+        //   // 2024 test auton
+        //   return new newAuto4Piece(driveSubsystem, robotStateSubsystem, "fiveMeterPath");
+      default:
         // 2024 test auton
         return new newAuto4Piece(driveSubsystem, robotStateSubsystem, "fiveMeterPath");
-      default:
-        String msg = String.format("no auto command assigned for switch pos: %02X", switchPos);
-        DriverStation.reportWarning(msg, false);
-        return new DefaultAutoCommand(
-            driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
+        // String msg = String.format("no auto command assigned for switch pos: %02X", switchPos);
+        // DriverStation.reportWarning(msg, false);
+        // return new DefaultAutoCommand(
+        //     driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
     }
   }
 }
