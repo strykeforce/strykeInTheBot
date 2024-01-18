@@ -3,6 +3,7 @@ package frc.robot.subsystems.autoSwitch;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.commands.auto.AutoCommandInterface;
 import frc.robot.commands.auto.DefaultAutoCommand;
+import frc.robot.commands.auto.newAuto4Piece;
 // import frc.robot.commands.auto.DefaultAutoCommand;
 // import frc.robot.commands.auto.DoNothingAutonCommand;
 import frc.robot.commands.auto.newAuto4PieceTurn;
@@ -130,9 +131,14 @@ public class AutoSwitch {
         //   return new PiecePlaceMobilityBump(
         //       driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem,
         // "fetchBumpPath");
-        // case 0x34:
-        //   // 2024 test auton
-        //   return new newAuto4Piece(driveSubsystem, robotStateSubsystem, "fiveMeterPath");
+      case 0x34:
+        // 2024 test auton
+        return new newAuto4Piece(
+            driveSubsystem,
+            robotStateSubsystem,
+            "newStartToPieceOne",
+            "newPieceOneToTwo",
+            "newPieceTwoToThree");
       default:
         // 2024 test auton
         return new newAuto4PieceTurn(

@@ -15,5 +15,5 @@ target_yaw = 30.0 #degrees
     angle = 30.0 #approximate
 
 [[internal_points]]
-    x = 1.89
-    y = 6.07
+    x = 2.29
+    y = 6.47
