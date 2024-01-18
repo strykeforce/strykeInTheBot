@@ -5,7 +5,7 @@ import frc.robot.commands.auto.AutoCommandInterface;
 import frc.robot.commands.auto.DefaultAutoCommand;
 // import frc.robot.commands.auto.DefaultAutoCommand;
 // import frc.robot.commands.auto.DoNothingAutonCommand;
-import frc.robot.commands.auto.newAuto4Piece;
+import frc.robot.commands.auto.newAuto4PieceTurn;
 import frc.robot.constants.AutonConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
@@ -135,7 +135,14 @@ public class AutoSwitch {
         //   return new newAuto4Piece(driveSubsystem, robotStateSubsystem, "fiveMeterPath");
       default:
         // 2024 test auton
-        return new newAuto4Piece(driveSubsystem, robotStateSubsystem, "fiveMeterPath");
+        return new newAuto4PieceTurn(
+            driveSubsystem,
+            robotStateSubsystem,
+            "newStartToPieceOne",
+            "newPieceOneToTwoTurn",
+            "newTurnTo0d",
+            "newPieceTwoToThreeTurn",
+            "newTurnTo30d");
         // String msg = String.format("no auto command assigned for switch pos: %02X", switchPos);
         // DriverStation.reportWarning(msg, false);
         // return new DefaultAutoCommand(

@@ -8,27 +8,32 @@ import frc.robot.commands.drive.setAngleOffsetCommand;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.robotState.MinimalRobotStateSubsystem;
 
-public class newAuto4Piece extends SequentialCommandGroup implements AutoCommandInterface {
+public class newAuto4PieceTurn extends SequentialCommandGroup implements AutoCommandInterface {
 
   DriveAutonCommand firstPath;
   DriveAutonCommand secondPath;
   DriveAutonCommand thirdPath;
   DriveAutonCommand fourthPath;
+  DriveAutonCommand fifthPath;
   DriveAutonCommand fallbackPath;
   DriveAutonCommand fallbackPath2;
   private boolean hasGenerated = false;
   private Alliance alliance = Alliance.Invalid;
   private MinimalRobotStateSubsystem robotStateSubsystem;
 
-  public newAuto4Piece(
+  public newAuto4PieceTurn(
       DriveSubsystem driveSubsystem,
       MinimalRobotStateSubsystem robotStateSubsystem,
       String pathOne,
       String pathTwo,
-      String pathThree) {
+      String pathThree,
+      String pathFour,
+      String pathFive) {
     firstPath = new DriveAutonCommand(driveSubsystem, pathOne, true, true);
-    secondPath = new DriveAutonCommand(driveSubsystem, pathTwo, true, false);
-    thirdPath = new DriveAutonCommand(driveSubsystem, pathThree, true, false);
+    secondPath = new DriveAutonCommand(driveSubsystem, pathTwo, false, false);
+    thirdPath = new DriveAutonCommand(driveSubsystem, pathThree, false, false);
+    fourthPath = new DriveAutonCommand(driveSubsystem, pathFour, false, false);
+    fifthPath = new DriveAutonCommand(driveSubsystem, pathFive, false, false);
     this.robotStateSubsystem = robotStateSubsystem;
 
     addCommands(
@@ -36,7 +41,9 @@ public class newAuto4Piece extends SequentialCommandGroup implements AutoCommand
         new setAngleOffsetCommand(driveSubsystem, -30.0),
         firstPath,
         secondPath,
-        thirdPath);
+        thirdPath,
+        fourthPath,
+        fifthPath);
   }
 
   public void generateTrajectory() {

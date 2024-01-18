@@ -16,7 +16,7 @@ public class setAngleOffsetCommand extends InstantCommand {
 
   @Override
   public void initialize() {
-    driveSubsystem.setGyroOffset(new Rotation2d(rotation));
+    driveSubsystem.setGyroOffset(Rotation2d.fromDegrees(rotation));
     ;
   }
 }
