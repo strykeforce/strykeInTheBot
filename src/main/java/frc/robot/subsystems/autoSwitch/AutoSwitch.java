@@ -7,6 +7,7 @@ import frc.robot.commands.auto.newAuto4Piece;
 // import frc.robot.commands.auto.DefaultAutoCommand;
 // import frc.robot.commands.auto.DoNothingAutonCommand;
 import frc.robot.commands.auto.newAuto4PieceTurn;
+import frc.robot.commands.auto.newLeftAuto4Piece;
 import frc.robot.constants.AutonConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
@@ -31,7 +32,7 @@ public class AutoSwitch {
   // private final ArmSubsystem armSubsystem;
   private final MinimalShoulderSubsystem shoulderSubsystem;
   private final HandSubsystem handSubsystem;
-  //   private final VisionSubsystem visionSubsystem;
+  // private final VisionSubsystem visionSubsystem;
   AutoCommandInterface defaultCommand;
 
   public AutoSwitch(
@@ -47,20 +48,20 @@ public class AutoSwitch {
     this.handSubsystem = handSubsystem;
 
     // defaultCommand =
-    //     new MiddleToDockWithMobility(
-    //         driveSubsystem,
-    //         robotStateSubsystem,
-    //         shoulderSubsystem,
-    //         handSubsystem,
-    //         "piecePlaceOverLinePath",
-    //         "tinyLittleToBalancePath");
+    // new MiddleToDockWithMobility(
+    // driveSubsystem,
+    // robotStateSubsystem,
+    // shoulderSubsystem,
+    // handSubsystem,
+    // "piecePlaceOverLinePath",
+    // "tinyLittleToBalancePath");
 
     defaultCommand =
         new DefaultAutoCommand(
             driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
 
     // new DefaultAutoCommand(
-    //     driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
+    // driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
 
     for (int i = AutonConstants.kStartSwitchID; i <= AutonConstants.kEndSwitchId; i++) {
       switchInputs.add(new DigitalInput(i));
@@ -112,24 +113,24 @@ public class AutoSwitch {
     switch (switchPos) {
         // Non-Bump Side
         // case 0x00:
-        //   // Cube lvl 2, mobility
-        //   return new PiecePlaceMobility(
-        //       driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem,
+        // // Cube lvl 2, mobility
+        // return new PiecePlaceMobility(
+        // driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem,
         // "fetchPath");
 
         // case 0x10:
-        //   return new MiddleToDockWithMobility(
-        //       driveSubsystem,
-        //       robotStateSubsystem,
-        //       shoulderSubsystem,
-        //       handSubsystem,
-        //       "piecePlaceOverLinePath",
-        //       "tinyLittleToBalancePath");
-        //   // Bump Side
+        // return new MiddleToDockWithMobility(
+        // driveSubsystem,
+        // robotStateSubsystem,
+        // shoulderSubsystem,
+        // handSubsystem,
+        // "piecePlaceOverLinePath",
+        // "tinyLittleToBalancePath");
+        // // Bump Side
         // case 0x20:
-        //   // Cube lvl 2, mobility, bump side
-        //   return new PiecePlaceMobilityBump(
-        //       driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem,
+        // // Cube lvl 2, mobility, bump side
+        // return new PiecePlaceMobilityBump(
+        // driveSubsystem, robotStateSubsystem, shoulderSubsystem, handSubsystem,
         // "fetchBumpPath");
       case 0x34:
         // 2024 test auton
@@ -139,6 +140,14 @@ public class AutoSwitch {
             "newStartToPieceOne",
             "newPieceOneToTwo",
             "newPieceTwoToThree");
+      case 0x35:
+        // 2024 test auton
+        return new newLeftAuto4Piece(
+            driveSubsystem,
+            robotStateSubsystem,
+            "newLeftStartToPieceOne",
+            "newLeftPieceOneToTwo",
+            "newLeftPieceTwoToThree");
       default:
         // 2024 test auton
         return new newAuto4PieceTurn(
@@ -149,10 +158,11 @@ public class AutoSwitch {
             "newTurnTo0d",
             "newPieceTwoToThreeTurn",
             "newTurnTo30d");
-        // String msg = String.format("no auto command assigned for switch pos: %02X", switchPos);
+        // String msg = String.format("no auto command assigned for switch pos: %02X",
+        // switchPos);
         // DriverStation.reportWarning(msg, false);
         // return new DefaultAutoCommand(
-        //     driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
+        // driveSubsystem, robotStateSubsystem, handSubsystem, shoulderSubsystem);
     }
   }
 }
