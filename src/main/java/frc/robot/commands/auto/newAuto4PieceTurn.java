@@ -38,7 +38,7 @@ public class newAuto4PieceTurn extends SequentialCommandGroup implements AutoCom
 
     addCommands(
         new ZeroGyroCommand(driveSubsystem),
-        new setAngleOffsetCommand(driveSubsystem, -30.0),
+        new setAngleOffsetCommand(driveSubsystem, -60.0),
         firstPath,
         secondPath,
         thirdPath,

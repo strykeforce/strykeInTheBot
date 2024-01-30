@@ -6,13 +6,13 @@ is_reversed = false
 target_yaw = -30.0 #degrees
 
 [start_pose]
-    x = 1.34 #approximate
-    y = 4.74 #approximate
-    angle = -30.0 #approximate
+    x = 0.89
+    y = 4.59
+    angle = -60.0
 [end_pose]
     x = 2.59
     y = 4.39
-    angle = -30.0 #approximate
+    angle = -30.0
 
 [[internal_points]]
     x = 1.97

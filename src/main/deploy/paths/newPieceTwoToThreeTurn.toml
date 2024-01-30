@@ -8,11 +8,11 @@ target_yaw = 90.0 #degrees
 [start_pose]
     x = 2.89
     y = 5.54
-    angle = 0.0 #approximate
+    angle = 0.0
 [end_pose]
     x = 2.89
     y = 6.8
-    angle = 90.0 #approximate
+    angle = 90.0
 
 [[internal_points]]
     x = 2.89

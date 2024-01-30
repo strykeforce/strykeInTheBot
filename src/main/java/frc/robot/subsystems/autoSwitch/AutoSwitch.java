@@ -8,6 +8,7 @@ import frc.robot.commands.auto.newAuto4Piece;
 // import frc.robot.commands.auto.DoNothingAutonCommand;
 import frc.robot.commands.auto.newAuto4PieceTurn;
 import frc.robot.commands.auto.newLeftAuto4Piece;
+import frc.robot.commands.auto.newLeftAuto4PieceTurn;
 import frc.robot.constants.AutonConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
@@ -148,6 +149,15 @@ public class AutoSwitch {
             "newLeftStartToPieceOne",
             "newLeftPieceOneToTwo",
             "newLeftPieceTwoToThree");
+      case 0x36:
+        // 2024 test auton
+        return new newLeftAuto4PieceTurn(
+            driveSubsystem,
+            robotStateSubsystem,
+            "newLeftStartToPieceOne",
+            "newLeftPieceOneToTwoTurn",
+            "newLeftTurnTo0d",
+            "newLeftPieceTwoToThreeTurn");
       default:
         // 2024 test auton
         return new newAuto4PieceTurn(
